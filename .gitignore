@@ -1,0 +1,8 @@
+Server/packages/
+Server/Server/bin
+Server/Server/obj
+*.sln
+*.suo
+*.config
+*.csproj
+*.csproj.user
