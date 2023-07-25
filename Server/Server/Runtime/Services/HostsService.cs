@@ -29,9 +29,25 @@ namespace Plugin.Runtime.Services
         /// <summary>
         /// Отримати акторів, котрі знаходяться в ігровій кімнаті
         /// </summary>
-        public IList<IActor> Actors(string gameId)
+        public IList<IActor> GetActors(string gameId)
         {
             return Get(gameId).GameActorsActive;
+        }
+
+        /// <summary>
+        /// Отримати актора, вказавши id кімнати та id актора
+        /// </summary>
+        public IActor GetActor(string gameId, int actorId)
+        {
+            IList<IActor> actors = GetActors(gameId);
+
+            foreach (IActor actor in actors)
+            {
+                if (actor.ActorNr == actorId)
+                    return actor;
+            }
+
+            return null;
         }
 
         /// <summary>

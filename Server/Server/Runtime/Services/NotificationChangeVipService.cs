@@ -33,7 +33,7 @@ namespace Plugin.Runtime.Services
                 && signalData.Status == OpStockPrivateModelSignal.StatusType.add)
             {
                 IPluginHost plugin = _hostsService.Get(signalData.GameId);
-                IList<IActor> roomActors = _hostsService.Actors(plugin.GameId);
+                IList<IActor> roomActors = _hostsService.GetActors(plugin.GameId);
 
                 foreach ( IActor actor in roomActors)
                 {

@@ -53,10 +53,10 @@ namespace Plugin.Runtime.Services.PlotStates.States
 
             var plotModels = new List<IPlotModelScheme>();
 
-            foreach (IActor actor in _hostsService.Actors(host.GameId))
+            foreach (IActor actor in _hostsService.GetActors(host.GameId))
             {
                 _unitsService.ReviveAction(host.GameId, actor.ActorNr);  // Всiм юнітам перезарядити їхні єкшени
-                plotModels.Add(_plotsModelService.Get(host.GameId, actor.ActorNr));  // отримати модель даних ігрового режиму
+                plotModels.Add(_plotsModelService.Get(host.GameId/*, actor.ActorNr*/));  // отримати модель даних ігрового режиму
             }
 
             // Десериализировать операцію StepScheme акторів, котрі вони прислали 
@@ -91,7 +91,7 @@ namespace Plugin.Runtime.Services.PlotStates.States
         /// </summary>
         private void DeserializeOp(ref List<ActorStep> actorSteps)
         {
-            foreach (IActor actor in _hostsService.Actors(host.GameId))
+            foreach (IActor actor in _hostsService.GetActors(host.GameId))
             {
                 if (!_opStockService.HasOp(host.GameId, actor.ActorNr, OperationCode.syncStep))
                     continue;

@@ -3,7 +3,6 @@ using Plugin.Installers;
 using Plugin.Interfaces;
 using Plugin.Signals;
 using Plugin.Tools;
-using System.Diagnostics;
 
 namespace Plugin.Runtime.Services.PlotStates.States
 {
@@ -67,7 +66,7 @@ namespace Plugin.Runtime.Services.PlotStates.States
             if (_isIgnore)
                 return;
 
-            if (_hostsService.Actors(host.GameId).Count == _countActors)
+            if (_hostsService.GetActors(host.GameId).Count == _countActors)
             {
                 plotStatesService.ChangeState(_nextState);
             }

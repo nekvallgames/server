@@ -35,7 +35,7 @@ namespace Plugin.Runtime.Services
             var pushData = new Dictionary<byte, object> { };
 
             // Зібрати синхронізацію дій акторів і відправити результат їхній дій всім акторам в кімнаті
-            foreach (IActor actor in _hostsService.Actors(host.GameId))
+            foreach (IActor actor in _hostsService.GetActors(host.GameId))
             {
                 StepScheme scheme = _stepSchemeBuilder.Create(host.GameId, actor.ActorNr, syncSteps);
                 string jsonString = _convertService.SerializeObject(scheme);

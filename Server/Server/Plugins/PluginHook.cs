@@ -18,6 +18,10 @@ namespace Plugin.Plugins
         /// Сервіс, котрий зберігає в собі стейти для роботи ігрового сценарія
         /// </summary>
         protected PlotStatesService plotService;
+        /// <summary>
+        /// Сервіс, котрий зберігає модель із даними сюжета, для поточної кімнати
+        /// </summary>
+        protected PlotsModelService plotsModelService;
 
         private OpStockService _opStockService;
         private SignalBus _signalBus;
@@ -30,6 +34,7 @@ namespace Plugin.Plugins
 
             _opStockService = gameInstaller.opStockService;
             _signalBus = gameInstaller.signalBus;
+            plotsModelService = gameInstaller.plotsModelService;
 
             gameInstaller.hostsService.Add(host);
 
@@ -80,15 +85,20 @@ namespace Plugin.Plugins
         /// Игрок покинул игровую комнаты на стороне Game Server
         /// </summary>
         public override void OnLeave(ILeaveGameCallInfo info)
-        {
+        {            
             info.Continue();
         }
 
         /// <summary>
         /// Виконається при закритті кімнати
         /// </summary>
-        public virtual void BeforeCloseGame(IBeforeCloseGameCallInfo info)
+        public override void BeforeCloseGame(IBeforeCloseGameCallInfo info)
         {
+            // Видалити модель із даними сюжета, котра була створена для поточної кімнати
+            if (plotsModelService.Has(host.GameId)){
+                plotsModelService.Remove(host.GameId);
+            }
+                        
             info.Continue();
         }
     }

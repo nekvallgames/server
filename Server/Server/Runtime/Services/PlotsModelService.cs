@@ -1,5 +1,6 @@
 ﻿using Plugin.Interfaces;
 using Plugin.Models.Private;
+using System.Linq;
 
 namespace Plugin.Runtime.Services
 {
@@ -20,9 +21,19 @@ namespace Plugin.Runtime.Services
             _model.Add(model);
         }
 
-        public IPlotModelScheme Get(string gameId, int actorId)
+        public IPlotModelScheme Get(string gameId)
         {
-            return _model.Items.Find(x => x.GameId == gameId && x.OwnerActorId == actorId);
+            return _model.Items.Find(x => x.GameId == gameId);
+        }
+
+        public bool Has(string gameId)
+        {
+            return _model.Items.Any(x => x.GameId == gameId);
+        }
+
+        public bool Remove(string gameId)
+        {
+            return _model.Items.Remove(Get(gameId));
         }
     }
 }

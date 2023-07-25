@@ -25,7 +25,7 @@ namespace Plugin.Runtime.Services.Sync
         /// </summary>
         public void Add(string gameId, int actorId, ISyncGroupComponent syncData )
         {
-            int plotStep = _plotsModelService.Get(gameId, actorId).SyncStep;   // витягуємо із моделі ігрового сценарія поточний крок ігрового сценарія
+            int plotStep = _plotsModelService.Get(gameId/*, actorId*/).SyncStep;   // витягуємо із моделі ігрового сценарія поточний крок ігрового сценарія
   
             var syncStep = Get(gameId, actorId, plotStep);
 

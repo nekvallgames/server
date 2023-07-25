@@ -40,7 +40,7 @@ namespace Plugin.Runtime.Services
         /// </summary>
         private void HostsModelChange(HostsPrivateModelSignal signalData )
         {
-            IList<IActor> actors = _hostsService.Actors(signalData.GameId);
+            IList<IActor> actors = _hostsService.GetActors(signalData.GameId);
 
             foreach ( IActor actor in actors)
             {

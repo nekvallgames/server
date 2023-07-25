@@ -102,7 +102,7 @@ namespace Plugin.Runtime.Services.PlotStates.States
             // value - это ChoosedUnitsScheme, которая имеет ID юнитов, которыми будут играть игроки
             Dictionary<byte, object> pushData = new Dictionary<byte, object> { };
 
-            foreach (IActor actor in _hostsService.Actors(host.GameId))
+            foreach (IActor actor in _hostsService.GetActors(host.GameId))
             {
                 var choosedUnitsScheme = new ChoosedUnitsScheme(){
                     unitsId = new List<int>()
