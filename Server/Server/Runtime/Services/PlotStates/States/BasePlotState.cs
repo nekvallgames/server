@@ -9,11 +9,16 @@ namespace Plugin.Runtime.Services.PlotStates.States
     {
         protected PlotStatesService plotStatesService;
         protected IPluginHost host;
+        /// <summary>
+        /// Наступний стейт, в котрий перейдемо після поточного стейту
+        /// </summary>
+        protected string nextState;
 
-        public BasePlotState(PlotStatesService plotStatesService, IPluginHost host)
+        public BasePlotState(PlotStatesService plotStatesService, IPluginHost host, string nextState)
         {
             this.plotStatesService = plotStatesService;
             this.host = host;
+            this.nextState = nextState;
         }
     }
 }

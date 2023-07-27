@@ -17,7 +17,7 @@ namespace Plugin.Interfaces
         /// <summary>
         /// Владелец игровой сетки
         /// </summary>
-        int OwnerActorId { get; }
+        int OwnerActorNr { get; }
 
         /// <summary>
         /// Размер игровой сетки по ширине

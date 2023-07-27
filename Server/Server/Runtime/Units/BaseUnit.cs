@@ -13,7 +13,7 @@ namespace Plugin.Runtime.Units
         /// <summary>
         /// Владелец игрового юнита
         /// </summary>
-        public int OwnerActorId { get; protected set; }
+        public int OwnerActorNr { get; protected set; }
 
         /// <summary>
         /// ID юнита
@@ -45,11 +45,11 @@ namespace Plugin.Runtime.Units
         public BaseUnit( string gameId, int ownerActorId, int unitId, int instanceUnitId )
         {
             GameId = gameId;
-            OwnerActorId = ownerActorId;
+            OwnerActorNr = ownerActorId;
             UnitId = unitId;
             InstanceId = instanceUnitId;
 
-            LogChannel.Log($"Created unit ownerId = {OwnerActorId}, uId = {UnitId}, instance = {InstanceId}", LogChannel.Type.Default);
+            LogChannel.Log($"Created unit ownerId = {OwnerActorNr}, uId = {UnitId}, instance = {InstanceId}", LogChannel.Type.Default);
         }
     }
 }

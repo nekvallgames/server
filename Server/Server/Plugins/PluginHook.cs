@@ -25,6 +25,9 @@ namespace Plugin.Plugins
 
         private OpStockService _opStockService;
         private SignalBus _signalBus;
+        private ActorService _actorService;
+        private UnitsService _unitsService;
+        private GridService _gridService;
 
         public override bool SetupInstance(IPluginHost host, Dictionary<string, string> config, out string errorMsg)
         {
@@ -34,6 +37,10 @@ namespace Plugin.Plugins
 
             _opStockService = gameInstaller.opStockService;
             _signalBus = gameInstaller.signalBus;
+            _actorService = gameInstaller.actorService;
+            _unitsService = gameInstaller.unitsService;
+            _gridService = gameInstaller.gridService;
+
             plotsModelService = gameInstaller.plotsModelService;
 
             gameInstaller.hostsService.Add(host);
@@ -54,7 +61,12 @@ namespace Plugin.Plugins
         /// </summary>
         public override void OnCreateGame(ICreateGameCallInfo info)
         {
+            _actorService.CreateActor(host.GameId,
+                                      !info.IsJoin ? 1 : info.Request.ActorNr,
+                                      info.Request.ActorProperties["id"].ToString());
+
             _signalBus.Fire(new HostsPrivateModelSignal(host.GameId, HostsPrivateModelSignal.StatusType.change));
+
             info.Continue();
         }
 
@@ -64,7 +76,12 @@ namespace Plugin.Plugins
         /// </summary>
         public override void OnJoin(IJoinGameCallInfo info)
         {            
+            _actorService.CreateActor(host.GameId,
+                                      info.ActorNr,
+                                      info.Request.ActorProperties["id"].ToString());
+
             _signalBus.Fire(new HostsPrivateModelSignal(host.GameId, HostsPrivateModelSignal.StatusType.change));
+
             info.Continue();
         }
 
@@ -85,7 +102,9 @@ namespace Plugin.Plugins
         /// Игрок покинул игровую комнаты на стороне Game Server
         /// </summary>
         public override void OnLeave(ILeaveGameCallInfo info)
-        {            
+        {
+            _actorService.RemoveActor(host.GameId, info.ActorNr);
+
             info.Continue();
         }
 
@@ -95,10 +114,14 @@ namespace Plugin.Plugins
         public override void BeforeCloseGame(IBeforeCloseGameCallInfo info)
         {
             // Видалити модель із даними сюжета, котра була створена для поточної кімнати
-            if (plotsModelService.Has(host.GameId)){
-                plotsModelService.Remove(host.GameId);
-            }
-                        
+            plotsModelService.RemoveIfExist(host.GameId);
+            // Видалити всіх юнітів, котрі були створені для ігрової кімнати
+            _unitsService.RemoveAllIfExist(host.GameId);
+            // Видалити всі ігрові сітки, котрі були створені для поточної кімнати
+            _gridService.RemoveAllIfExist(host.GameId);
+            // Видалити всіх юнітів, котри належать поточній кімнаті
+            _actorService.RemoveActorsInRoom(host.GameId);
+
             info.Continue();
         }
     }

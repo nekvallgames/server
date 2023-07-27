@@ -26,7 +26,15 @@ namespace Plugin.Runtime.Services
             return _model.Items.Find(x => x.GameId == gameId);
         }
 
-        public bool Has(string gameId)
+        public void RemoveIfExist(string gameId)
+        {
+            if (!IsExist(gameId))
+                return;
+
+            Remove(gameId);
+        }
+
+        public bool IsExist(string gameId)
         {
             return _model.Items.Any(x => x.GameId == gameId);
         }

@@ -1,5 +1,4 @@
-﻿using Photon.Hive.Plugin;
-using Plugin.Builders;
+﻿using Plugin.Builders;
 using Plugin.Interfaces;
 using Plugin.Models.Private;
 using Plugin.Models.Public;
@@ -12,7 +11,6 @@ using Plugin.Runtime.Services.ExecuteOp;
 using Plugin.Runtime.Services.Sync;
 using Plugin.Runtime.Spawners;
 using Plugin.Schemes;
-using System;
 using System.Collections.Generic;
 
 namespace Plugin.Installers
@@ -49,6 +47,8 @@ namespace Plugin.Installers
         public LocationUnitsSpawner locationUnitsSpawner;
         public SyncStepService syncStepService;
         public PlotsModelService plotsModelService;
+        public ActorService actorService;
+        public IBackendBroadcastProvider backendBroadcastProvider;
 
         public ExecuteOpStepSchemeService executeOpStepService;
         public ExecuteOpGroupService executeOpGroupService;
@@ -59,6 +59,9 @@ namespace Plugin.Installers
 
             signalBus = new SignalBus();
             convertService = new ConvertService();
+
+            backendBroadcastProvider = new BackendBroadcastProvider();
+            backendBroadcastProvider.Connect();
 
             publicModelProvider = new PublicModelProvider(new List<IPublicModel>
             {
@@ -72,9 +75,11 @@ namespace Plugin.Installers
                 new SyncPrivateModel(),
                 new GridsPrivateModel(signalBus),
                 new HostsPrivateModel(signalBus),
-                new PlotsPrivateModel()
+                new PlotsPrivateModel(),
+                new ActorsPrivateModel()
             });
 
+            actorService = new ActorService(privateModelProvider.Get<ActorsPrivateModel>());
             hostsService = new HostsService(privateModelProvider.Get<HostsPrivateModel>());
             plotsModelService = new PlotsModelService(privateModelProvider.Get<PlotsPrivateModel>());
             gridBuilder = new GridBuilder();
@@ -85,13 +90,13 @@ namespace Plugin.Installers
             stepSchemeBuilder = new StepSchemeBuilder(syncService);
             syncStepService = new SyncStepService(stepSchemeBuilder, convertService, hostsService);
             moveService = new MoveService(syncService);
-            unitsService = new UnitsService(privateModelProvider.Get<UnitsPrivateModel>(), opStockService, convertService, unitBuilder, signalBus, moveService);
+            unitsService = new UnitsService(privateModelProvider.Get<UnitsPrivateModel>(), unitBuilder, signalBus, moveService);
             locationUnitsSpawner = new LocationUnitsSpawner(publicModelProvider, unitsService, signalBus);
             vipService = new VipService(syncService, unitsService);
             sortTargetOnGridService = new SortTargetOnGridService();
             actionService = new ActionService(syncService, unitsService, sortTargetOnGridService);
             additionalService = new AdditionalService(syncService, unitsService);
-            gridService = new GridService(publicModelProvider, privateModelProvider, gridBuilder, signalBus, hostsService);
+            gridService = new GridService(publicModelProvider, privateModelProvider, gridBuilder);
             notificationChangeVipService = new NotificationChangeVipService(hostsService, opStockService, signalBus);
             executeOpGroupService = new ExecuteOpGroupService(unitsService, moveService, vipService, actionService, additionalService);
             executeOpStepService = new ExecuteOpStepSchemeService(executeOpGroupService);

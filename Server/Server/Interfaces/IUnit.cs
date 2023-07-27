@@ -12,7 +12,7 @@ namespace Plugin.Interfaces
         /// <summary>
         /// Владелец юнита
         /// </summary>
-        int OwnerActorId { get; }
+        int OwnerActorNr { get; }
 
         /// <summary>
         /// ID юнита

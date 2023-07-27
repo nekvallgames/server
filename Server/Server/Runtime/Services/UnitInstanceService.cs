@@ -24,7 +24,7 @@ namespace Plugin.Runtime.Services
         /// </summary>
         public int GetInstance(string gameId, int actorId, int unitId)
         {
-            List<IUnit> list = _unitsPrivateModel.Items.FindAll(x => x.GameId == gameId && x.OwnerActorId == actorId && x.UnitId == unitId);
+            List<IUnit> list = _unitsPrivateModel.Items.FindAll(x => x.GameId == gameId && x.OwnerActorNr == actorId && x.UnitId == unitId);
             if (!list.Any())
                 return 0;
 

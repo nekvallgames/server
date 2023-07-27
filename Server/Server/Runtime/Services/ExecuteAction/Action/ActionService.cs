@@ -47,7 +47,7 @@ namespace Plugin.Runtime.Services.ExecuteAction.Action
                 return;
             }
 
-            Debug.Fail($"ActionService :: ExecuteAction() I can't execute action, because I don't know how. OwnerId = {unit.OwnerActorId}, uId = {unit.UnitId}, instanceId = {unit.InstanceId}");
+            Debug.Fail($"ActionService :: ExecuteAction() I can't execute action, because I don't know how. OwnerId = {unit.OwnerActorNr}, uId = {unit.UnitId}, instanceId = {unit.InstanceId}");
         }
     }
 }

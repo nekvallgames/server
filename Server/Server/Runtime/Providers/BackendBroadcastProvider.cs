@@ -1,7 +1,10 @@
 ﻿using Google.Cloud.Firestore;
 using Plugin.Interfaces;
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace Plugin.Runtime.Providers
 {
@@ -37,6 +40,36 @@ namespace Plugin.Runtime.Providers
             Database = FirestoreDb.Create("shootermobile2d-151b3");
 
             File.Delete(filepath);
+        }
+
+        /// <summary>
+        /// Отримати юнітів, котрі вибрані гравцем
+        /// Тобто отримати юнітів, котрі в гравця вибрані в колоді
+        /// </summary>
+        public async Task<List<int>> GetUnitsInDeck(string profileId)
+        {
+            var deck = new List<int>();
+
+            DocumentReference docref = Database.Collection("users").Document(profileId);
+            DocumentSnapshot snap = await docref.GetSnapshotAsync();
+
+            if (snap.Exists)
+            {
+                Dictionary<string, object> user = snap.ToDictionary();
+                if (user.ContainsKey("decks"))
+                {
+                    IEnumerable enumerable = user["decks"] as IEnumerable;
+                    var enumerator = enumerable.GetEnumerator();
+                    while (enumerator.MoveNext())
+                    {
+                        var item = enumerator.Current;
+                        int unitId = int.Parse(item.ToString());
+                        deck.Add(unitId);
+                    }
+                }
+            }
+
+            return deck;
         }
     }
 }

@@ -49,7 +49,7 @@ namespace Plugin.Runtime.Units
             // Capacity--;      // TODO розкомітити, коли прикручу збільшення патронів в режимі перестрілки із віпом
             if (Capacity < 0){
                 Capacity = 0;
-                throw new Exception($"BaseDamageActionUnit :: Used() capacity decrease below zero. ActorId = {OwnerActorId}, unitId = {UnitId}, instanceId = {InstanceId}");
+                throw new Exception($"BaseDamageActionUnit :: Used() capacity decrease below zero. ActorId = {OwnerActorNr}, unitId = {UnitId}, instanceId = {InstanceId}");
             }
         }
     }

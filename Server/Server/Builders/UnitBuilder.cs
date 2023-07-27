@@ -21,24 +21,24 @@ namespace Plugin.Builders
         /// ownerActorId - владелец юнита
         /// unitId       - уникальный ID юнита
         /// </summary>
-        public IUnit CreateUnit(string gameId, int ownerActorId, int unitId)
+        public IUnit CreateUnit(string gameId, int ownerActorNr, int unitId)
         {
             switch (unitId)
             {
-                case UnitPistol.UnitId: return Create<UnitPistol>(gameId, ownerActorId, unitId);
-                case UnitShotGun.UnitId: return Create<UnitShotGun>(gameId, ownerActorId, unitId);
-                case UnitUmp45.UnitId: return Create<UnitUmp45>(gameId, ownerActorId, unitId);
-                case UnitSniper.UnitId: return Create<UnitSniper>(gameId, ownerActorId, unitId);
-                case UnitPoison.UnitId: return Create<UnitPoison>(gameId, ownerActorId, unitId);
-                case UnitTrash.UnitId: return Create<UnitTrash>(gameId, ownerActorId, unitId);
-                case UnitRoadBlock.UnitId: return Create<UnitRoadBlock>(gameId, ownerActorId, unitId);
-                case UnitBarrel.UnitId: return Create<UnitBarrel>(gameId, ownerActorId, unitId);
-                case UnitLuke.UnitId: return Create<UnitLuke>(gameId, ownerActorId, unitId);
-                case UnitBagBarrier.UnitId: return Create<UnitBagBarrier>(gameId, ownerActorId, unitId);
-                case UnitIronFenceBarrier.UnitId: return Create<UnitIronFenceBarrier>(gameId, ownerActorId, unitId);
+                case UnitPistol.UnitId: return Create<UnitPistol>(gameId, ownerActorNr, unitId);
+                case UnitShotGun.UnitId: return Create<UnitShotGun>(gameId, ownerActorNr, unitId);
+                case UnitUmp45.UnitId: return Create<UnitUmp45>(gameId, ownerActorNr, unitId);
+                case UnitSniper.UnitId: return Create<UnitSniper>(gameId, ownerActorNr, unitId);
+                case UnitPoison.UnitId: return Create<UnitPoison>(gameId, ownerActorNr, unitId);
+                case UnitTrash.UnitId: return Create<UnitTrash>(gameId, ownerActorNr, unitId);
+                case UnitRoadBlock.UnitId: return Create<UnitRoadBlock>(gameId, ownerActorNr, unitId);
+                case UnitBarrel.UnitId: return Create<UnitBarrel>(gameId, ownerActorNr, unitId);
+                case UnitLuke.UnitId: return Create<UnitLuke>(gameId, ownerActorNr, unitId);
+                case UnitBagBarrier.UnitId: return Create<UnitBagBarrier>(gameId, ownerActorNr, unitId);
+                case UnitIronFenceBarrier.UnitId: return Create<UnitIronFenceBarrier>(gameId, ownerActorNr, unitId);
 
                 default:{
-                        Debug.Fail($"UnitBuilder :: CreateUnit() I can't create unitId = {unitId}, for actorId = {ownerActorId}.");
+                        Debug.Fail($"UnitBuilder :: CreateUnit() I can't create unitId = {unitId}, for actorNr = {ownerActorNr}.");
                         return null;
                     }
                     break;

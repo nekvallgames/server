@@ -52,7 +52,7 @@ namespace Plugin.Runtime.Services.ExecuteAction.Action.Executors
             var damageAction = (IDamageAction)unit;
 
             if (!damageAction.CanExecuteAction()){
-                Debug.Fail($"ExecuteActionService :: WeaponShot :: Execute() ownerID = {unit.OwnerActorId}, unitID = {unit.UnitId}, instanceID = {unit.InstanceId}, targetActorID = {targetActorId}, posW = {posW}, posH = {posH}, I can't make damage action. Maybe I don't have ammunition.");
+                Debug.Fail($"ExecuteActionService :: WeaponShot :: Execute() ownerID = {unit.OwnerActorNr}, unitID = {unit.UnitId}, instanceID = {unit.InstanceId}, targetActorID = {targetActorId}, posW = {posW}, posH = {posH}, I can't make damage action. Maybe I don't have ammunition.");
             }
 
             damageAction.SpendAction();     // делаем выстрел. Юнит тратит 1 патрон
@@ -62,7 +62,7 @@ namespace Plugin.Runtime.Services.ExecuteAction.Action.Executors
                                                targetActorId,
                                                posW,
                                                posH);
-            _syncService.Add(gameId, unit.OwnerActorId, syncData);
+            _syncService.Add(gameId, unit.OwnerActorNr, syncData);
 
 
             foreach (Int2 area in damageAction.DamageActionArea)
@@ -73,7 +73,7 @@ namespace Plugin.Runtime.Services.ExecuteAction.Action.Executors
                 // Находим всех противников, в которых мы выстрелили
                 List<IUnit> targets = _sortTargetOnGridService.SortTargets(_unitsService.GetUnitsUnderThisPosition(gameId, targetActorId, targetW, targetH));
 
-                LogChannel.Log($"ActionService :: DamageAction() ownerId = {unit.OwnerActorId}, unitId = {unit.UnitId}, instanceId = {unit.InstanceId}, cellW = {targetW}, cellH = {targetH}");
+                LogChannel.Log($"ActionService :: DamageAction() ownerId = {unit.OwnerActorNr}, unitId = {unit.UnitId}, instanceId = {unit.InstanceId}, cellW = {targetW}, cellH = {targetH}");
 
                 if (targets.Count <= 0){
                     continue;                     // игрок выстрелил мимо!

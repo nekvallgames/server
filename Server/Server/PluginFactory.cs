@@ -1,7 +1,5 @@
 ﻿using Photon.Hive.Plugin;
-using Plugin.Interfaces;
 using Plugin.Plugins.PVP;
-using Plugin.Runtime.Providers;
 
 namespace Plugin
 {
@@ -12,15 +10,7 @@ namespace Plugin
     /// который будет отвечать за логику поведения комнаты
     /// </summary>
     public class PluginFactory : PluginFactoryBase
-    {
-        private IBackendBroadcastProvider _backendBroadcastProvider;
-
-        public PluginFactory()
-        {
-            _backendBroadcastProvider = new BackendBroadcastProvider();
-            _backendBroadcastProvider.Connect();
-        }
-        
+    {        
         public override IGamePlugin CreatePlugin(string pluginName)
         {
             switch (pluginName){

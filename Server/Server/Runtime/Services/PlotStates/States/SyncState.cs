@@ -28,14 +28,10 @@ namespace Plugin.Runtime.Services.PlotStates.States
         private HostsService _hostsService;
         private PlotsModelService _plotsModelService;
 
-        private string _nextStep;
-
         public SyncState(PlotStatesService plotStatesService,
                          IPluginHost host, 
-                         string nextStep):base(plotStatesService, host)
+                         string nextStep):base(plotStatesService, host, nextStep)
         {
-            _nextStep = nextStep;
-
             var gameInstaller = GameInstaller.GetInstance();
 
             _unitsService = gameInstaller.unitsService;
@@ -51,12 +47,11 @@ namespace Plugin.Runtime.Services.PlotStates.States
         {
             LogChannel.Log("PlotService :: PVPStepResult :: EnterState()", LogChannel.Type.Plot);
 
-            var plotModels = new List<IPlotModelScheme>();
+            IPlotModelScheme plotModel = _plotsModelService.Get(host.GameId);
 
             foreach (IActor actor in _hostsService.GetActors(host.GameId))
             {
                 _unitsService.ReviveAction(host.GameId, actor.ActorNr);  // Всiм юнітам перезарядити їхні єкшени
-                plotModels.Add(_plotsModelService.Get(host.GameId/*, actor.ActorNr*/));  // отримати модель даних ігрового режиму
             }
 
             // Десериализировать операцію StepScheme акторів, котрі вони прислали 
@@ -64,26 +59,17 @@ namespace Plugin.Runtime.Services.PlotStates.States
             DeserializeOp(ref actorSteps);
 
             // Виконати перший крок - move
-            ExecuteSteps(host.GameId, ref actorSteps, plotModels[0].SyncStep);
-            IncreaseSyncStep();
+            ExecuteSteps(host.GameId, ref actorSteps, plotModel.SyncStep);
+            plotModel.SyncStep++;
 
             // Виконати другий крок - attack
-            ExecuteSteps(host.GameId, ref actorSteps, plotModels[0].SyncStep);
-            IncreaseSyncStep();
+            ExecuteSteps(host.GameId, ref actorSteps, plotModel.SyncStep);
+            plotModel.SyncStep++;
 
 
-            _syncStepService.Sync(host, new int[] { plotModels[0].SyncStep - 2, plotModels[0].SyncStep - 1 });
+            _syncStepService.Sync(host, new int[] { plotModel.SyncStep - 2, plotModel.SyncStep - 1 });
 
-            plotStatesService.ChangeState(_nextStep);
-
-
-
-            void IncreaseSyncStep()
-            {
-                foreach (IPlotModelScheme plotModel in plotModels){
-                    plotModel.SyncStep++;
-                }
-            }
+            plotStatesService.ChangeState(nextState);
         }
 
         /// <summary>

@@ -21,18 +21,13 @@ namespace Plugin.Runtime.Services.PlotStates.States
         /// Кількість гравців, котрі потрібні для старту ігрової кімнати
         /// </summary>
         private int _countActors;
-        /// <summary>
-        /// Наступний стейт, в котрий перейдемо після поточного стейту
-        /// </summary>
-        private string _nextState;
 
         public WaitStepResult(PlotStatesService plotStatesService,
                               IPluginHost host, 
                               int countActors, 
-                              string nextState):base(plotStatesService, host)
+                              string nextState):base(plotStatesService, host, nextState)
         {
             _countActors = countActors;
-            _nextState = nextState;
 
             var gameInstaller = GameInstaller.GetInstance();
 
@@ -61,7 +56,7 @@ namespace Plugin.Runtime.Services.PlotStates.States
             {
                 // Оба игрока прислали свой ход. Можно не ждать окончание таймера, 
                 // а перейти в следующее состояние
-                plotStatesService.ChangeState(_nextState);
+                plotStatesService.ChangeState(nextState);
             }
         }
 

@@ -52,7 +52,7 @@ namespace Plugin.Runtime.Services.ExecuteAction.Action.Executors
             var waveDamageAction = (IWaveDamageAction)unit;
 
             if (!waveDamageAction.CanExecuteAction()){
-                Debug.Fail($"ExecuteActionService :: GrenadeShot :: Execute() ownerID = {unit.OwnerActorId}, unitID = {unit.UnitId}, instanceID = {unit.InstanceId}, targetActorID = {targetActorId}, posW = {posW}, posH = {posH}, I can't shot, maybe I don't have ammunition.");
+                Debug.Fail($"ExecuteActionService :: GrenadeShot :: Execute() ownerID = {unit.OwnerActorNr}, unitID = {unit.UnitId}, instanceID = {unit.InstanceId}, targetActorID = {targetActorId}, posW = {posW}, posH = {posH}, I can't shot, maybe I don't have ammunition.");
             }
 
             waveDamageAction.SpendAction();     // делаем бросок гранаты. Юнит тратит 1-у гранату
@@ -62,7 +62,7 @@ namespace Plugin.Runtime.Services.ExecuteAction.Action.Executors
                                                  targetActorId,
                                                  posW,
                                                  posH);
-            _syncService.Add(gameId, unit.OwnerActorId, syncOnGrid);
+            _syncService.Add(gameId, unit.OwnerActorNr, syncOnGrid);
 
 
             // 2 2 2 2 2
@@ -85,7 +85,7 @@ namespace Plugin.Runtime.Services.ExecuteAction.Action.Executors
                 // Находим всех противников, в которых мы выстрелили
                 List<IUnit> enemyTargets = _sortTargetOnGridService.SortTargets(_unitsService.GetUnitsUnderThisPosition(gameId, targetActorId, targetW, targetH));
 
-                LogChannel.Log($"ActionService :: WaveDamageAction() ownerId = {unit.OwnerActorId}, unitId = {unit.UnitId}, instanceId = {unit.InstanceId}, cellW = {targetW}, cellH = {targetH}");
+                LogChannel.Log($"ActionService :: WaveDamageAction() ownerId = {unit.OwnerActorNr}, unitId = {unit.UnitId}, instanceId = {unit.InstanceId}, cellW = {targetW}, cellH = {targetH}");
 
                 if (enemyTargets.Count <= 0){
                     continue;                     // игрок выстрелил мимо!

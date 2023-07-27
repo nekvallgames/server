@@ -3,9 +3,8 @@ using Plugin.Interfaces;
 using Plugin.Interfaces.UnitComponents;
 using Plugin.Models.Private;
 using Plugin.Runtime.Services.ExecuteAction;
-using Plugin.Schemes;
-using Plugin.Signals;
 using Plugin.Tools;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -18,57 +17,26 @@ namespace Plugin.Runtime.Services
     public class UnitsService
     {
         private UnitsPrivateModel _model;
-        private OpStockService _opStockService;
-        private ConvertService _convertService;
         private UnitBuilder _unitBuilder;
         private MoveService _moveService;
 
-        public UnitsService(UnitsPrivateModel model, 
-                            OpStockService opStockService, 
-                            ConvertService convertService, 
+        public UnitsService(UnitsPrivateModel model,  
                             UnitBuilder unitBuilder, 
                             SignalBus signalBus, 
                             MoveService moveService)
         {
             _model = model;
 
-            _opStockService = opStockService;
-            _convertService = convertService;
             _unitBuilder = unitBuilder;
             _moveService = moveService;
-
-            signalBus.Subscrible<OpStockPrivateModelSignal>( OpStockModelChange );
-        }
-
-        /// <summary>
-        /// Модель із операціями акторів була оновлена
-        /// </summary>
-        private void OpStockModelChange(OpStockPrivateModelSignal signalData)
-        {
-            // Якщо це операція choosedUnitsForGame, це означає, що потрібно для гравця створити юнітів
-            if (signalData.OpCode == OperationCode.choosedUnitsForGame 
-                && signalData.Status == OpStockPrivateModelSignal.StatusType.add)
-            {
-                // Отримати зі складу операцію, в якій знаходяться дані із юнітами, котрих обрав актор
-                var opChoosedUnits = _opStockService.GetOp(signalData.GameId, signalData.ActorId, signalData.OpCode);
-
-                var choosedUnitsScheme = _convertService.DeserializeObject<ChoosedUnitsScheme>(opChoosedUnits.Data.ToString());
-
-                foreach( int unitId in choosedUnitsScheme.unitsId ){
-                    CreateUnit(signalData.GameId, signalData.ActorId, unitId);
-                }
-
-                // Видалити оброблену операцію зі складу
-                _opStockService.TakeOp(signalData.GameId, signalData.ActorId, signalData.OpCode);
-            }
         }
 
         /// <summary>
         /// Створити юніта для актора
         /// </summary>
-        public IUnit CreateUnit(string gameId, int actorId, int unitId)
+        public IUnit CreateUnit(string gameId, int actorNr, int unitId)
         {
-            IUnit unit = _unitBuilder.CreateUnit(gameId, actorId, unitId);
+            IUnit unit = _unitBuilder.CreateUnit(gameId, actorNr, unitId);
 
             _model.Add(unit);
 
@@ -105,7 +73,7 @@ namespace Plugin.Runtime.Services
             foreach (var unit in _model.Items)
             {
                 // 1. Проверяем, юнит принадлежит игроку unitOwnerID
-                if (unit.GameId == gameId && unit.OwnerActorId == unitOwnerId){
+                if (unit.GameId == gameId && unit.OwnerActorNr == unitOwnerId){
                     // 2. Проверяем, попали мы по этому юниту
                     if (IsPositionUnderUnitArea(unit, posW, posH)){
                         unitsUnderPos.Add(unit);
@@ -122,7 +90,7 @@ namespace Plugin.Runtime.Services
         /// </summary>
         public void ReviveAction(string gameId, int actorId)
         {
-            List<IUnit> units = _model.Items.FindAll(x => x.GameId == gameId && x.OwnerActorId == actorId && x is IActionComponent);
+            List<IUnit> units = _model.Items.FindAll(x => x.GameId == gameId && x.OwnerActorNr == actorId && x is IActionComponent);
 
             foreach (IUnit unit in units){
                 ((IActionComponent)unit).ReviveAction();
@@ -130,17 +98,17 @@ namespace Plugin.Runtime.Services
         }
 
         public IUnit GetUnit(string gameId, int actorId, int unitId, int instanceId){
-            return _model.Items.Find(x => x.GameId == gameId && x.OwnerActorId == actorId && x.UnitId == unitId && x.InstanceId == instanceId);
+            return _model.Items.Find(x => x.GameId == gameId && x.OwnerActorNr == actorId && x.UnitId == unitId && x.InstanceId == instanceId);
         }
 
         public List<IUnit> GetUnits(string gameId, int actorId)
         {
-            return _model.Items.FindAll(x => x.GameId == gameId && x.OwnerActorId == actorId);
+            return _model.Items.FindAll(x => x.GameId == gameId && x.OwnerActorNr == actorId);
         }
 
         public List<IUnit> GetUnits(string gameId, int actorId, int unitId)
         {
-            return _model.Items.FindAll(x => x.GameId == gameId && x.OwnerActorId == actorId && x.UnitId == unitId);
+            return _model.Items.FindAll(x => x.GameId == gameId && x.OwnerActorNr == actorId && x.UnitId == unitId);
         }
 
         /// <summary>
@@ -166,7 +134,7 @@ namespace Plugin.Runtime.Services
         public void Healing(IUnit unit, int healthPower)
         {
             if (!HasComponent<IHealthComponent>(unit)){
-                Debug.Fail($"UnitService :: Healing() I can't healing unit, because this unit don't have IHealthComponent. ActorId = {unit.OwnerActorId}, unitId = {unit.UnitId}, instanceId = {unit.InstanceId}");
+                Debug.Fail($"UnitService :: Healing() I can't healing unit, because this unit don't have IHealthComponent. ActorId = {unit.OwnerActorNr}, unitId = {unit.UnitId}, instanceId = {unit.InstanceId}");
                 return;
             }
 
@@ -209,7 +177,7 @@ namespace Plugin.Runtime.Services
         /// </summary>
         public bool HasAliveUnit(string gameId, int actorId)
         {
-            return _model.Items.Any(x => x.GameId == gameId && x.OwnerActorId == actorId && !x.IsDead);
+            return _model.Items.Any(x => x.GameId == gameId && x.OwnerActorNr == actorId && !x.IsDead);
         }
 
         /// <summary>
@@ -217,7 +185,7 @@ namespace Plugin.Runtime.Services
         /// </summary>
         public bool HasAnyDeadUnit(string gameId, int actorId)
         {
-            return _model.Items.Any(x => x.GameId == gameId && x.OwnerActorId == actorId && x.IsDead);
+            return _model.Items.Any(x => x.GameId == gameId && x.OwnerActorNr == actorId && x.IsDead);
         }
 
         /// <summary>
@@ -248,6 +216,24 @@ namespace Plugin.Runtime.Services
             if (curr < 0) curr = 0;
 
             ((IArmorComponent)unit).Capacity = curr;
+        }
+
+        public void RemoveAllIfExist(string gameId)
+        {
+            List<IUnit> units = _model.Items.FindAll(x => x.GameId == gameId);
+            foreach (IUnit unit in units)
+            {
+                _model.Items.Remove(unit);
+            }
+        }
+
+        public void RemoveAllIfExist(string gameId, int actorNr)
+        {
+            List<IUnit> units = _model.Items.FindAll(x => x.GameId == gameId && x.OwnerActorNr == actorNr);
+            foreach (IUnit unit in units)
+            {
+                _model.Items.Remove(unit);
+            }
         }
     }
 

@@ -29,18 +29,18 @@ namespace Plugin.Runtime.Services.ExecuteAction
         {
             // Перевіряємо, чи може поточний юніт бути vip?
             if (!_unitsService.HasComponent<IVipComponent>(unitNextVip)){
-                Debug.Fail($"VipService :: ChangeVip() actorID = {unitNextVip.OwnerActorId}, unitId = {unitNextVip.UnitId}, instanceId = {unitNextVip.InstanceId}. Unit don't has implementation IVip");
+                Debug.Fail($"VipService :: ChangeVip() actorID = {unitNextVip.OwnerActorNr}, unitId = {unitNextVip.UnitId}, instanceId = {unitNextVip.InstanceId}. Unit don't has implementation IVip");
                 return;
             }
 
             // Мертвого юніта не можемо зробити vip
             if (_unitsService.IsDead(unitNextVip)){
-                Debug.Fail($"ExecuteVipService :: ChangeVip() actorID = {unitNextVip.OwnerActorId}, unitId = {unitNextVip.UnitId}, instanceId = {unitNextVip.InstanceId}. Unit alredy dead. I can't make it vip");
+                Debug.Fail($"ExecuteVipService :: ChangeVip() actorID = {unitNextVip.OwnerActorNr}, unitId = {unitNextVip.UnitId}, instanceId = {unitNextVip.InstanceId}. Unit alredy dead. I can't make it vip");
                 return;
             }
 
             // Деактивуємо vip для всих юнітів актора
-            List<IUnit> units = _unitsService.GetUnits(unitNextVip.GameId, unitNextVip.OwnerActorId);
+            List<IUnit> units = _unitsService.GetUnits(unitNextVip.GameId, unitNextVip.OwnerActorNr);
             foreach (IUnit unit in units)
             {
                 if (_unitsService.HasComponent<IVipComponent>(unit)){
@@ -53,7 +53,7 @@ namespace Plugin.Runtime.Services.ExecuteAction
 
             // Синхронизировать статус Vip для юнита
             var syncVip = new SyncVipGroup(unitNextVip);
-            _syncService.Add(unitNextVip.GameId, unitNextVip.OwnerActorId, syncVip);
+            _syncService.Add(unitNextVip.GameId, unitNextVip.OwnerActorNr, syncVip);
         }
     }
 }

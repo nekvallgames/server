@@ -17,7 +17,7 @@ namespace Plugin.Schemes
         /// <summary>
         /// Владелец игровой сетки
         /// </summary>
-        public int OwnerActorId { get; }
+        public int OwnerActorNr { get; }
 
         /// <summary>
         /// Размер игровой сетки по ширине
@@ -33,7 +33,7 @@ namespace Plugin.Schemes
         public GridScheme(string gameId, int ownerActorId, int sizeGridW, int sizeGridH, Cell[] cellsList)
         {
             GameId = gameId;
-            OwnerActorId = ownerActorId;
+            OwnerActorNr = ownerActorId;
             SizeGridW = sizeGridW;
             SizeGridH = sizeGridH;
             СellsList = cellsList;

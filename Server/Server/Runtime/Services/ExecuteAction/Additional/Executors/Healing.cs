@@ -48,7 +48,7 @@ namespace Plugin.Runtime.Services.ExecuteAction.Additional.Executors
             IHealingAdditional unitMedic = (IHealingAdditional)unit;
 
             if (!unitMedic.CanExecuteAdditional()){
-                Debug.Fail($"ExecuteAdditionalService :: Healing :: Execute() ownerId = {unit.OwnerActorId}, unitId = {unit.UnitId}, instanceId = {unit.InstanceId}, targetActorId = {targetActorId}, posH = {posH}, I can't healing, maybe I don't have ammunition.");
+                Debug.Fail($"ExecuteAdditionalService :: Healing :: Execute() ownerId = {unit.OwnerActorNr}, unitId = {unit.UnitId}, instanceId = {unit.InstanceId}, targetActorId = {targetActorId}, posH = {posH}, I can't healing, maybe I don't have ammunition.");
             }
 
             unitMedic.SpendAdditional();     // юнит вылечил когото. Забрать 1 аптечку
@@ -58,7 +58,7 @@ namespace Plugin.Runtime.Services.ExecuteAction.Additional.Executors
                                                                      targetActorId,
                                                                      posW,
                                                                      posH);
-            _syncService.Add(gameId, unit.OwnerActorId, syncOnGrid);
+            _syncService.Add(gameId, unit.OwnerActorNr, syncOnGrid);
 
 
             Int2[] additionalArea = unitMedic.GetAdditionalArea();

@@ -16,12 +16,12 @@ namespace Plugin.Models.Private
 
         protected override void AfterAddHook(IGrid item)
         {
-            _signalBus.Fire(new GridsPrivateModelSignal(item.GameId, item.OwnerActorId, GridsPrivateModelSignal.StatusType.add));
+            _signalBus.Fire(new GridsPrivateModelSignal(item.GameId, item.OwnerActorNr, GridsPrivateModelSignal.StatusType.add));
         }
 
         protected override void AfterRemoveHook(IGrid item)
         {
-            _signalBus.Fire(new GridsPrivateModelSignal(item.GameId, item.OwnerActorId, GridsPrivateModelSignal.StatusType.remove));
+            _signalBus.Fire(new GridsPrivateModelSignal(item.GameId, item.OwnerActorNr, GridsPrivateModelSignal.StatusType.remove));
         }
     }
 }
