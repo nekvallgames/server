@@ -9,11 +9,19 @@ namespace Plugin.Interfaces
         /// Підключитися до DataBace
         /// </summary>
         void Connect();
-
         /// <summary>
-        /// Отримати юнітів, котрі вибрані гравцем
-        /// Тобто отримати юнітів, котрі в гравця вибрані в колоді
+        /// Отримати дані вказаного актора із database
+        /// item1 - рейтинг гравця
+        /// item2 - id юнітів, котрі в гравця знаходяться в колоді
         /// </summary>
-        Task<List<int>> GetUnitsInDeck(string profileId);
+        Task<(int, List<int>)> GetActorData(string profileId);
+        /// <summary>
+        /// Отримати ownCapacity юнітів вказаного гравця
+        /// </summary>
+        Task<List<(int, int)>> GetOwnCapacityUnits(string profileId);
+        /// <summary>
+        /// Перезаписати рейтинг вказаного гравця
+        /// </summary>
+        Task SetRating(string profileId, int capacity);
     }
 }

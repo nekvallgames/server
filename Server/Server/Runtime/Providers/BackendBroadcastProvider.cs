@@ -43,11 +43,13 @@ namespace Plugin.Runtime.Providers
         }
 
         /// <summary>
-        /// Отримати юнітів, котрі вибрані гравцем
-        /// Тобто отримати юнітів, котрі в гравця вибрані в колоді
+        /// Отримати дані вказаного актора із database
+        /// item1 - рейтинг гравця
+        /// item2 - id юнітів, котрі в гравця знаходяться в колоді
         /// </summary>
-        public async Task<List<int>> GetUnitsInDeck(string profileId)
+        public async Task<(int, List<int>)> GetActorData(string profileId)
         {
+            int rating = 0;
             var deck = new List<int>();
 
             DocumentReference docref = Database.Collection("users").Document(profileId);
@@ -67,9 +69,50 @@ namespace Plugin.Runtime.Providers
                         deck.Add(unitId);
                     }
                 }
+
+                if (user.ContainsKey("rating"))
+                {
+                    rating = (int)user["rating"];
+                }
             }
 
-            return deck;
+            return (rating, deck);
+        }
+
+        /// <summary>
+        /// Отримати ownCapacity юнітів вказаного гравця
+        /// </summary>
+        public async Task<List<(int, int)>> GetOwnCapacityUnits(string profileId)
+        {
+            var capacityUnits = new List<(int, int)>();
+
+            Query qRef = Database.Collection("users").Document(profileId).Collection("units");
+            QuerySnapshot snap = await qRef.GetSnapshotAsync();
+
+            foreach (DocumentSnapshot docsnap in snap){
+                capacityUnits.Add((int.Parse(docsnap.Id), docsnap.GetValue<int>("ownCapacity")));
+            }
+
+            return capacityUnits;
+        }
+
+        /// <summary>
+        /// Перезаписати рейтинг вказаного гравця
+        /// </summary>
+        public async Task SetRating(string profileId, int capacity)
+        {
+            DocumentReference docref = Database.Collection("users").Document(profileId);
+
+            Dictionary<string, object> data = new Dictionary<string, object>()
+            {
+                {"rating",capacity}
+            };
+
+            DocumentSnapshot snap = await docref.GetSnapshotAsync();
+            if (snap.Exists)
+            {
+                await docref.UpdateAsync(data);
+            }
         }
     }
 }

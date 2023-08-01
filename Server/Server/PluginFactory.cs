@@ -1,4 +1,5 @@
 ﻿using Photon.Hive.Plugin;
+using Plugin.Installers;
 using Plugin.Plugins.PVP;
 
 namespace Plugin
@@ -10,7 +11,12 @@ namespace Plugin
     /// который будет отвечать за логику поведения комнаты
     /// </summary>
     public class PluginFactory : PluginFactoryBase
-    {        
+    {
+        public PluginFactory()
+        {
+            GameInstaller.GetInstance();
+        }
+
         public override IGamePlugin CreatePlugin(string pluginName)
         {
             switch (pluginName){

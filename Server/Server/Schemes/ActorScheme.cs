@@ -9,6 +9,8 @@ namespace Plugin.Schemes
         public int ActorNr { get; private set; }
         public string ProfileId { get; private set; }
         public List<int> Deck { get; set; }
+        public List<int> Levels { get; set; }
+        public int Rating { get; set; }
 
         public ActorScheme(string gameId, int actorId, string profileId)
         {
@@ -16,7 +18,9 @@ namespace Plugin.Schemes
             ActorNr = actorId;
             ProfileId = profileId;
 
+            Rating = 0;
             Deck = new List<int>();
+            Levels = new List<int>();
         }
     }
 }

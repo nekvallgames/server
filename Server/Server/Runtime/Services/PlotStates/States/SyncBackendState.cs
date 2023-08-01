@@ -16,8 +16,7 @@ namespace Plugin.Runtime.Services.PlotStates.States
         public const string NAME = "SyncBackendState";
         public string Name => NAME;
 
-        private SignalBus _signalBus;
-        private IBackendBroadcastProvider _backendBroadcastProvider;
+        private BackendBroadcastService _backendBroadcastService;
         private ActorService _actorService;
 
         public SyncBackendState(PlotStatesService plotStatesService,
@@ -26,14 +25,13 @@ namespace Plugin.Runtime.Services.PlotStates.States
         {
             var gameInstaller = GameInstaller.GetInstance();
 
-            _signalBus = gameInstaller.signalBus;
-            _backendBroadcastProvider = gameInstaller.backendBroadcastProvider;
+            _backendBroadcastService = gameInstaller.backendBroadcastService;
             _actorService = gameInstaller.actorService;
         }
 
         public void EnterState()
         {
-            LogChannel.Log("PlotStatesService :: SyncStartState :: EnterState()", LogChannel.Type.Plot);
+            LogChannel.Log("PlotStatesService :: SyncBackendState :: EnterState()", LogChannel.Type.Plot);
             
             SyncBackend();
         }
@@ -51,13 +49,8 @@ namespace Plugin.Runtime.Services.PlotStates.States
 
             foreach (IActorScheme actor in actors)
             {
-                List<int> deck = await _backendBroadcastProvider.GetUnitsInDeck(actor.ProfileId);
-
-                actor.Deck.Clear();
-                foreach (int unitId in deck)
-                {
-                    actor.Deck.Add(unitId);
-                }
+                await _backendBroadcastService.SyncActorData(actor);
+                await _backendBroadcastService.SyncLevelByDeck(actor);
             }
         }
 

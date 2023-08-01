@@ -48,11 +48,14 @@ namespace Plugin.Installers
         public SyncStepService syncStepService;
         public PlotsModelService plotsModelService;
         public ActorService actorService;
-        public IBackendBroadcastProvider backendBroadcastProvider;
-
+        public BackendBroadcastService backendBroadcastService;
         public ExecuteOpStepSchemeService executeOpStepService;
         public ExecuteOpGroupService executeOpGroupService;
+        public UnitLevelService unitLevelService;
+        public JsonReaderService jsonReaderService;
+        public ResultService resultService;
 
+       
         public GameInstaller()
         {
             _instance = this;
@@ -60,8 +63,9 @@ namespace Plugin.Installers
             signalBus = new SignalBus();
             convertService = new ConvertService();
 
-            backendBroadcastProvider = new BackendBroadcastProvider();
-            backendBroadcastProvider.Connect();
+            jsonReaderService = new JsonReaderService();
+            unitLevelService = new UnitLevelService(jsonReaderService);
+            backendBroadcastService = new BackendBroadcastService(unitLevelService);
 
             publicModelProvider = new PublicModelProvider(new List<IPublicModel>
             {
@@ -100,6 +104,7 @@ namespace Plugin.Installers
             notificationChangeVipService = new NotificationChangeVipService(hostsService, opStockService, signalBus);
             executeOpGroupService = new ExecuteOpGroupService(unitsService, moveService, vipService, actionService, additionalService);
             executeOpStepService = new ExecuteOpStepSchemeService(executeOpGroupService);
+            resultService = new ResultService(backendBroadcastService);
         }
     }
 }

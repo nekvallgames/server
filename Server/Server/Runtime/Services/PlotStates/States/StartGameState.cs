@@ -49,19 +49,21 @@ namespace Plugin.Runtime.Services.PlotStates.States
 
             foreach (IActorScheme actor in actors)
             {
-                var choosedUnitsScheme = new ChoosedUnitsScheme(){
-                    unitsId = new List<int>()
+                var startGameScheme = new StartGameScheme(){
+                    units = new List<ChoosedUnit>()
                 };
 
-                foreach (int unitId in actor.Deck)
+                for (int i = 0; i < actor.Deck.Count; i++)
                 {
+                    int unitId = actor.Deck[i];
+
                     if (unitId == -1)
                         continue;
-
-                    choosedUnitsScheme.unitsId.Add(unitId);
+                    
+                    startGameScheme.units.Add(new ChoosedUnit(unitId, actor.Levels[i]));
                 }
 
-                string jsonString = _convertService.SerializeObject(choosedUnitsScheme);
+                string jsonString = _convertService.SerializeObject(startGameScheme);
 
                 pushData.Add((byte)actor.ActorNr, jsonString);
             }
