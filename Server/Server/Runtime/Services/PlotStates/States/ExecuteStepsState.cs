@@ -15,22 +15,21 @@ namespace Plugin.Runtime.Services.PlotStates.States
     /// Нужно сначала синхронизировать первый шаг, где игрок розставляет своих юнитов на игровой сетке
     /// И после выполнить второй шаг - где игрок уже атаковал противника
     /// </summary>
-    public class SyncState : BasePlotState, IState
+    public class ExecuteStepsState : BasePlotState, IState
     {
-        public const string NAME = "SyncState";
+        public const string NAME = "ExecuteStepsState";
         public string Name => NAME;
 
         private UnitsService _unitsService;
         private ConvertService _convertService;
         private OpStockService _opStockService;
         private ExecuteOpStepSchemeService _executeOpStepService;
-        private SyncStepService _syncStepService;
         private HostsService _hostsService;
         private PlotsModelService _plotsModelService;
 
-        public SyncState(PlotStatesService plotStatesService,
-                         IPluginHost host, 
-                         string nextStep):base(plotStatesService, host, nextStep)
+        public ExecuteStepsState(PlotStatesService plotStatesService,
+                                 IPluginHost host, 
+                                 string nextStep):base(plotStatesService, host, nextStep)
         {
             var gameInstaller = GameInstaller.GetInstance();
 
@@ -38,14 +37,13 @@ namespace Plugin.Runtime.Services.PlotStates.States
             _convertService = gameInstaller.convertService;
             _opStockService = gameInstaller.opStockService;
             _executeOpStepService = gameInstaller.executeOpStepService;
-            _syncStepService = gameInstaller.syncStepService;
             _hostsService = gameInstaller.hostsService;
             _plotsModelService = gameInstaller.plotsModelService;
         }
 
         public void EnterState()
         {
-            LogChannel.Log("PlotService :: PVPStepResult :: EnterState()", LogChannel.Type.Plot);
+            LogChannel.Log("PlotService :: ExecuteStepsState :: EnterState()", LogChannel.Type.Plot);
 
             IPlotModelScheme plotModel = _plotsModelService.Get(host.GameId);
 
@@ -58,16 +56,13 @@ namespace Plugin.Runtime.Services.PlotStates.States
             var actorSteps = new List<ActorStep>();
             DeserializeOp(ref actorSteps);
 
-            // Виконати перший крок - move
+            // Виконати перший крок всих гравців в ігровій кімнаті - move
             ExecuteSteps(host.GameId, ref actorSteps, plotModel.SyncStep);
             plotModel.SyncStep++;
 
-            // Виконати другий крок - attack
+            // Виконати другий крок всих гравців в ігровій кімнаті - attack
             ExecuteSteps(host.GameId, ref actorSteps, plotModel.SyncStep);
             plotModel.SyncStep++;
-
-
-            _syncStepService.Sync(host, new int[] { plotModel.SyncStep - 2, plotModel.SyncStep - 1 });
 
             plotStatesService.ChangeState(nextState);
         }

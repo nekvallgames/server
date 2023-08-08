@@ -14,7 +14,7 @@ namespace Plugin.Runtime.Units
 
 
         public int Capacity { get; set; }
-        public abstract int OriginalCapacity { get; }
+        public abstract int OriginalCapacity { get; set; }
 
         public abstract Int2[] DamageActionArea { get; }
 

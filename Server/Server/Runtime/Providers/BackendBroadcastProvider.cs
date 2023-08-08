@@ -72,7 +72,7 @@ namespace Plugin.Runtime.Providers
 
                 if (user.ContainsKey("rating"))
                 {
-                    rating = (int)user["rating"];
+                    rating = int.Parse(user["rating"].ToString());
                 }
             }
 

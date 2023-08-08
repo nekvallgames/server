@@ -17,7 +17,7 @@ namespace Plugin.Runtime.Units
         int IHealthComponent.CapacityMax => 100;    // Количество жизней юнита на старте игры
 
         public override int OriginalPower => 0;
-        public override int OriginalCapacity => 999;
+        public override int OriginalCapacity { get; set; } = 999;
 
         public override Int2[] DamageActionArea => new Int2[] { new Int2(0, 0) };
 

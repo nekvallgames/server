@@ -4,7 +4,7 @@ using System;
 namespace Plugin.Schemes
 {
     [Serializable]
-    public struct UpgradeUnitLevelCostScheme
+    public struct UpgradeUnitLevelCostPublicScheme
     {
         [JsonProperty("cost")]
         public int[] Cost;

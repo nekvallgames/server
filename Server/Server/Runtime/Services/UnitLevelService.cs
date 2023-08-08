@@ -10,11 +10,11 @@ namespace Plugin.Runtime.Services
     {
         private const string jsonName = "upgrade_unit_level_cost";
 
-        private UpgradeUnitLevelCostScheme _data;
+        private UpgradeUnitLevelCostPublicScheme _data;
 
         public UnitLevelService(JsonReaderService jsonReaderService)
         {
-            _data = jsonReaderService.Read<UpgradeUnitLevelCostScheme>(jsonName);
+            _data = jsonReaderService.Read<UpgradeUnitLevelCostPublicScheme>(jsonName);
         }
 
         /// <summary>

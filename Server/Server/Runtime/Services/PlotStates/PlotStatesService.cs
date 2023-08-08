@@ -16,7 +16,7 @@ namespace Plugin.Runtime.Services.PlotStates
         /// </summary>
         public IState CurrState { get; private set; }
 
-        public void Add(IState[] states)
+        public PlotStatesService(IState[] states)
         {
             _states = states;
         }

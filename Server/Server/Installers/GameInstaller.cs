@@ -54,6 +54,11 @@ namespace Plugin.Installers
         public UnitLevelService unitLevelService;
         public JsonReaderService jsonReaderService;
         public ResultService resultService;
+        public IncreaseUnitDamageService increaseUnitDamageService;
+        public IncreaseUnitHealthService increaseUnitHealthService;
+        public PlotPublicService plotPublicService;
+        public UnitDamageMultiplicationService unitDamageMultiplicationService;
+        public UnitsPublicModelService unitsPublicModelService;
 
        
         public GameInstaller()
@@ -65,6 +70,12 @@ namespace Plugin.Installers
 
             jsonReaderService = new JsonReaderService();
             unitLevelService = new UnitLevelService(jsonReaderService);
+            increaseUnitDamageService = new IncreaseUnitDamageService(jsonReaderService);
+            increaseUnitHealthService = new IncreaseUnitHealthService(jsonReaderService);
+            plotPublicService = new PlotPublicService(jsonReaderService);
+            unitDamageMultiplicationService = new UnitDamageMultiplicationService(jsonReaderService);
+            unitsPublicModelService = new UnitsPublicModelService(jsonReaderService);
+
             backendBroadcastService = new BackendBroadcastService(unitLevelService);
 
             publicModelProvider = new PublicModelProvider(new List<IPublicModel>

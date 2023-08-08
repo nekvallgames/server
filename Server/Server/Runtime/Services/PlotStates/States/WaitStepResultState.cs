@@ -9,7 +9,7 @@ namespace Plugin.Runtime.Services.PlotStates.States
     /// <summary>
     /// Состояние, в котором мы ждем, когда игроки пришлют свой шаг действия
     /// </summary>
-    public class WaitStepResult : BasePlotState, IState
+    public class WaitStepResultState : BasePlotState, IState
     {
         public const string NAME = "WaitStepResult";
         public string Name => NAME;
@@ -22,10 +22,10 @@ namespace Plugin.Runtime.Services.PlotStates.States
         /// </summary>
         private int _countActors;
 
-        public WaitStepResult(PlotStatesService plotStatesService,
-                              IPluginHost host, 
-                              int countActors, 
-                              string nextState):base(plotStatesService, host, nextState)
+        public WaitStepResultState(PlotStatesService plotStatesService,
+                                   IPluginHost host, 
+                                   int countActors, 
+                                   string nextState):base(plotStatesService, host, nextState)
         {
             _countActors = countActors;
 

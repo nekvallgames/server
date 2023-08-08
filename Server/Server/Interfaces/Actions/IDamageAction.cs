@@ -49,11 +49,11 @@ namespace Plugin.Interfaces.Actions
         /// <summary>
         /// Поточна кількість амуніції 
         /// </summary>
-        int Capacity { get; }
+        int Capacity { get; set; }
 
         /// <summary>
         /// Орігінальна кількість амуніції при створенні юніта
         /// </summary>
-        int OriginalCapacity { get; }
+        int OriginalCapacity { get; set; }
     }
 }

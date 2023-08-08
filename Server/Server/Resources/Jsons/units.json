@@ -1,0 +1,90 @@
+[
+  {
+    "id": 0,
+    "name": "Пістон",
+    "description": "Юніт із пістолетом",
+    "health": 100,
+    "damage": 8,
+    "capacity": 5,
+    "additional_power": 50,
+    "additional_capacity": 2
+  },
+  {
+    "id": 1,
+    "name": "Дробовичок",
+    "description": "Юніт із дробовиком",
+    "health": 150,
+    "damage": 16,
+    "capacity": 2,
+    "additional_power": 50,
+    "additional_capacity": 2
+  },
+  {
+    "id": 3,
+    "name": "Кіллер",
+    "description": "Юніт із снайперськой винтовкою",
+    "health": 90,
+    "damage": 96,
+    "capacity": 2,
+    "additional_power": 50,
+    "additional_capacity": 2
+  },
+  {
+    "id": 6,
+    "name": "Бочка",
+    "description": "Бочка",
+    "health": 100
+  },
+  {
+    "id": 7,
+    "name": "Мусорний ящик",
+    "description": "Мусорний ящик",
+    "health": 100
+  },
+  {
+    "id": 8,
+    "name": "Дорожний блок",
+    "description": "Дорожний блок",
+    "health": 200
+  },
+  {
+    "id": 11,
+    "name": "Дорожний люк",
+    "description": "Дорожний люк",
+    "health": 100
+  },
+  {
+    "id": 15,
+    "name": "Ump45",
+    "description": "Юнит с огнестрельным полу-автоматическим пистолетом Ump45 и имеет броню",
+    "health": 100,
+    "damage": 16,
+    "armor": 100,
+    "capacity": 2,
+    "additional_power": 50,
+    "additional_capacity": 2
+  },
+  {
+    "id": 23,
+    "name": "Лучнік",
+    "description": "Юнит с луком, который стреляет отравлеными стрелами",
+    "health": 100,
+    "damage": 8,
+    "capacity": 3,
+    "additional_power": 50,
+    "additional_capacity": 2,
+    "additional_damage": 8
+  },
+  {
+    "id": 35,
+    "name": "Стенка из мешков",
+    "description": "Стенка из мешков",
+    "health": 50
+  },
+  {
+    "id": 36,
+    "name": "Стенка из мешков",
+    "description": "Стенка из мешков",
+    "health": 100
+  }
+]

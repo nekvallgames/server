@@ -1,0 +1,7 @@
+{
+  "scenario_step_first_move_time": 15,
+  "scenario_step_first_attack_time": 15,
+  "increase_damage_for_last_unit": 300,
+  "increase_rating": 30,
+  "decrease_rating": 5
+}

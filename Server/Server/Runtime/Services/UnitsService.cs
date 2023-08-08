@@ -4,7 +4,6 @@ using Plugin.Interfaces.UnitComponents;
 using Plugin.Models.Private;
 using Plugin.Runtime.Services.ExecuteAction;
 using Plugin.Tools;
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -46,9 +45,9 @@ namespace Plugin.Runtime.Services
         /// <summary>
         /// Створити юніта для актора та позиціюнювати юніта на ігровій сітці
         /// </summary>
-        public IUnit CreateUnit(string gameId, int actorId, int unitId, int posW, int posH)
+        public IUnit CreateUnit(string gameId, int actorNr, int unitId, int posW, int posH)
         {
-            IUnit unit = CreateUnit(gameId, actorId, unitId);
+            IUnit unit = CreateUnit(gameId, actorNr, unitId);
 
             _moveService.PositionOnGrid(unit, posW, posH);
 
@@ -88,33 +87,33 @@ namespace Plugin.Runtime.Services
         /// <summary>
         /// Восстановить все действия юнитов (перезарядить оружия, восстановить магию и т.д.)
         /// </summary>
-        public void ReviveAction(string gameId, int actorId)
+        public void ReviveAction(string gameId, int actorNr)
         {
-            List<IUnit> units = _model.Items.FindAll(x => x.GameId == gameId && x.OwnerActorNr == actorId && x is IActionComponent);
+            List<IUnit> units = _model.Items.FindAll(x => x.GameId == gameId && x.OwnerActorNr == actorNr && x is IActionComponent);
 
             foreach (IUnit unit in units){
                 ((IActionComponent)unit).ReviveAction();
             }
         }
 
-        public IUnit GetUnit(string gameId, int actorId, int unitId, int instanceId){
-            return _model.Items.Find(x => x.GameId == gameId && x.OwnerActorNr == actorId && x.UnitId == unitId && x.InstanceId == instanceId);
+        public IUnit GetUnit(string gameId, int actorNr, int unitId, int instanceId){
+            return _model.Items.Find(x => x.GameId == gameId && x.OwnerActorNr == actorNr && x.UnitId == unitId && x.InstanceId == instanceId);
         }
 
-        public List<IUnit> GetUnits(string gameId, int actorId)
+        public List<IUnit> GetUnits(string gameId, int actorNr)
         {
-            return _model.Items.FindAll(x => x.GameId == gameId && x.OwnerActorNr == actorId);
+            return _model.Items.FindAll(x => x.GameId == gameId && x.OwnerActorNr == actorNr);
         }
 
-        public List<IUnit> GetUnits(string gameId, int actorId, int unitId)
+        public List<IUnit> GetUnits(string gameId, int actorNr, int unitId)
         {
-            return _model.Items.FindAll(x => x.GameId == gameId && x.OwnerActorNr == actorId && x.UnitId == unitId);
+            return _model.Items.FindAll(x => x.GameId == gameId && x.OwnerActorNr == actorNr && x.UnitId == unitId);
         }
 
         /// <summary>
         /// Нанести урон юниту
         /// </summary>
-        public void SetDamage( IUnit unit, int damage )
+        public void SetDamage(IUnit unit, int damage)
         {
             bool hasHealth = HasComponent<IHealthComponent>(unit);
             bool hasArmor = HasComponent<IArmorComponent>(unit);
@@ -168,24 +167,76 @@ namespace Plugin.Runtime.Services
             }
 
             return false;
-
-
         }
 
         /// <summary>
         /// Игрок имеет живых юнитов?
         /// </summary>
-        public bool HasAliveUnit(string gameId, int actorId)
+        public bool HasAliveUnit(string gameId, int actorNr)
         {
-            return _model.Items.Any(x => x.GameId == gameId && x.OwnerActorNr == actorId && !x.IsDead);
+            return _model.Items.Any(x => x.GameId == gameId && x.OwnerActorNr == actorNr && !x.IsDead);
         }
 
         /// <summary>
+        /// Отримати кількість живих юнітів
+        /// </summary>
+        public int GetAliveUnitsCount(string gameId, int actorNr)
+        {
+            return _model.Items.FindAll(x => x.GameId == gameId && x.OwnerActorNr == actorNr && !x.IsDead).Count;
+        }
+
+        /// <summary>
+        /// Отримати живого юніта, котрий може стати випом
+        /// </summary>
+        public IUnit GetAnyAliveUnitWhoWillBeAbleToVip(string gameId, int actorNr)
+        {
+            return _model.Items.Find(x => x.GameId == gameId && x.OwnerActorNr == actorNr && !x.IsDead && (x is IVipComponent));
+        }
+
+        /// <summary>
+        /// Отримати список юнітів, котрі можуть стати VIP-ами
+        /// </summary>
+        public void GetAliveUnitsWhoWillBeAbleToVip(string gameId, int actorNr, ref List<IUnit> vipUnits)
+        {
+            List<IUnit> units = GetUnits(gameId, actorNr);
+
+            foreach (IUnit unit in units)
+            {
+                if (CanBecomeVip(unit))
+                    vipUnits.Add(unit);
+            }
+        }
+
+        /// <summary>
+        /// Чи може вказаний юніт стати чи бути VIP-ом?
+        /// </summary>
+        public bool CanBecomeVip(IUnit unit)
+        {
+            return !unit.IsDead && (unit is IVipComponent);
+        }
+
+        /// <summary>
+        /// Отримати кількість живих юнітів, котрі можуть стати віпами
+        /// </summary>
+        public int GetAliveUnitsCountWhoWillBeAbleToVip(string gameId, int actorNr)
+        {
+            return _model.Items.FindAll(x => x.GameId == gameId && x.OwnerActorNr == actorNr && !x.IsDead && (x is IVipComponent)).Count;
+        }
+        
+        /// <summary>
+        /// Отримати любого юніта, котрий може бути віпом
+        /// </summary>
+        public IUnit GetAnyUnitWhoWillBeAbleToVip(string gameId, int actorNr)
+        {
+            return _model.Items.Find(x => x.GameId == gameId && x.OwnerActorNr == actorNr && (x is IVipComponent));
+        }
+        
+        /// <summary>
         /// Перебрать всех юнитов, и вернуть истину, если есть мертвые юниты
         /// </summary>
-        public bool HasAnyDeadUnit(string gameId, int actorId)
+        public bool HasAnyDeadUnit(string gameId, int actorNr)
         {
-            return _model.Items.Any(x => x.GameId == gameId && x.OwnerActorNr == actorId && x.IsDead);
+            return _model.Items.Any(x => x.GameId == gameId && x.OwnerActorNr == actorNr && x.IsDead);
         }
 
         /// <summary>
@@ -234,6 +285,80 @@ namespace Plugin.Runtime.Services
             {
                 _model.Items.Remove(unit);
             }
+        }
+
+        /// <summary>
+        /// Зробити юніта VIP-ом
+        /// </summary>
+        public void MakeVip(IUnit unit)
+        {
+            (unit as IVipComponent).Enable = true;
+        }
+
+        /// <summary>
+        /// Юнит со статусом Vip живой?
+        /// </summary>
+        public bool VipIsAlive(string gameId, int actorNr)
+        {
+            List<IUnit> units = GetUnits(gameId, actorNr);
+
+            foreach (IUnit unit in units)
+            {
+                if (unit is IVipComponent && !unit.IsDead && (unit as IVipComponent).Enable)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Получить количество живых юнитов
+        /// </summary>
+        public void GetAliveUnits(string gameId, int actorNr, ref List<IUnit> units)
+        {
+            foreach (IUnit unit in GetUnits(gameId, actorNr))
+            {
+                if (!unit.IsDead && !(unit is IBarrier))
+                {
+                    units.Add(unit);
+                }                
+            }
+        }
+
+        /// <summary>
+        /// Со всех юнитов удалить хилки,
+        /// что бы юниты не могли применить хилку
+        /// </summary>
+        public void RemoveAllMedicHealing(string gameId, int actorNr)
+        {
+            // перебираем всех юнитов игрока
+            foreach (IUnit unit in GetUnits(gameId, actorNr))
+            {
+                if (unit is IHealthComponent)
+                {
+                    ((IHealthComponent)unit).Capacity = 0;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Получить юнита, который VIP
+        /// </summary>
+        public IUnit GetVipUnit(string gameId, int actorNr)
+        {
+            List<IUnit> units = GetUnits(gameId, actorNr);
+
+            foreach (IUnit unit in units)
+            {
+                if (unit is IVipComponent && ((IVipComponent)unit).Enable)
+                {
+                    return unit;
+                }
+            }
+
+            return null;
         }
     }
 
