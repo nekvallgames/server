@@ -4,7 +4,7 @@ namespace Plugin.Runtime.Services
 {
     public class UnitsPublicModelService
     {
-        private const string jsonName = "increase_unit_damage";
+        private const string jsonName = "units";
 
         private UnitsPublicScheme _data;
 

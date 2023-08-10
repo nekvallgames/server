@@ -9,10 +9,10 @@ namespace Plugin.Runtime.Services.PlotStates.States
     /// <summary>
     /// Стейт, в котрому створимо юнітів та ігрову сітку для гравців в ігровій кімнаті
     /// </summary>
-    public class PrepareRoomState : BasePlotState, IState
+    public class PrepareRoomState : BasePlotState
     {
         public const string NAME = "PrepareRoomState";
-        public string Name => NAME;
+        public override string Name => NAME;
 
         private ActorService _actorService;
         private UnitsService _unitsService;
@@ -28,7 +28,7 @@ namespace Plugin.Runtime.Services.PlotStates.States
             _gridService = gameInstaller.gridService;
         }
 
-        public void EnterState()
+        public override void EnterState()
         {
             LogChannel.Log("PlotStatesService :: CreateUnitsState :: EnterState()", LogChannel.Type.Plot);
 
@@ -39,18 +39,18 @@ namespace Plugin.Runtime.Services.PlotStates.States
 
             plotStatesService.ChangeState(nextState);
         }
+
         private void CreateUnits(ref List<IActorScheme> actors)
         {
             foreach (IActorScheme actor in actors)
             {
                 _unitsService.RemoveAllIfExist(host.GameId, actor.ActorNr);
 
-                foreach (int unitId in actor.Deck)
+                for (int i = 0; i < actor.Deck.Count; i++)
                 {
-                    if (unitId == -1)
-                        continue;
+                    int unitId = actor.Deck[i];
 
-                    _unitsService.CreateUnit(host.GameId, actor.ActorNr, unitId);
+                    _unitsService.CreateUnit(host.GameId, actor.ActorNr, unitId, actor.Levels[i]);
                 }
             }
         }
@@ -65,11 +65,6 @@ namespace Plugin.Runtime.Services.PlotStates.States
 
                 _gridService.Create(host.GameId, actor.ActorNr);
             }
-        }
-
-        public void ExitState()
-        {
-            
         }
     }
 }

@@ -5,11 +5,11 @@
         /// <summary>
         /// Получить количество брони юнита
         /// </summary>
-        int Capacity { get; set; }
+        int ArmorCapacity { get; set; }
         
         /// <summary>
         /// Получить максимальное количество брони юнита
         /// </summary>
-        int CapacityMax { get; }
+        int ArmorCapacityMax { get; }
     }
 }

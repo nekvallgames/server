@@ -7,10 +7,10 @@ using System.Collections.Generic;
 
 namespace Plugin.Runtime.Services.PlotStates.States
 {
-    public class StartGameState : BasePlotState, IState
+    public class StartGameState : BasePlotState
     {
         public const string NAME = "StartGameState";
-        public string Name => NAME;
+        public override string Name => NAME;
 
         private ActorService _actorService;
         private ConvertService _convertService;
@@ -25,7 +25,7 @@ namespace Plugin.Runtime.Services.PlotStates.States
             _convertService = gameInstaller.convertService;
         }
 
-        public void EnterState()
+        public override void EnterState()
         {
             LogChannel.Log("PlotStatesService :: StartGameState :: EnterState()", LogChannel.Type.Plot);
 
@@ -74,11 +74,6 @@ namespace Plugin.Runtime.Services.PlotStates.States
                                 OperationCode.startGame,
                                 pushData,
                                 CacheOperations.DoNotCache);        // не кэшировать сообщение
-        }
-
-        public void ExitState()
-        {
-            
         }
     }
 }

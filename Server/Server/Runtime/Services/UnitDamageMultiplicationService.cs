@@ -1,4 +1,5 @@
 ﻿using Plugin.Schemes.Public;
+using Plugin.Tools;
 
 namespace Plugin.Runtime.Services
 {
@@ -11,6 +12,32 @@ namespace Plugin.Runtime.Services
         public UnitDamageMultiplicationService(JsonReaderService jsonReaderService)
         {
             _data = jsonReaderService.Read<UnitMultiplicationPublicScheme>(jsonName);
+        }
+
+        public float Get(Enums.PartBody partBody)
+        {
+            switch (partBody)
+            {
+                case Enums.PartBody.head:
+                    {
+                        return _data.head;
+                    }
+                    break;
+
+                case Enums.PartBody.body:
+                    {
+                        return _data.body;
+                    }
+                    break;
+
+                case Enums.PartBody.bottom:
+                    {
+                        return _data.bottom;
+                    }
+                    break;
+            }
+
+            return 0;
         }
     }
 }

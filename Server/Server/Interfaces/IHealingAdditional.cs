@@ -18,7 +18,7 @@ namespace Plugin.Interfaces
         /// <summary>
         /// Получить силу лечения
         /// </summary>
-        Int16 GetHealthPower();
+        int GetHealthPower();
 
         /// <summary>
         /// Вылечить

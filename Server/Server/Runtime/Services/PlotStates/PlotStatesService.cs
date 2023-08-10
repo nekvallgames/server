@@ -9,21 +9,21 @@ namespace Plugin.Runtime.Services.PlotStates
     /// </summary>
     public class PlotStatesService
     {
-        private IState[] _states;
+        public IPlotState[] States { get; private set; }
 
         /// <summary>
         /// Текущее игровое состояние
         /// </summary>
         public IState CurrState { get; private set; }
 
-        public PlotStatesService(IState[] states)
+        public void Add(IPlotState[] states)
         {
-            _states = states;
+            States = states;
         }
 
         public void ChangeState(string nextStateName)
         {
-            if (!_states.Any(x => x.Name == nextStateName))
+            if (!States.Any(x => x.Name == nextStateName))
             {
                 Debug.Fail($"PlotStatesService :: ChangeState() I don't know this state {nextStateName}");
                 return;
@@ -33,7 +33,7 @@ namespace Plugin.Runtime.Services.PlotStates
                 CurrState.ExitState();
             }
 
-            CurrState = _states.First(x => x.Name == nextStateName);
+            CurrState = States.First(x => x.Name == nextStateName);
 
             CurrState.EnterState();
         }

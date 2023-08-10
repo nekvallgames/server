@@ -33,13 +33,13 @@ namespace Plugin.Interfaces.Actions
         /// Сила урона от текущего оружия. Но, текущее значение может изменятся,
         /// так как сущность может получить как баф, так и дебаф
         /// </summary>
-        int Power { get; set; }
+        int Damage { get; set; }
 
         /// <summary>
         /// Базовая сила урона от текущего оружия
         /// Текущий параметр изменять нельзя!!!
         /// </summary>
-        int OriginalPower { get; }
+        int OriginalDamage { get; }
 
         /// <summary>
         /// Получить рисунок экшена
@@ -49,11 +49,11 @@ namespace Plugin.Interfaces.Actions
         /// <summary>
         /// Поточна кількість амуніції 
         /// </summary>
-        int Capacity { get; set; }
+        int DamageCapacity { get; set; }
 
         /// <summary>
         /// Орігінальна кількість амуніції при створенні юніта
         /// </summary>
-        int OriginalCapacity { get; set; }
+        int OriginalDamageCapacity { get; set; }
     }
 }

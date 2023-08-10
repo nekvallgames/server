@@ -5,11 +5,11 @@
         /// <summary>
         /// Получить количество жизней юнита
         /// </summary>
-        int Capacity { get; set; }
+        int HealthCapacity { get; set; }
 
         /// <summary>
         /// Получить максимальное количество жизней юнита
         /// </summary>
-        int CapacityMax { get; }
+        int HealthCapacityMax { get; }
     }
 }

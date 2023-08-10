@@ -7,10 +7,10 @@ namespace Plugin.Runtime.Services.PlotStates.States
     /// <summary>
     /// Стейт, в котрому потрібно запинити стейт машину ігрових стейтів, якщо гра закінчилася
     /// </summary>
-    public class StopRoomState : BasePlotState, IState
+    public class StopRoomState : BasePlotState
     {
         public const string NAME = "StopRoomState";
-        public string Name => NAME;
+        public override string Name => NAME;
 
         public StopRoomState(PlotStatesService plotStatesService,
                                 IPluginHost host,
@@ -19,14 +19,9 @@ namespace Plugin.Runtime.Services.PlotStates.States
             var gameInstaller = GameInstaller.GetInstance();
         }
 
-        public void EnterState()
+        public override void EnterState()
         {
             plotStatesService.ChangeState(nextState);
-        }
-
-        public void ExitState()
-        {
-
         }
     }
 }

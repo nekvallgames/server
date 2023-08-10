@@ -128,6 +128,10 @@ namespace Plugin.Runtime.Services.PlotMode.States.PVP
                     return;
                 }
             }
+            else
+            {
+                taskIsDone?.Invoke();
+            }
         }
 
         public void ExitTask()

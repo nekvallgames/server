@@ -15,10 +15,10 @@ namespace Plugin.Runtime.Services.PlotStates.States
     /// Нужно сначала синхронизировать первый шаг, где игрок розставляет своих юнитов на игровой сетке
     /// И после выполнить второй шаг - где игрок уже атаковал противника
     /// </summary>
-    public class ExecuteStepsState : BasePlotState, IState
+    public class ExecuteStepsState : BasePlotState
     {
         public const string NAME = "ExecuteStepsState";
-        public string Name => NAME;
+        public override string Name => NAME;
 
         private UnitsService _unitsService;
         private ConvertService _convertService;
@@ -41,7 +41,7 @@ namespace Plugin.Runtime.Services.PlotStates.States
             _plotsModelService = gameInstaller.plotsModelService;
         }
 
-        public void EnterState()
+        public override void EnterState()
         {
             LogChannel.Log("PlotService :: ExecuteStepsState :: EnterState()", LogChannel.Type.Plot);
 
@@ -90,11 +90,6 @@ namespace Plugin.Runtime.Services.PlotStates.States
             foreach (ActorStep actorStep in actorSteps){
                 _executeOpStepService.Execute(gameId, actorStep.actorId, syncStep, actorStep.stepScheme);
             }
-        }
-
-        public void ExitState()
-        {
-            
         }
     }
 

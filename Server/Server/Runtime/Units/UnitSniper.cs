@@ -1,5 +1,7 @@
 ﻿using Plugin.Interfaces;
 using Plugin.Interfaces.UnitComponents;
+using Plugin.Parameters;
+using Plugin.Schemes;
 using Plugin.Tools;
 
 namespace Plugin.Runtime.Units
@@ -12,12 +14,19 @@ namespace Plugin.Runtime.Units
         public const int UnitId = 3;
 
         public override Int2 BodySize => new Int2(2, 5);
+        public override PartBodyScheme[] AreaGrid => new PartBodyScheme[] {
+            new PartBodyScheme(0,4, Enums.PartBody.head), new PartBodyScheme(1,4, Enums.PartBody.head),
+            new PartBodyScheme(0,3, Enums.PartBody.head), new PartBodyScheme(1,3, Enums.PartBody.head),
+            new PartBodyScheme(0,2, Enums.PartBody.body), new PartBodyScheme(1,2, Enums.PartBody.body),
+            new PartBodyScheme(0,1, Enums.PartBody.bottom), new PartBodyScheme(1,1, Enums.PartBody.bottom),
+            new PartBodyScheme(0,0, Enums.PartBody.bottom), new PartBodyScheme(1,0, Enums.PartBody.bottom)
+        };
 
-        int IHealthComponent.Capacity { get; set; }
-        int IHealthComponent.CapacityMax => 100;    // Количество жизней юнита на старте игры
+        public int HealthCapacity { get; set; }
+        public int HealthCapacityMax { get; private set; }    // Количество жизней юнита на старте игры
 
-        public override int OriginalPower => 0;
-        public override int OriginalCapacity { get; set; } = 999;
+        public override int OriginalDamage { get; }
+        public override int OriginalDamageCapacity { get; set; }
 
         public override Int2[] DamageActionArea => new Int2[] { new Int2(0, 0) };
 
@@ -25,30 +34,49 @@ namespace Plugin.Runtime.Units
 
         #region additional
 
-        private int _additionalCapacity = 2;
+        private int _additionalCapacity;
+        private int _additionalPower;
 
         public bool CanExecuteAdditional()
         {
             return _additionalCapacity > 0;
         }
 
-        public short GetHealthPower()
+        public int GetHealthPower()
         {
-            return 30;
+            return _additionalPower;
         }
 
         public void SpendAdditional()
         {
             _additionalCapacity--;
+            if (_additionalCapacity < 0)
+                _additionalCapacity = 0;
         }
 
         public Int2[] GetAdditionalArea() => new Int2[] { new Int2(0, 0) };
 
         #endregion
 
-        public UnitSniper(string gameId, int ownerActorId, int unitId, int instanceUnitId) : base(gameId, ownerActorId, unitId, instanceUnitId)
+        public UnitSniper(UnitFactoryParameters parameters) : base(parameters)
         {
+            // Set health
+            int health = unitPublicScheme.health + increaseUnitHealthService.GetAdditionalHealthByLevel(UnitId, Level);
+            HealthCapacity = health;
+            HealthCapacityMax = health;
 
+            // Set damage
+            int damage = unitPublicScheme.damage + increaseUnitDamageService.GetAdditionalDamageByLevel(UnitId, Level);
+            Damage = damage;
+            OriginalDamage = damage;
+
+            // Set damage capacity
+            DamageCapacity = unitPublicScheme.capacity;
+            OriginalDamageCapacity = unitPublicScheme.capacity;
+
+            // Set additional 
+            _additionalCapacity = unitPublicScheme.additionalCapacity;
+            _additionalPower = unitPublicScheme.additionalPower;
         }
     }
 }

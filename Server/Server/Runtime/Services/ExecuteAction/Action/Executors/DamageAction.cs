@@ -26,13 +26,18 @@ namespace Plugin.Runtime.Services.ExecuteAction.Action.Executors
     {
         private SyncService _syncService;
         private UnitsService _unitsService;
-        private SortTargetOnGridService _sortTargetOnGridService;
+        private SortHitOnGridService _sortTargetOnGridService;
+        private BodyDamageConverterService _bodyDamageConverterService;
 
-        public DamageAction(SyncService syncService, UnitsService unitsService, SortTargetOnGridService sortTargetOnGridService)
+        public DamageAction(SyncService syncService, 
+                            UnitsService unitsService, 
+                            SortHitOnGridService sortTargetOnGridService,
+                            BodyDamageConverterService bodyDamageConverterService)
         {
             _syncService = syncService;
             _unitsService = unitsService;
             _sortTargetOnGridService = sortTargetOnGridService;
+            _bodyDamageConverterService = bodyDamageConverterService;
         }
 
         /// <summary>
@@ -46,7 +51,7 @@ namespace Plugin.Runtime.Services.ExecuteAction.Action.Executors
         /// <summary>
         /// Выполнить действие
         /// </summary>
-        public void Execute( IUnit unit, string gameId, int targetActorId, int posW, int posH )
+        public void Execute(IUnit unit, string gameId, int targetActorId, int posW, int posH)
         {
             // Проверяем, может ли юнит вытсрелить?
             var damageAction = (IDamageAction)unit;
@@ -73,15 +78,19 @@ namespace Plugin.Runtime.Services.ExecuteAction.Action.Executors
                 // Находим всех противников, в которых мы выстрелили
                 List<IUnit> targets = _sortTargetOnGridService.SortTargets(_unitsService.GetUnitsUnderThisPosition(gameId, targetActorId, targetW, targetH));
 
-                LogChannel.Log($"ActionService :: DamageAction() ownerId = {unit.OwnerActorNr}, unitId = {unit.UnitId}, instanceId = {unit.InstanceId}, cellW = {targetW}, cellH = {targetH}");
+                // LogChannel.Log($"ActionService :: DamageAction() ownerId = {unit.OwnerActorNr}, unitId = {unit.UnitId}, instanceId = {unit.InstanceId}, cellW = {targetW}, cellH = {targetH}");
 
                 if (targets.Count <= 0){
                     continue;                     // игрок выстрелил мимо!
                 }
 
-                int damage = damageAction.Power;   // получить урон, который игрок нанес выстрелом
+                int damage = damageAction.Damage;   // получить урон, который игрок нанес выстрелом
+                IUnit unitTarget = targets[0];      // отримати юніта, по котрому нанесемо урон
 
-                _unitsService.SetDamage(targets[0], damage);
+                // Конвертировать урон по части тела
+                int damageByBody = _bodyDamageConverterService.Converter(unitTarget, damage, targetW, targetH);
+
+                _unitsService.SetDamage(unitTarget, damageByBody);
             }
         }
     }

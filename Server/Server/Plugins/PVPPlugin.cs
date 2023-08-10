@@ -26,22 +26,20 @@ namespace Plugin.Plugins.PVP
         {
             // Для поточної ігрової кімнати створити стейт машину із стейтами,
             // котрі потрібні для ігрового режиму 
-            plotService = new PlotStatesService(new IState[] { 
-                                                new AccumulateState(plotService, host, 2, SyncBackendState.NAME),
-                                                new SyncBackendState(plotService, host, PrepareRoomState.NAME),
-                                                new PrepareRoomState(plotService, host, StartGameState.NAME),
-                                                new StartGameState(plotService, host, WaitStepResultState.NAME),
-                                                
-                                                new WaitStepResultState(plotService, host, 2, ExecuteStepsState.NAME),
-                                                new ExecuteStepsState(plotService, host, PVPResultState.NAME),
-                                                new PVPResultState(plotService, host, GiveRewardsState.NAME),
-                                                new GiveRewardsState(plotService, host, SyncStepsState.NAME),
-                                                new SyncStepsState(plotService, host, StopRoomState.NAME),
-                                                new StopRoomState(plotService, host, WaitStepResultState.NAME)
-                                                              });
-
-            // запустити ігровий сценарій
-            plotService.ChangeState(AccumulateState.NAME);
+            plotService = new PlotStatesService();
+            plotService.Add(new IPlotState[] { 
+                                            new AccumulateState(plotService, host, 2, SyncBackendState.NAME),
+                                            new SyncBackendState(plotService, host, PrepareRoomState.NAME),
+                                            new PrepareRoomState(plotService, host, StartGameState.NAME),
+                                            new StartGameState(plotService, host, WaitStepResultState.NAME),
+                                                            
+                                            new WaitStepResultState(plotService, host, 2, ExecuteStepsState.NAME),
+                                            new ExecuteStepsState(plotService, host, PVPResultState.NAME),
+                                            new PVPResultState(plotService, host, GiveRewardsState.NAME),
+                                            new GiveRewardsState(plotService, host, SyncStepsState.NAME),
+                                            new SyncStepsState(plotService, host, StopRoomState.NAME),
+                                            new StopRoomState(plotService, host, WaitStepResultState.NAME)
+                                          });
         }
 
         /// <summary>
@@ -54,6 +52,13 @@ namespace Plugin.Plugins.PVP
 
             plotsModelService.RemoveIfExist(host.GameId);
             plotsModelService.Add(new PVPPlotModelScheme(host.GameId));
+
+
+            foreach (IPlotState state in plotService.States)
+                state.Initialize();
+
+            // запустити ігровий сценарій
+            plotService.ChangeState(AccumulateState.NAME);
         }
     }
 }

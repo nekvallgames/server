@@ -11,7 +11,7 @@ namespace Plugin.Schemes.Public
     }
 
     [Serializable]
-    public class UnitPublicScheme
+    public struct UnitPublicScheme
     {
         public int id;
         public string name;
@@ -26,6 +26,5 @@ namespace Plugin.Schemes.Public
         public int additionalCapacity;
         [JsonProperty("additional_damage")]
         public int additionalDamage;
-        //public int[] levels;
     }
 }

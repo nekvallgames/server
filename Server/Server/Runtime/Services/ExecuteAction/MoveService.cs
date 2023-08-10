@@ -29,7 +29,7 @@ namespace Plugin.Runtime.Services.ExecuteAction
 
             unit.Position = new Int2(posW, posH);
 
-            LogChannel.Log($"MoveService :: PositionOnGrid() ownerId = {unit.OwnerActorNr}, uId = {unit.UnitId}, instance = {unit.InstanceId}, w = {posW}, h = {posH}", LogChannel.Type.ExecuteAction);
+            // LogChannel.Log($"MoveService :: PositionOnGrid() ownerId = {unit.OwnerActorNr}, uId = {unit.UnitId}, instance = {unit.InstanceId}, w = {posW}, h = {posH}", LogChannel.Type.ExecuteAction);
 
             if (unit is IIgnoreSyncComponent){
                 return;     // для поточного юніта не потрібно синхронізувати позіцію

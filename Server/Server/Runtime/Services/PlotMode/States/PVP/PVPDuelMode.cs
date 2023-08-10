@@ -135,8 +135,8 @@ namespace Plugin.Runtime.Services.PlotMode.States.PVP
         private void ReviveUnit(IUnit unit)
         {
             unit.IsDead = false;
-            ((IHealthComponent)unit).Capacity = 1;
-            ((IDamageAction)unit).Capacity = 1;
+            ((IHealthComponent)unit).HealthCapacity = 1;
+            ((IDamageAction)unit).DamageCapacity = 1;
         }
 
         /// <summary>

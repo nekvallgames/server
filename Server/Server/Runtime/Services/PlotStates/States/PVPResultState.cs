@@ -11,17 +11,16 @@ namespace Plugin.Runtime.Services.PlotStates.States
     /// Стейт, в котрому ми перепровіряємо хто виграв, хто ні в PVP
     /// Зміна мода та таке інше
     /// </summary>
-    public class PVPResultState : BasePlotState, IState
+    public class PVPResultState : BasePlotState
     {
         public const string NAME = "PVPResultState";
-        public string Name => NAME;
+        public override string Name => NAME;
 
         private PlotsModelService _plotsModelService;
         private UnitsService _unitsService;
         private ActorService _actorService;
         private PVPPlotModelScheme _plotModelScheme;
         private PlotModeService _plotModeService;
-        private PlotPublicService _plotPublicService;
 
         public PVPResultState(PlotStatesService plotStatesService,
                               IPluginHost host,
@@ -32,18 +31,21 @@ namespace Plugin.Runtime.Services.PlotStates.States
             _plotsModelService = gameInstaller.plotsModelService;
             _unitsService = gameInstaller.unitsService;
             _actorService = gameInstaller.actorService;
-            _plotPublicService = gameInstaller.plotPublicService;
+        }
+
+        public override void Initialize()
+        {
             _plotModelScheme = (PVPPlotModelScheme)_plotsModelService.Get(host.GameId);
 
             _plotModeService = new PlotModeService(new ITask[] {
                                                    new PVPFightToFirstDeadMode(_plotModeService, host, _plotModelScheme, _actorService, _unitsService),
-                                                   new PVPFightWithVipMode(_plotModeService, host, _plotModelScheme, _actorService, _unitsService, _plotPublicService),
+                                                   new PVPFightWithVipMode(_plotModeService, host, _plotModelScheme, _actorService, _unitsService),
                                                    new PVPDuelMode(_plotModeService, host, _plotModelScheme, _actorService, _unitsService),
                                                    new ResultMode(_plotModeService, host, _plotModelScheme)
             });
         }
 
-        public void EnterState()
+        public override void EnterState()
         {
             _plotModeService.ExecuteTask(_plotModelScheme.GameMode, () => 
             {
@@ -53,11 +55,6 @@ namespace Plugin.Runtime.Services.PlotStates.States
             {
                 // fail
             });    
-        }
-
-        public void ExitState()
-        {
-            
         }
     }
 }

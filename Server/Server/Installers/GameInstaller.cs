@@ -32,7 +32,7 @@ namespace Plugin.Installers
         public MoveService moveService;
         public VipService vipService;
         public ActionService actionService;
-        public SortTargetOnGridService sortTargetOnGridService;
+        public SortHitOnGridService sortTargetOnGridService;
         public AdditionalService additionalService;
         public OpStockService opStockService;
         public GridService gridService;
@@ -59,6 +59,7 @@ namespace Plugin.Installers
         public PlotPublicService plotPublicService;
         public UnitDamageMultiplicationService unitDamageMultiplicationService;
         public UnitsPublicModelService unitsPublicModelService;
+        public BodyDamageConverterService bodyDamageConverterService;
 
        
         public GameInstaller()
@@ -76,6 +77,7 @@ namespace Plugin.Installers
             unitDamageMultiplicationService = new UnitDamageMultiplicationService(jsonReaderService);
             unitsPublicModelService = new UnitsPublicModelService(jsonReaderService);
 
+            bodyDamageConverterService = new BodyDamageConverterService(unitDamageMultiplicationService);
             backendBroadcastService = new BackendBroadcastService(unitLevelService);
 
             publicModelProvider = new PublicModelProvider(new List<IPublicModel>
@@ -99,7 +101,7 @@ namespace Plugin.Installers
             plotsModelService = new PlotsModelService(privateModelProvider.Get<PlotsPrivateModel>());
             gridBuilder = new GridBuilder();
             unitInstanceService = new UnitInstanceService(privateModelProvider.Get<UnitsPrivateModel>());
-            unitBuilder = new UnitBuilder(unitInstanceService);
+            unitBuilder = new UnitBuilder(unitInstanceService, unitsPublicModelService, increaseUnitDamageService, increaseUnitHealthService);
             opStockService = new OpStockService(privateModelProvider.Get<OpStockPrivateModel>());
             syncService = new SyncService(privateModelProvider.Get<SyncPrivateModel>(), plotsModelService);
             stepSchemeBuilder = new StepSchemeBuilder(syncService);
@@ -108,8 +110,8 @@ namespace Plugin.Installers
             unitsService = new UnitsService(privateModelProvider.Get<UnitsPrivateModel>(), unitBuilder, signalBus, moveService);
             locationUnitsSpawner = new LocationUnitsSpawner(publicModelProvider, unitsService, signalBus);
             vipService = new VipService(syncService, unitsService);
-            sortTargetOnGridService = new SortTargetOnGridService();
-            actionService = new ActionService(syncService, unitsService, sortTargetOnGridService);
+            sortTargetOnGridService = new SortHitOnGridService();
+            actionService = new ActionService(syncService, unitsService, sortTargetOnGridService, bodyDamageConverterService);
             additionalService = new AdditionalService(syncService, unitsService);
             gridService = new GridService(publicModelProvider, privateModelProvider, gridBuilder);
             notificationChangeVipService = new NotificationChangeVipService(hostsService, opStockService, signalBus);

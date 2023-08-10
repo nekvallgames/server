@@ -1,4 +1,8 @@
 ﻿using Plugin.Interfaces;
+using Plugin.Parameters;
+using Plugin.Runtime.Services;
+using Plugin.Schemes;
+using Plugin.Schemes.Public;
 using Plugin.Tools;
 
 namespace Plugin.Runtime.Units
@@ -34,22 +38,46 @@ namespace Plugin.Runtime.Units
         /// Ширина та висота юніта
         /// </summary>
         public abstract Int2 BodySize { get; }
-
+        
+        /// <summary>
+        /// Бінарна маска, котра буде зберігати 
+        /// в собі дані про кожну частину тіла поточного юніта
+        /// </summary>
+        public abstract PartBodyScheme[] AreaGrid { get; }
+        
         /// <summary>
         /// Поточний юніт мертвий?
         /// </summary>
         public bool IsDead { get; set; }
 
+        /// <summary>
+        /// Рiвень юніта
+        /// </summary>
+        public int Level { get; private set; }
         
 
-        public BaseUnit( string gameId, int ownerActorId, int unitId, int instanceUnitId )
-        {
-            GameId = gameId;
-            OwnerActorNr = ownerActorId;
-            UnitId = unitId;
-            InstanceId = instanceUnitId;
+        protected UnitPublicScheme unitPublicScheme;
+        protected IncreaseUnitDamageService increaseUnitDamageService;
+        protected IncreaseUnitHealthService increaseUnitHealthService;
 
-            LogChannel.Log($"Created unit ownerId = {OwnerActorNr}, uId = {UnitId}, instance = {InstanceId}", LogChannel.Type.Default);
+        public BaseUnit(UnitFactoryParameters parameters)
+        {
+            GameId = parameters.GameId;
+            OwnerActorNr = parameters.OwnerActorNr;
+            UnitId = parameters.UnitId;
+            InstanceId = parameters.InstanceId;
+            Level = parameters.Level;
+ 
+            unitPublicScheme = parameters.UnitsPublicModelService.Get(UnitId);
+            increaseUnitDamageService = parameters.IncreaseUnitDamageService;
+            increaseUnitHealthService = parameters.IncreaseUnitHealthService;
+
+            // LogChannel.Log($"Created unit ownerId = {OwnerActorNr}, uId = {UnitId}, instance = {InstanceId}, level = {Level}", LogChannel.Type.Default);
+        }
+
+        protected BaseUnit()
+        {
+
         }
     }
 }

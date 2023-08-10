@@ -7,7 +7,7 @@ namespace Plugin.Runtime.Services
     /// <summary>
     /// Сервис, который будет сортировать цели на игровой сетке 
     /// </summary>
-    public class SortTargetOnGridService
+    public class SortHitOnGridService
     {
         /// <summary>
         /// Инициализация цели, в которую будет выстрел
@@ -20,7 +20,7 @@ namespace Plugin.Runtime.Services
         /// по высоте, что и юнит, так что в преграды приоритет выше! Это значит то, что
         /// преграда возьмет на себя урон первая.
         /// </summary>
-        public List<IUnit> SortTargets( List<IUnit> occupiedList )
+        public List<IUnit> SortTargets(List<IUnit> occupiedList)
         {
             if (occupiedList.Count <= 0)
             {

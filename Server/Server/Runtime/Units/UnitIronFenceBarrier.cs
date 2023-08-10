@@ -1,5 +1,7 @@
 ﻿using Plugin.Interfaces;
 using Plugin.Interfaces.UnitComponents;
+using Plugin.Parameters;
+using Plugin.Schemes;
 using Plugin.Tools;
 
 namespace Plugin.Runtime.Units
@@ -7,18 +9,25 @@ namespace Plugin.Runtime.Units
     /// <summary>
     /// Обычный юнит барриер. Стенка из металического забора с сеткой
     /// </summary>
-    public class UnitIronFenceBarrier : BaseUnit, IHealthComponent, IUnit, IIgnoreSyncComponent
+    public class UnitIronFenceBarrier : BaseUnit, IHealthComponent, IUnit, IIgnoreSyncComponent, IBarrier
     {
         public const int UnitId = 36;
 
         public override Int2 BodySize => new Int2(4, 2);
+        public override PartBodyScheme[] AreaGrid => new PartBodyScheme[] {
+            new PartBodyScheme(0,1, Enums.PartBody.body), new PartBodyScheme(1,1, Enums.PartBody.body), new PartBodyScheme(2,1, Enums.PartBody.body), new PartBodyScheme(3,1, Enums.PartBody.body),
+            new PartBodyScheme(0,0, Enums.PartBody.body), new PartBodyScheme(1,0, Enums.PartBody.body), new PartBodyScheme(2,0, Enums.PartBody.body), new PartBodyScheme(3,0, Enums.PartBody.body)
+        };
 
-        int IHealthComponent.Capacity { get; set; }
-        int IHealthComponent.CapacityMax => 100;    // Количество жизней юнита на старте игры
+        public int HealthCapacity { get; set; }
+        public int HealthCapacityMax { get; private set; }    // Количество жизней юнита на старте игры
 
-        public UnitIronFenceBarrier(string gameId, int ownerActorId, int unitId, int instanceUnitId) : base(gameId, ownerActorId, unitId, instanceUnitId)
+        public UnitIronFenceBarrier(UnitFactoryParameters parameters) : base(parameters)
         {
-
+            // Set health
+            int health = unitPublicScheme.health + increaseUnitHealthService.GetAdditionalHealthByLevel(UnitId, Level);
+            HealthCapacity = health;
+            HealthCapacityMax = health;
         }
     }
 }

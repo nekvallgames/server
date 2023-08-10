@@ -8,10 +8,10 @@ namespace Plugin.Runtime.Services.PlotStates.States
     /// <summary>
     /// 
     /// </summary>
-    public class SyncStepsState : BasePlotState, IState
+    public class SyncStepsState : BasePlotState
     {
         public const string NAME = "SyncStepsState";
-        public string Name => NAME;
+        public override string Name => NAME;
 
         private SyncStepService _syncStepService;
         private PlotsModelService _plotsModelService;
@@ -26,7 +26,7 @@ namespace Plugin.Runtime.Services.PlotStates.States
             _plotsModelService = gameInstaller.plotsModelService;
         }
 
-        public void EnterState()
+        public override void EnterState()
         {
             LogChannel.Log("PlotService :: SyncStepsState :: EnterState()", LogChannel.Type.Plot);
 
@@ -36,11 +36,6 @@ namespace Plugin.Runtime.Services.PlotStates.States
             _syncStepService.Sync(host, new int[] { plotModel.SyncStep - 2, plotModel.SyncStep - 1 });
 
             plotStatesService.ChangeState(nextState);
-        }
-
-        public void ExitState()
-        {
-            
         }
     }
 }

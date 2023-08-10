@@ -1,4 +1,5 @@
-﻿using Plugin.Tools;
+﻿using Plugin.Schemes;
+using Plugin.Tools;
 
 namespace Plugin.Interfaces
 {
@@ -33,10 +34,20 @@ namespace Plugin.Interfaces
         /// Ширина та висота юніта
         /// </summary>
         Int2 BodySize { get; }
+        /// <summary>
+        /// Бінарна маска, котра буде зберігати 
+        /// в собі дані про кожну частину тіла поточного юніта
+        /// </summary>
+        PartBodyScheme[] AreaGrid { get; }
 
         /// <summary>
         /// Поточний юніт мертвий?
         /// </summary>
         bool IsDead { get; set; }
+
+        /// <summary>
+        /// Рiвень юніта
+        /// </summary>
+        int Level { get; }
     }
 }

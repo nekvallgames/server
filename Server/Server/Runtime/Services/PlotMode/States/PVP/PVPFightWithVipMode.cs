@@ -24,10 +24,10 @@ namespace Plugin.Runtime.Services.PlotMode.States.PVP
         private PVPPlotModelScheme _model;
         private ActorService _actorService;
         private UnitsService _unitsService;
-        private PlotPublicService _plotPublicService;
         private Action _taskIsDone;
         private Action _taskIsFail;
         private List<IActorScheme> _actors;
+        private bool _isCreatedAdditionalConditions;
 
         /// <summary>
         /// Список с дополнительными проверками для текущего этапа игры
@@ -38,28 +38,30 @@ namespace Plugin.Runtime.Services.PlotMode.States.PVP
                                    IPluginHost host, 
                                    PVPPlotModelScheme model, 
                                    ActorService actorService,
-                                   UnitsService unitsService,
-                                   PlotPublicService plotPublicService)
+                                   UnitsService unitsService)
         {
             _plotModeService = plotModeService;
             _host = host;
             _model = model;
             _actorService = actorService;
             _unitsService = unitsService;
-            _plotPublicService = plotPublicService;
-
-            CreateAdditionalConditions();
         }
 
         public void EnterTask(Action taskIsDone, Action taskIsFail)
         {
             LogChannel.Log("PlotModeService :: PVPFightWithVipMode :: EnterTask()", LogChannel.Type.Plot);
 
+            _actors = _actorService.GetActorsInRoom(_host.GameId);
+
+            if (!_isCreatedAdditionalConditions)
+            {
+                _isCreatedAdditionalConditions = true;
+                CreateAdditionalConditions();
+            }
+
             _taskIsDone = taskIsDone;
             _taskIsFail = taskIsFail;
             _model.GameMode = Name;
-
-            _actors = _actorService.GetActorsInRoom(_host.GameId);
 
             if (!_model.WasPreparedVipMode)
             {
@@ -218,7 +220,7 @@ namespace Plugin.Runtime.Services.PlotMode.States.PVP
 
             foreach (IUnit unit in aliveUnits)
             {
-                (unit as IDamageAction).OriginalCapacity++;
+                (unit as IDamageAction).OriginalDamageCapacity++;
             }
         }
     }

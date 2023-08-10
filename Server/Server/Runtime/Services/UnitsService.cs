@@ -33,9 +33,12 @@ namespace Plugin.Runtime.Services
         /// <summary>
         /// Створити юніта для актора
         /// </summary>
-        public IUnit CreateUnit(string gameId, int actorNr, int unitId)
+        public IUnit CreateUnit(string gameId, int actorNr, int unitId, int level = 0)
         {
-            IUnit unit = _unitBuilder.CreateUnit(gameId, actorNr, unitId);
+            if (unitId == -1)
+                return null;
+
+            IUnit unit = _unitBuilder.CreateUnit(gameId, actorNr, unitId, level);
 
             _model.Add(unit);
 
@@ -47,7 +50,13 @@ namespace Plugin.Runtime.Services
         /// </summary>
         public IUnit CreateUnit(string gameId, int actorNr, int unitId, int posW, int posH)
         {
+            if (unitId == -1)
+                return null;
+
             IUnit unit = CreateUnit(gameId, actorNr, unitId);
+
+            if (unit == null)
+                return null;
 
             _moveService.PositionOnGrid(unit, posW, posH);
 
@@ -89,7 +98,7 @@ namespace Plugin.Runtime.Services
         /// </summary>
         public void ReviveAction(string gameId, int actorNr)
         {
-            List<IUnit> units = _model.Items.FindAll(x => x.GameId == gameId && x.OwnerActorNr == actorNr && x is IActionComponent);
+            List<IUnit> units = _model.Items.FindAll(x => x.GameId == gameId && x.OwnerActorNr == actorNr && HasComponent<IActionComponent>(x));
 
             foreach (IUnit unit in units){
                 ((IActionComponent)unit).ReviveAction();
@@ -139,13 +148,13 @@ namespace Plugin.Runtime.Services
 
             var healthComponent = (IHealthComponent)unit;
 
-            int health = healthComponent.Capacity + healthPower;
+            int health = healthComponent.HealthCapacity + healthPower;
 
-            if (health > healthComponent.CapacityMax){
-                health = healthComponent.CapacityMax;
+            if (health > healthComponent.HealthCapacityMax){
+                health = healthComponent.HealthCapacityMax;
             }
 
-            ((IHealthComponent)unit).Capacity = health;
+            ((IHealthComponent)unit).HealthCapacity = health;
         }
 
         /// <summary>
@@ -182,7 +191,7 @@ namespace Plugin.Runtime.Services
         /// </summary>
         public int GetAliveUnitsCount(string gameId, int actorNr)
         {
-            return _model.Items.FindAll(x => x.GameId == gameId && x.OwnerActorNr == actorNr && !x.IsDead).Count;
+            return _model.Items.FindAll(x => x.GameId == gameId && x.OwnerActorNr == actorNr && !x.IsDead && !HasComponent<IBarrier>(x)).Count;
         }
 
         /// <summary>
@@ -190,7 +199,7 @@ namespace Plugin.Runtime.Services
         /// </summary>
         public IUnit GetAnyAliveUnitWhoWillBeAbleToVip(string gameId, int actorNr)
         {
-            return _model.Items.Find(x => x.GameId == gameId && x.OwnerActorNr == actorNr && !x.IsDead && (x is IVipComponent));
+            return _model.Items.Find(x => x.GameId == gameId && x.OwnerActorNr == actorNr && !x.IsDead && HasComponent<IVipComponent>(x));
         }
 
         /// <summary>
@@ -212,7 +221,7 @@ namespace Plugin.Runtime.Services
         /// </summary>
         public bool CanBecomeVip(IUnit unit)
         {
-            return !unit.IsDead && (unit is IVipComponent);
+            return !unit.IsDead && HasComponent<IVipComponent>(unit);
         }
 
         /// <summary>
@@ -220,7 +229,7 @@ namespace Plugin.Runtime.Services
         /// </summary>
         public int GetAliveUnitsCountWhoWillBeAbleToVip(string gameId, int actorNr)
         {
-            return _model.Items.FindAll(x => x.GameId == gameId && x.OwnerActorNr == actorNr && !x.IsDead && (x is IVipComponent)).Count;
+            return _model.Items.FindAll(x => x.GameId == gameId && x.OwnerActorNr == actorNr && !x.IsDead && HasComponent<IVipComponent>(x)).Count;
         }
         
         /// <summary>
@@ -228,7 +237,7 @@ namespace Plugin.Runtime.Services
         /// </summary>
         public IUnit GetAnyUnitWhoWillBeAbleToVip(string gameId, int actorNr)
         {
-            return _model.Items.Find(x => x.GameId == gameId && x.OwnerActorNr == actorNr && (x is IVipComponent));
+            return _model.Items.Find(x => x.GameId == gameId && x.OwnerActorNr == actorNr && HasComponent<IVipComponent>(x));
         }
         
         /// <summary>
@@ -236,7 +245,7 @@ namespace Plugin.Runtime.Services
         /// </summary>
         public bool HasAnyDeadUnit(string gameId, int actorNr)
         {
-            return _model.Items.Any(x => x.GameId == gameId && x.OwnerActorNr == actorNr && x.IsDead);
+            return _model.Items.Any(x => x.GameId == gameId && x.OwnerActorNr == actorNr && x.IsDead && !HasComponent<IBarrier>(x));
         }
 
         /// <summary>
@@ -252,10 +261,10 @@ namespace Plugin.Runtime.Services
         /// </summary>
         private void SetDamageByHealth(IUnit unit, int damage)
         {
-            int curr = ((IHealthComponent)unit).Capacity - damage;
+            int curr = ((IHealthComponent)unit).HealthCapacity - damage;
             if (curr < 0) curr = 0;
             
-            ((IHealthComponent)unit).Capacity = curr;
+            ((IHealthComponent)unit).HealthCapacity = curr;
         }
 
         /// <summary>
@@ -263,10 +272,10 @@ namespace Plugin.Runtime.Services
         /// </summary>
         private void SetDamageByArmor(IUnit unit, int damage)
         {
-            int curr = ((IArmorComponent)unit).Capacity - damage;
+            int curr = ((IArmorComponent)unit).ArmorCapacity - damage;
             if (curr < 0) curr = 0;
 
-            ((IArmorComponent)unit).Capacity = curr;
+            ((IArmorComponent)unit).ArmorCapacity = curr;
         }
 
         public void RemoveAllIfExist(string gameId)
@@ -320,7 +329,7 @@ namespace Plugin.Runtime.Services
         {
             foreach (IUnit unit in GetUnits(gameId, actorNr))
             {
-                if (!unit.IsDead && !(unit is IBarrier))
+                if (!unit.IsDead && !HasComponent<IBarrier>(unit))
                 {
                     units.Add(unit);
                 }                
@@ -338,7 +347,7 @@ namespace Plugin.Runtime.Services
             {
                 if (unit is IHealthComponent)
                 {
-                    ((IHealthComponent)unit).Capacity = 0;
+                    ((IHealthComponent)unit).HealthCapacity = 0;
                 }
             }
         }

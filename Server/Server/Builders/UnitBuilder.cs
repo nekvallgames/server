@@ -1,4 +1,5 @@
 ﻿using Plugin.Interfaces;
+using Plugin.Parameters;
 using Plugin.Runtime.Services;
 using Plugin.Runtime.Units;
 using System;
@@ -9,33 +10,48 @@ namespace Plugin.Builders
     public class UnitBuilder
     {
         private UnitInstanceService _unitInstanceService;
+        private UnitsPublicModelService _unitsPublicModelService;
+        private IncreaseUnitDamageService _increaseUnitDamageService;
+        private IncreaseUnitHealthService _increaseUnitHealthService;
 
-        public UnitBuilder(UnitInstanceService unitInstanceService)
+        public UnitBuilder(UnitInstanceService unitInstanceService, 
+                           UnitsPublicModelService unitsPublicModelService,
+                           IncreaseUnitDamageService increaseUnitDamageService,
+                           IncreaseUnitHealthService increaseUnitHealthService)
         {
             _unitInstanceService = unitInstanceService;
+            _unitsPublicModelService = unitsPublicModelService;
+            _increaseUnitDamageService = increaseUnitDamageService;
+            _increaseUnitHealthService = increaseUnitHealthService;
         }
 
         /// <summary>
         /// Создать юнит, указав его тип
-        /// gameId - вказати ігрову кімнату, котрій належить поточний юніт
-        /// ownerActorId - владелец юнита
-        /// unitId       - уникальный ID юнита
         /// </summary>
-        public IUnit CreateUnit(string gameId, int ownerActorNr, int unitId)
+        public IUnit CreateUnit(string gameId, int ownerActorNr, int unitId, int level)
         {
+            var parameters = new UnitFactoryParameters(gameId,
+                                                       ownerActorNr,
+                                                       unitId,
+                                                       _unitInstanceService.GetInstance(gameId, ownerActorNr, unitId),
+                                                       level,
+                                                       _unitsPublicModelService,
+                                                       _increaseUnitHealthService,
+                                                       _increaseUnitDamageService);
+
             switch (unitId)
             {
-                case UnitPistol.UnitId: return Create<UnitPistol>(gameId, ownerActorNr, unitId);
-                case UnitShotGun.UnitId: return Create<UnitShotGun>(gameId, ownerActorNr, unitId);
-                case UnitUmp45.UnitId: return Create<UnitUmp45>(gameId, ownerActorNr, unitId);
-                case UnitSniper.UnitId: return Create<UnitSniper>(gameId, ownerActorNr, unitId);
-                case UnitPoison.UnitId: return Create<UnitPoison>(gameId, ownerActorNr, unitId);
-                case UnitTrash.UnitId: return Create<UnitTrash>(gameId, ownerActorNr, unitId);
-                case UnitRoadBlock.UnitId: return Create<UnitRoadBlock>(gameId, ownerActorNr, unitId);
-                case UnitBarrel.UnitId: return Create<UnitBarrel>(gameId, ownerActorNr, unitId);
-                case UnitLuke.UnitId: return Create<UnitLuke>(gameId, ownerActorNr, unitId);
-                case UnitBagBarrier.UnitId: return Create<UnitBagBarrier>(gameId, ownerActorNr, unitId);
-                case UnitIronFenceBarrier.UnitId: return Create<UnitIronFenceBarrier>(gameId, ownerActorNr, unitId);
+                case UnitPistol.UnitId: return Create<UnitPistol>(parameters);
+                case UnitShotGun.UnitId: return Create<UnitShotGun>(parameters);
+                case UnitUmp45.UnitId: return Create<UnitUmp45>(parameters);
+                case UnitSniper.UnitId: return Create<UnitSniper>(parameters);
+                case UnitPoison.UnitId: return Create<UnitPoison>(parameters);
+                case UnitTrash.UnitId: return Create<UnitTrash>(parameters);
+                case UnitRoadBlock.UnitId: return Create<UnitRoadBlock>(parameters);
+                case UnitBarrel.UnitId: return Create<UnitBarrel>(parameters);
+                case UnitLuke.UnitId: return Create<UnitLuke>(parameters);
+                case UnitBagBarrier.UnitId: return Create<UnitBagBarrier>(parameters);
+                case UnitIronFenceBarrier.UnitId: return Create<UnitIronFenceBarrier>(parameters);
 
                 default:{
                         Debug.Fail($"UnitBuilder :: CreateUnit() I can't create unitId = {unitId}, for actorNr = {ownerActorNr}.");
@@ -45,11 +61,9 @@ namespace Plugin.Builders
             }
         }
 
-        private IUnit Create<T>(string gameId, int actorId, int unitId) where T : IUnit
+        private IUnit Create<T>(UnitFactoryParameters parameters) where T : IUnit
         {
-            int instance = _unitInstanceService.GetInstance(gameId, actorId, unitId);
-
-            return (T)Activator.CreateInstance(typeof(T), gameId, actorId, unitId, instance);
+            return (T)Activator.CreateInstance(typeof(T), parameters);
         }
     }
 }

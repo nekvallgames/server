@@ -11,10 +11,10 @@ namespace Plugin.Runtime.Services.PlotStates.States
     /// Стейт, в котрому потрібно синхронізувати backend перед початком гри
     /// Наприклад: отримати юнітів, котрими грає гравець
     /// </summary>
-    public class SyncBackendState : BasePlotState, IState
+    public class SyncBackendState : BasePlotState
     {
         public const string NAME = "SyncBackendState";
-        public string Name => NAME;
+        public override string Name => NAME;
 
         private BackendBroadcastService _backendBroadcastService;
         private ActorService _actorService;
@@ -29,7 +29,7 @@ namespace Plugin.Runtime.Services.PlotStates.States
             _actorService = gameInstaller.actorService;
         }
 
-        public void EnterState()
+        public override void EnterState()
         {
             LogChannel.Log("PlotStatesService :: SyncBackendState :: EnterState()", LogChannel.Type.Plot);
             
@@ -52,11 +52,6 @@ namespace Plugin.Runtime.Services.PlotStates.States
                 await _backendBroadcastService.SyncActorData(actor);
                 await _backendBroadcastService.SyncLevelByDeck(actor);
             }
-        }
-
-        public void ExitState()
-        {
-            
         }
     }
 }

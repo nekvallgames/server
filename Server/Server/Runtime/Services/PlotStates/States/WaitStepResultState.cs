@@ -1,6 +1,5 @@
 ﻿using Photon.Hive.Plugin;
 using Plugin.Installers;
-using Plugin.Interfaces;
 using Plugin.Signals;
 using Plugin.Tools;
 
@@ -9,10 +8,10 @@ namespace Plugin.Runtime.Services.PlotStates.States
     /// <summary>
     /// Состояние, в котором мы ждем, когда игроки пришлют свой шаг действия
     /// </summary>
-    public class WaitStepResultState : BasePlotState, IState
+    public class WaitStepResultState : BasePlotState
     {
         public const string NAME = "WaitStepResult";
-        public string Name => NAME;
+        public override string Name => NAME;
 
         private SignalBus _signalBus;
         private OpStockService _opStockService;
@@ -35,7 +34,7 @@ namespace Plugin.Runtime.Services.PlotStates.States
             _opStockService = gameInstaller.opStockService;
         }
 
-        public void EnterState()
+        public override void EnterState()
         {
             LogChannel.Log("PlotService :: WaitStepResult :: EnterState()", LogChannel.Type.Plot);
 
@@ -60,7 +59,7 @@ namespace Plugin.Runtime.Services.PlotStates.States
             }
         }
 
-        public void ExitState()
+        public override void ExitState()
         {
             _signalBus.Unsubscrible<OpStockPrivateModelSignal>(OpStockModelChanged);
         }

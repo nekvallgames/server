@@ -15,12 +15,15 @@ namespace Plugin.Runtime.Services.ExecuteAction.Action
         /// </summary>
         private IExecuteAction[] _executorsActions;
 
-        public ActionService(SyncService syncService, UnitsService unitsService, SortTargetOnGridService sortTargetOnGridService)
+        public ActionService(SyncService syncService, 
+                             UnitsService unitsService, 
+                             SortHitOnGridService sortTargetOnGridService,
+                             BodyDamageConverterService bodyDamageConverterService)
         {
             _executorsActions = new IExecuteAction[]
             {
                 new WaveDamageAction(syncService, unitsService, sortTargetOnGridService),    // выполнить бросок гранаты и взорвать ее
-                new DamageAction(syncService, unitsService, sortTargetOnGridService)      // выстрелить 1 раз с огнестрельного оружия
+                new DamageAction(syncService, unitsService, sortTargetOnGridService, bodyDamageConverterService)      // выстрелить 1 раз с огнестрельного оружия
             };
         }
 

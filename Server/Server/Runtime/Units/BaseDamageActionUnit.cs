@@ -1,4 +1,6 @@
 ﻿using Plugin.Interfaces.Actions;
+using Plugin.Parameters;
+using Plugin.Schemes.Public;
 using Plugin.Tools;
 using System;
 
@@ -9,17 +11,16 @@ namespace Plugin.Runtime.Units
     /// </summary>
     public abstract class BaseDamageActionUnit : BaseUnit, IDamageAction
     {
-        public int Power { get; set; }
-        public abstract int OriginalPower { get; }   
+        public int Damage { get; set; }
+        public abstract int OriginalDamage { get; }   
 
 
-        public int Capacity { get; set; }
-        public abstract int OriginalCapacity { get; set; }
+        public int DamageCapacity { get; set; }
+        public abstract int OriginalDamageCapacity { get; set; }
 
         public abstract Int2[] DamageActionArea { get; }
 
-
-        public BaseDamageActionUnit(string gameId, int ownerActorId, int unitId, int instanceUnitId) : base(gameId, ownerActorId, unitId, instanceUnitId)
+        public BaseDamageActionUnit(UnitFactoryParameters parameters) : base(parameters)
         {
             
         }
@@ -36,19 +37,19 @@ namespace Plugin.Runtime.Units
 
         public void Reload()
         {
-            Capacity = OriginalCapacity;
+            DamageCapacity = OriginalDamageCapacity;
         }
 
         public bool CanExecuteAction()
         {
-            return Capacity > 0;
+            return DamageCapacity > 0;
         }
 
         public void SpendAction()
         {
             // Capacity--;      // TODO розкомітити, коли прикручу збільшення патронів в режимі перестрілки із віпом
-            if (Capacity < 0){
-                Capacity = 0;
+            if (DamageCapacity < 0){
+                DamageCapacity = 0;
                 throw new Exception($"BaseDamageActionUnit :: Used() capacity decrease below zero. ActorId = {OwnerActorNr}, unitId = {UnitId}, instanceId = {InstanceId}");
             }
         }

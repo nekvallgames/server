@@ -26,9 +26,9 @@ namespace Plugin.Runtime.Services.ExecuteAction.Action.Executors
     {
         private SyncService _syncService;
         private UnitsService _unitsService;
-        private SortTargetOnGridService _sortTargetOnGridService;
+        private SortHitOnGridService _sortTargetOnGridService;
 
-        public WaveDamageAction(SyncService syncService, UnitsService unitsService, SortTargetOnGridService sortTargetOnGridService)
+        public WaveDamageAction(SyncService syncService, UnitsService unitsService, SortHitOnGridService sortTargetOnGridService)
         {
             _syncService = syncService;
             _unitsService = unitsService;
@@ -77,7 +77,7 @@ namespace Plugin.Runtime.Services.ExecuteAction.Action.Executors
             {
                 // Найти урон, взависимости от волны взрыва гранаты
                 int waveIndex = CalculateWave(area.x, area.y);
-                int damage = CalculateDamage(waveDamageAction.Power, waveDamageAction, waveIndex);
+                int damage = CalculateDamage(waveDamageAction.Damage, waveDamageAction, waveIndex);
 
                 int targetW = posW + area.x;
                 int targetH = posH + area.y;
