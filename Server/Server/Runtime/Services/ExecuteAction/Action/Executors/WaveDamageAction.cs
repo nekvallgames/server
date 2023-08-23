@@ -70,7 +70,7 @@ namespace Plugin.Runtime.Services.ExecuteAction.Action.Executors
             // 2 1 0 1 2
             // 2 1 1 1 2
             // 2 2 2 2 2
-            Int2[] actionArea = waveDamageAction.DamageActionArea;
+            Int2[] actionArea = waveDamageAction.ActionArea;
 
             // Перебираем каждую ячейку поля взрыва
             foreach (Int2 area in actionArea)

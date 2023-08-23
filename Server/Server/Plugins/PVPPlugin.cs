@@ -35,8 +35,8 @@ namespace Plugin.Plugins.PVP
                                                             
                                             new WaitStepResultState(plotService, host, 2, ExecuteStepsState.NAME),
                                             new ExecuteStepsState(plotService, host, PVPResultState.NAME),
-                                            new PVPResultState(plotService, host, GiveRewardsState.NAME),
-                                            new GiveRewardsState(plotService, host, SyncStepsState.NAME),
+                                            new PVPResultState(plotService, host, SyncProgressState.NAME),
+                                            new SyncProgressState(plotService, host, SyncStepsState.NAME),
                                             new SyncStepsState(plotService, host, StopRoomState.NAME),
                                             new StopRoomState(plotService, host, WaitStepResultState.NAME)
                                           });

@@ -70,7 +70,7 @@ namespace Plugin.Runtime.Services.ExecuteAction.Action.Executors
             _syncService.Add(gameId, unit.OwnerActorNr, syncData);
 
 
-            foreach (Int2 area in damageAction.DamageActionArea)
+            foreach (Int2 area in damageAction.ActionArea)
             {
                 int targetW = posW + area.x;
                 int targetH = posH + area.y;

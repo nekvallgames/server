@@ -21,6 +21,10 @@ namespace Plugin.Interfaces
         /// </summary>
         int Rating { get; set; }
         /// <summary>
+        /// Is actor left from room?
+        /// </summary>
+        bool IsLeft { get; set; }
+        /// <summary>
         /// Id юнітів, котрими буде грати гравець
         /// </summary>
         List<int> Deck { get; set; }

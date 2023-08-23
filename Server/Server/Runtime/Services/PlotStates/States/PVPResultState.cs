@@ -37,23 +37,21 @@ namespace Plugin.Runtime.Services.PlotStates.States
         {
             _plotModelScheme = (PVPPlotModelScheme)_plotsModelService.Get(host.GameId);
 
-            _plotModeService = new PlotModeService(new ITask[] {
-                                                   new PVPFightToFirstDeadMode(_plotModeService, host, _plotModelScheme, _actorService, _unitsService),
-                                                   new PVPFightWithVipMode(_plotModeService, host, _plotModelScheme, _actorService, _unitsService),
-                                                   new PVPDuelMode(_plotModeService, host, _plotModelScheme, _actorService, _unitsService),
-                                                   new ResultMode(_plotModeService, host, _plotModelScheme)
+            _plotModeService = new PlotModeService();
+            _plotModeService.Add(new IMode[] {
+                                 new FightToFirstDeadMode(_plotModeService, host, _plotModelScheme, _actorService, _unitsService),
+                                 new FightWithVipMode(_plotModeService, host, _plotModelScheme, _actorService, _unitsService),
+                                 new DuelMode(_plotModeService, host, _plotModelScheme, _actorService, _unitsService),
+                                 new ResultMode(host, _plotModelScheme, _actorService, _unitsService)
             });
         }
 
         public override void EnterState()
         {
-            _plotModeService.ExecuteTask(_plotModelScheme.GameMode, () => 
+            _plotModeService.ExecuteMode(_plotModelScheme.GameMode, () => 
             {
                 // success
                 plotStatesService.ChangeState(nextState);
-            }, () => 
-            {
-                // fail
             });    
         }
     }

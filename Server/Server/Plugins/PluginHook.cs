@@ -103,7 +103,7 @@ namespace Plugin.Plugins
         /// </summary>
         public override void OnLeave(ILeaveGameCallInfo info)
         {
-            _actorService.RemoveActor(host.GameId, info.ActorNr);
+            _actorService.ActorLeft(host.GameId, info.ActorNr);
 
             info.Continue();
         }

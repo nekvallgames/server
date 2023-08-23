@@ -1,6 +1,8 @@
 ﻿using Photon.Hive.Plugin;
 using Plugin.Installers;
 using Plugin.Interfaces;
+using Plugin.Interfaces.Actions;
+using Plugin.Interfaces.UnitComponents;
 using Plugin.Runtime.Services.ExecuteOp;
 using Plugin.Schemes;
 using Plugin.Tools;
@@ -64,7 +66,23 @@ namespace Plugin.Runtime.Services.PlotStates.States
             ExecuteSteps(host.GameId, ref actorSteps, plotModel.SyncStep);
             plotModel.SyncStep++;
 
+            DebugStatus();
+
             plotStatesService.ChangeState(nextState);
+        }
+
+        private void DebugStatus()
+        {
+            List<IUnit> units = _unitsService.GetUnits(host.GameId, _hostsService.GetActors(host.GameId)[0].ActorNr);
+
+            for (int i = 0; i < units.Count; i++)
+            {
+                IUnit unit = units[i];
+                if (!(unit is IBarrier) && !unit.IsDead)
+                {
+                    LogChannel.Log($"[{i}] uId = {unit.UnitId}, h = {(unit as IHealthComponent).HealthCapacity}/{(unit as IHealthComponent).HealthCapacityMax}, c = {(unit as IDamageAction).ActionCapacity}", LogChannel.Type.Plot);
+                }
+            }
         }
 
         /// <summary>

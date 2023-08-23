@@ -10,9 +10,11 @@ namespace Plugin.Schemes.Public
         public int FirstMoveTime;
         [JsonProperty("scenario_step_first_attack_time")]
         public int FirstAttackTime;
-        // [JsonProperty("increase_damage_every_step")]
-        // public int IncreaseDamageEveryStep;
-        [JsonProperty("increase_damage_for_last_unit")]
-        public int IncreaseDamageForLastUnit;
+        [JsonProperty("vip_health_buff")]
+        public int VipHealthBuff;
+        [JsonProperty("increase_rating")]
+        public int IncreaseRating;
+        [JsonProperty("decrease_rating")]
+        public int DecreaseRating;
     }
 }

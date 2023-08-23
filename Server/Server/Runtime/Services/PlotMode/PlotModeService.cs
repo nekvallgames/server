@@ -6,17 +6,17 @@ namespace Plugin.Runtime.Services.PlotMode
 {
     public class PlotModeService
     {
-        private ITask[] _modes;
+        private IMode[] _modes;
         
-        public PlotModeService(ITask[] modes)
+        public void Add(IMode[] modes)
         {
             _modes = modes;
         }
 
-        public void ExecuteTask(string gameMode, Action onComplete, Action onFail)
+        public void ExecuteMode(int modeId, Action success)
         {
-            ITask task = _modes.First(x => x.Name == gameMode);
-            task.EnterTask(onComplete, onFail);
+            IMode task = _modes.First(x => x.ModeId == modeId);
+            task.ExecuteMode(success);
         }
     }
 }

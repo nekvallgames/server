@@ -32,10 +32,22 @@ namespace Plugin.Runtime.Services.PlotStates.States
 
             IPlotModelScheme plotModel = _plotsModelService.Get(host.GameId);
 
+            if (plotModel.IsAbort)
+            {
+                return; // гра була призупинена! Можливо один із гравців покинув гру...
+            }
+
             // Відправити клієнтам результат кроків
             _syncStepService.Sync(host, new int[] { plotModel.SyncStep - 2, plotModel.SyncStep - 1 });
 
-            plotStatesService.ChangeState(nextState);
+            if (plotModel.IsGameFinished)
+            {
+                // game is finish
+            }
+            else 
+            {
+                plotStatesService.ChangeState(nextState);
+            }
         }
     }
 }

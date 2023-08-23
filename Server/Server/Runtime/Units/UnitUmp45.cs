@@ -9,7 +9,7 @@ namespace Plugin.Runtime.Units
     /// <summary>
     /// Юнит с огнестрельным дробовиком
     /// </summary>
-    public class UnitUmp45 : BaseDamageActionUnit, IHealthComponent, IArmorComponent, IVipComponent, IHealingAdditional
+    public class UnitUmp45 : BaseActionUnit, IHealthComponent, IHealthBuffComponent, IArmorComponent, IVipComponent, IHealingAdditional
     {
         public const int UnitId = 15;
 
@@ -29,12 +29,13 @@ namespace Plugin.Runtime.Units
         public int ArmorCapacityMax { get; }    // Количество броні юнита на старте игры
 
         public override int OriginalDamage { get; }
-        public override int OriginalDamageCapacity { get; set; }
+        public override int OriginalActionCapacity { get; set; }
 
 
-        public override Int2[] DamageActionArea => new Int2[] { new Int2(0, 0), new Int2(0, 1), new Int2(1, 2) };
+        public override Int2[] ActionArea => new Int2[] { new Int2(0, 0), new Int2(0, 1), new Int2(1, 2) };
 
-        bool IVipComponent.Enable { get; set; }
+        public bool IsVip { get; set; }
+        public int HealthBuffCapacity { get; set; }
 
 
         #region additional
@@ -76,8 +77,8 @@ namespace Plugin.Runtime.Units
             OriginalDamage = damage;
 
             // Set damage capacity
-            DamageCapacity = unitPublicScheme.capacity;
-            OriginalDamageCapacity = unitPublicScheme.capacity;
+            ActionCapacity = unitPublicScheme.capacity;
+            OriginalActionCapacity = unitPublicScheme.capacity;
 
             // Set additional 
             _additionalCapacity = unitPublicScheme.additionalCapacity;

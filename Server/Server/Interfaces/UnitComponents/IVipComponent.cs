@@ -5,6 +5,6 @@
         /// <summary>
         /// Текущий юнит является Vip?
         /// </summary>
-        bool Enable { get; set; }
+        bool IsVip { get; set; }
     }
 }

@@ -9,7 +9,7 @@ namespace Plugin.Runtime.Units
     /// <summary>
     /// Юніт із луком, котрий при влучанні наносить ядовитий урон по противнику
     /// </summary>
-    public class UnitPoison : BaseDamageActionUnit, IHealthComponent, IVipComponent, IHealingAdditional
+    public class UnitPoison : BaseActionUnit, IHealthComponent, IHealthBuffComponent, IVipComponent, IHealingAdditional
     {
         public const int UnitId = 23;
 
@@ -25,11 +25,12 @@ namespace Plugin.Runtime.Units
         public int HealthCapacityMax { get; private set; }    // Количество жизней юнита на старте игры
 
         public override int OriginalDamage { get; }
-        public override int OriginalDamageCapacity { get; set; }
+        public override int OriginalActionCapacity { get; set; }
 
-        public override Int2[] DamageActionArea => new Int2[] { new Int2(0, 0) };
+        public override Int2[] ActionArea => new Int2[] { new Int2(0, 0) };
 
-        bool IVipComponent.Enable { get; set; }
+        public bool IsVip { get; set; }
+        public int HealthBuffCapacity { get; set; }
 
         #region additional
 
@@ -70,8 +71,8 @@ namespace Plugin.Runtime.Units
             OriginalDamage = damage;
 
             // Set damage capacity
-            DamageCapacity = unitPublicScheme.capacity;
-            OriginalDamageCapacity = unitPublicScheme.capacity;
+            ActionCapacity = unitPublicScheme.capacity;
+            OriginalActionCapacity = unitPublicScheme.capacity;
 
             // Set additional 
             _additionalCapacity = unitPublicScheme.additionalCapacity;

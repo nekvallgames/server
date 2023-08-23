@@ -22,9 +22,14 @@ namespace Plugin.Schemes
         public int SyncStep { get; set; }
 
         /// <summary>
-        /// Текущее игровое состояние
+        /// Поточний ігровий мод
         /// </summary>
-        public string GameMode { get; set; }
+        public int GameMode { get; set; }
+
+        /// <summary>
+        /// Чи була гра призупинена? Наприклад один із гравців покинув ігрову кімнату
+        /// </summary>
+        public bool IsAbort { get; set; }
 
         /// <summary>
         /// Время, на выполнение шага First Move
@@ -63,7 +68,7 @@ namespace Plugin.Schemes
         /// (Помощь заключается в супер уроне и перемещении по всей карте)
         /// List<ActorNr>
         /// </summary>
-        public List<int> HasLastUnitsHelp { get; set; }
+        public List<int> HasLastUnitsHelp { get; set; } = new List<int>();
 
         /// <summary>
         /// Чи був створений vip? Vip потрібно створити тільки 1 раз для
@@ -76,6 +81,17 @@ namespace Plugin.Schemes
         /// </summary>
         public bool WasPreparedDuel { get; set; }
 
+        /// <summary>
+        /// Гравці дограли до кінця і є переможець?
+        /// </summary>
+        public bool IsGameFinished { get; set; }
+
+        /// <summary>
+        /// Номер гравців в ігровій кімнаті, хто отримав перемогу
+        /// </summary>
+        public List<int> WinnerActorsNr { get; set; } = new List<int>();
+        
+
         private int _fightToFirstDeadStage_countGame;    // Количество игр, сыграных на этапе FightToFirstDeadStage
         private int _fightWithVipStage_countGame;        // Количество игр, сыграных на этапе FightWithVipStage
         private int _duelStage_countGame;                // Количество игр, сыграных на этапе DuelStage
@@ -83,29 +99,29 @@ namespace Plugin.Schemes
         public PVPPlotModelScheme(string gameId)
         {
             GameId = gameId;
-            GameMode = PVPFightToFirstDeadMode.NAME;
+            GameMode = (int)FightToFirstDeadMode.Mode;
         }
 
         /// <summary>
         /// Увеличить каунтер сыграных игр на текущем игровом этапе
         /// </summary>
-        public void IncreasePlayedStage(string gameMode)
+        public void IncreasePlayedStage(Enums.PVPMode gameMode)
         {
             switch (gameMode)
             {
-                case PVPFightToFirstDeadMode.NAME:
+                case FightToFirstDeadMode.Mode:
                     {
                         _fightToFirstDeadStage_countGame++;
                     }
                     break;
 
-                case PVPFightWithVipMode.NAME:
+                case FightWithVipMode.Mode:
                     {
                         _fightWithVipStage_countGame++;
                     }
                     break;
 
-                case PVPDuelMode.NAME:
+                case DuelMode.Mode:
                     {
                         _duelStage_countGame++;
                     }
@@ -122,23 +138,23 @@ namespace Plugin.Schemes
         /// <summary>
         /// Получить количество сыграных игр на указаном игровом этапе
         /// </summary>
-        public int GetCountPlayedStage(string gameMode)
+        public int GetCountPlayedStage(Enums.PVPMode gameMode)
         {
             switch (gameMode)
             {
-                case PVPFightToFirstDeadMode.NAME:
+                case FightToFirstDeadMode.Mode:
                     {
                         return _fightToFirstDeadStage_countGame;
                     }
                     break;
 
-                case PVPFightWithVipMode.NAME:
+                case FightWithVipMode.Mode:
                     {
                         return _fightWithVipStage_countGame;
                     }
                     break;
 
-                case PVPDuelMode.NAME:
+                case DuelMode.Mode:
                     {
                         return _duelStage_countGame;
                     }

@@ -14,31 +14,29 @@ namespace Plugin.Runtime.Services.PlotMode.States.PVP
     /// Также проверяем, если оба VIP-а мертвы, с двух сторон, и у каждого юнита есть еще кем играть,
     /// то переназначить VIP-ов на других юнитов
     /// </summary>
-    public class PVPFightWithVipMode : ITask
+    public class FightWithVipMode : IMode
     {
-        public const string NAME = "PVPFightWithVipMode";
-        public string Name => NAME;
+        public const Enums.PVPMode Mode = Enums.PVPMode.FightWithVip;
+        public int ModeId => (int)Mode;
 
         private PlotModeService _plotModeService;
         private IPluginHost _host;
         private PVPPlotModelScheme _model;
         private ActorService _actorService;
         private UnitsService _unitsService;
-        private Action _taskIsDone;
-        private Action _taskIsFail;
+        private Action _success;
         private List<IActorScheme> _actors;
-        private bool _isCreatedAdditionalConditions;
 
         /// <summary>
         /// Список с дополнительными проверками для текущего этапа игры
         /// </summary>
         private List<ICondition> _additionalConditions = new List<ICondition>();
 
-        public PVPFightWithVipMode(PlotModeService plotModeService, 
-                                   IPluginHost host, 
-                                   PVPPlotModelScheme model, 
-                                   ActorService actorService,
-                                   UnitsService unitsService)
+        public FightWithVipMode(PlotModeService plotModeService, 
+                                IPluginHost host, 
+                                PVPPlotModelScheme model, 
+                                ActorService actorService,
+                                UnitsService unitsService)
         {
             _plotModeService = plotModeService;
             _host = host;
@@ -47,26 +45,23 @@ namespace Plugin.Runtime.Services.PlotMode.States.PVP
             _unitsService = unitsService;
         }
 
-        public void EnterTask(Action taskIsDone, Action taskIsFail)
+        public void ExecuteMode(Action success)
         {
-            LogChannel.Log("PlotModeService :: PVPFightWithVipMode :: EnterTask()", LogChannel.Type.Plot);
+            LogChannel.Log("PlotModeService :: FightWithVipMode :: EnterTask()", LogChannel.Type.Plot);
+
+            _success = success;
+            _model.GameMode = (int)Mode;
 
             _actors = _actorService.GetActorsInRoom(_host.GameId);
 
-            if (!_isCreatedAdditionalConditions)
-            {
-                _isCreatedAdditionalConditions = true;
-                CreateAdditionalConditions();
-            }
-
-            _taskIsDone = taskIsDone;
-            _taskIsFail = taskIsFail;
-            _model.GameMode = Name;
-
             if (!_model.WasPreparedVipMode)
             {
+                CreateAdditionalConditions();
+                ExecuteAdditionalCondition();
                 PrepareVipMode();
                 _model.WasPreparedVipMode = true;
+
+                _success?.Invoke();
             }
             else
             {
@@ -77,14 +72,14 @@ namespace Plugin.Runtime.Services.PlotMode.States.PVP
         private void CheckingConditionMode()
         {
             // Проверяем условия выиграша или проиграша
-            bool isAliveActor0 = _unitsService.VipIsAlive(_host.GameId, _actors[0].ActorNr)
+            bool isAliveVipActor0 = _unitsService.VipIsAlive(_host.GameId, _actors[0].ActorNr)
                 ? true
                 : false;
-            bool isAliveActor1 = _unitsService.VipIsAlive(_host.GameId, _actors[1].ActorNr)
+            bool isAliveVipActor1 = _unitsService.VipIsAlive(_host.GameId, _actors[1].ActorNr)
                 ? true
                 : false;
 
-            if (isAliveActor0 && isAliveActor1)
+            if (isAliveVipActor0 && isAliveVipActor1)
             {
                 // Vip-ы игроков живы. Но! перед тем, как продолжить игру,
                 // проверяем, если осталось только по одному юниту
@@ -92,62 +87,17 @@ namespace Plugin.Runtime.Services.PlotMode.States.PVP
                 if (_unitsService.GetAliveUnitsCountWhoWillBeAbleToVip(_host.GameId, _actors[0].ActorNr) == 1 &&
                     _unitsService.GetAliveUnitsCountWhoWillBeAbleToVip(_host.GameId, _actors[1].ActorNr) == 1)
                 {
-                    _plotModeService.ExecuteTask(PVPDuelMode.NAME, _taskIsDone, _taskIsFail);
+                    _plotModeService.ExecuteMode((int)DuelMode.Mode, _success);
                     return;
                 }
 
                 // Vip-ы игроков живы. Продолжаем игру далее
                 ExecuteAdditionalCondition();
-                _taskIsDone?.Invoke();
+                _success?.Invoke();
                 return;
             }
 
-            if (!isAliveActor0 && !isAliveActor1)
-            {
-                // Vip-ы обоих игроков мертвы
-                BothVipsAreDead();
-                return;
-            }
-
-            _plotModeService.ExecuteTask(ResultMode.NAME, _taskIsDone, _taskIsFail);
-        }
-
-        /// <summary>
-        /// Оба Vip-а мертвы. Проверяем, можем ли переназначить
-        /// VIP на другого юнита у каждого из игроков
-        ///
-        /// То есть, у двоиз игроков vip юнит мертв. Если можем переназначить VIP одному игроку и другому игроку,
-        /// то переназначаем, и продолжаем игру дальше
-        /// </summary>
-        private void BothVipsAreDead()
-        {
-            IUnit actor0HasAliveUnits = _unitsService.GetAnyAliveUnitWhoWillBeAbleToVip(_host.GameId, _actors[0].ActorNr);
-            IUnit actor1HasAliveUnits = _unitsService.GetAnyAliveUnitWhoWillBeAbleToVip(_host.GameId, _actors[1].ActorNr);
-
-            if (actor0HasAliveUnits == null && actor1HasAliveUnits == null)
-            {
-                // Оба VIP-а мертвы, и дополнительных юнитов с обеих сторон нет.
-                // Нужно перейти в состояния дуэли
-                _plotModeService.ExecuteTask(PVPDuelMode.NAME, _taskIsDone, _taskIsFail);
-                return;
-            }
-
-            if (actor0HasAliveUnits != null && actor1HasAliveUnits != null)
-            {
-                // Оба VIP-а мертвы, но игроки имеют еще юнитов в команде.
-                // Назначить этих юнитов VIP-ами
-                // RemoveVipFromDeadUnits();
-                PrepareVipMode();
-                return;
-            }
-
-            if (actor0HasAliveUnits != null || actor1HasAliveUnits != null)
-            {
-                // Оба VIP-а мертвы, но с одной стороны есть еще выжившие юниты.
-                // То есть, у одного игрока мертвы все юниты, а у другого игрока еще есть живой юнит
-                _plotModeService.ExecuteTask(ResultMode.NAME, _taskIsDone, _taskIsFail);
-                return;
-            }
+            _plotModeService.ExecuteMode((int)ResultMode.Mode, _success);
         }
 
         /// <summary>
@@ -161,7 +111,7 @@ namespace Plugin.Runtime.Services.PlotMode.States.PVP
                 _unitsService.GetAliveUnitsWhoWillBeAbleToVip(_host.GameId, actor.ActorNr, ref candidatesForVip);
 
                 // Сделать VIP-ом по умолчанию
-                _unitsService.MakeVip(candidatesForVip[0]);
+                _unitsService.MakeVip(candidatesForVip[0], true);
             }
         }
 
@@ -189,11 +139,6 @@ namespace Plugin.Runtime.Services.PlotMode.States.PVP
                 additionalCondition.Execute();
             }
         }
-
-        public void ExitTask()
-        {
-
-        }
     }
 
     /// <summary>
@@ -220,7 +165,8 @@ namespace Plugin.Runtime.Services.PlotMode.States.PVP
 
             foreach (IUnit unit in aliveUnits)
             {
-                (unit as IDamageAction).OriginalDamageCapacity++;
+                (unit as IDamageAction).OriginalActionCapacity++;
+                (unit as IDamageAction).ReviveAction();
             }
         }
     }

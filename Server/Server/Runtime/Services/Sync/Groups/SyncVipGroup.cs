@@ -20,7 +20,7 @@ namespace Plugin.Runtime.Services.Sync.Groups
             var syncElements = SyncElementBuilder
                .Build(this)
                .SyncUnitID(unit.UnitId, unit.InstanceId)
-               .SyncVip((unit as IVipComponent).Enable);
+               .SyncVip((unit as IVipComponent).IsVip);
         }
     }
 }

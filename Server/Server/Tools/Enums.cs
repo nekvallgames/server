@@ -35,5 +35,13 @@
             body = 2,    // тело
             bottom = 3,    // ноги
         }
+
+        public enum PVPMode
+        {
+            FightToFirstDead = 0,
+            FightWithVip = 1,
+            Duel = 2,
+            Result = 3
+        }
     }
 }

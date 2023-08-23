@@ -9,10 +9,10 @@ using System.Collections.Generic;
 
 namespace Plugin.Runtime.Services.PlotMode.States.PVP
 {
-    public class PVPDuelMode : ITask
+    public class DuelMode : IMode
     {
-        public const string NAME = "PVPDuelMode";
-        public string Name => NAME;
+        public const Enums.PVPMode Mode = Enums.PVPMode.Duel;
+        public int ModeId => (int)Mode;
 
         private PlotModeService _plotModeService;
         private IPluginHost _host;
@@ -26,11 +26,11 @@ namespace Plugin.Runtime.Services.PlotMode.States.PVP
 
         private List<IActorScheme> _actors;
 
-        public PVPDuelMode(PlotModeService plotModeService, 
-                           IPluginHost host, 
-                           PVPPlotModelScheme model, 
-                           ActorService actorService,
-                           UnitsService unitsService)
+        public DuelMode(PlotModeService plotModeService, 
+                        IPluginHost host, 
+                        PVPPlotModelScheme model, 
+                        ActorService actorService,
+                        UnitsService unitsService)
         {
             _plotModeService = plotModeService;
             _host = host;
@@ -39,10 +39,10 @@ namespace Plugin.Runtime.Services.PlotMode.States.PVP
             _unitsService = unitsService;
         }
 
-        public void EnterTask(Action taskIsDone, Action taskIsFail)
+        public void ExecuteMode(Action success)
         {
-            LogChannel.Log("PlotModeService :: PVPDuelMode :: EnterTask()", LogChannel.Type.Plot);
-            _model.GameMode = Name;
+            LogChannel.Log("PlotModeService :: DuelMode :: EnterTask()", LogChannel.Type.Plot);
+            _model.GameMode = (int)Mode;
 
             _actors = _actorService.GetActorsInRoom(_host.GameId);
 
@@ -51,7 +51,10 @@ namespace Plugin.Runtime.Services.PlotMode.States.PVP
                 _model.WasPreparedDuel = true;
 
                 _actor0DuelUnit = RegisterDuelUnit(_host.GameId, _actors[0].ActorNr);
+                (_actor0DuelUnit as IVipComponent).IsVip = true;
+
                 _actor1DuelUnit = RegisterDuelUnit(_host.GameId, _actors[1].ActorNr);
+                (_actor1DuelUnit as IVipComponent).IsVip = true;
 
                 // 9. Востановити юнітів, котрі будуть приймати участь в дуєлі
                 ReviveUnit(_actor0DuelUnit);
@@ -65,34 +68,18 @@ namespace Plugin.Runtime.Services.PlotMode.States.PVP
             else
             {
                 // Проверяем условия выиграша или проиграша
-                bool IsAliveVipActor0 = _unitsService.VipIsAlive(_host.GameId, _actors[0].ActorNr)
-                    ? true
+                bool IsAliveVipActor0 = _unitsService.VipIsAlive(_host.GameId, _actors[0].ActorNr) 
+                    ? true 
                     : false;
+                
                 bool IsAliveVipActor1 = _unitsService.VipIsAlive(_host.GameId, _actors[1].ActorNr)
                     ? true
                     : false;
 
-                // Дополнительное условие, если дуэль началась раньше, чем были назначены VIP-ы
-                if (!IsAliveVipActor0 && !IsAliveVipActor1)
-                {
-                    bool IsAliveAnyActor0 = _unitsService.HasAliveUnit(_host.GameId, _actors[0].ActorNr)
-                        ? true
-                        : false;
-                    bool IsAliveAnyActor1 = _unitsService.HasAliveUnit(_host.GameId, _actors[1].ActorNr)
-                        ? true
-                        : false;
-
-                    if (IsAliveAnyActor0 || IsAliveAnyActor1)
-                    {
-                        IsAliveVipActor0 = IsAliveAnyActor0;
-                        IsAliveVipActor1 = IsAliveAnyActor1;
-                    }
-                }
-
                 if (IsAliveVipActor0 && IsAliveVipActor1)
                 {
                     // Vip-ы игроков живы. Продолжаем игру далее
-                    taskIsDone?.Invoke();
+                    success?.Invoke();
                     return;
                 }
 
@@ -100,16 +87,16 @@ namespace Plugin.Runtime.Services.PlotMode.States.PVP
                 {
                     // Vip-ы обоих игроков мертвы
                     BothVipsAreDead();
-                    taskIsDone?.Invoke();
+                    success?.Invoke();
                     return;
                 }
 
                 // Изменить игровой этап
-                _plotModeService.ExecuteTask(ResultMode.NAME, taskIsDone, taskIsFail);
+                _plotModeService.ExecuteMode((int)ResultMode.Mode, success);
                 return;
             }
 
-            taskIsDone?.Invoke();
+            success?.Invoke();
         }
 
         /// <summary>
@@ -121,9 +108,12 @@ namespace Plugin.Runtime.Services.PlotMode.States.PVP
             // Вытащить у игрока юнита с VIP
             IUnit unit = _unitsService.GetVipUnit(gameId, actorNr);
 
-            if (unit == null)
-            {
+            if (unit == null){
                 unit = _unitsService.GetAnyAliveUnitWhoWillBeAbleToVip(gameId, actorNr);
+            }
+
+            if (unit == null){
+                unit = _unitsService.GetAnyUnitWhoWillBeAbleToVip(gameId, actorNr);
             }
 
             return unit;
@@ -136,7 +126,7 @@ namespace Plugin.Runtime.Services.PlotMode.States.PVP
         {
             unit.IsDead = false;
             ((IHealthComponent)unit).HealthCapacity = 1;
-            ((IDamageAction)unit).DamageCapacity = 1;
+            ((IDamageAction)unit).ActionCapacity = 1;
         }
 
         /// <summary>
@@ -154,10 +144,6 @@ namespace Plugin.Runtime.Services.PlotMode.States.PVP
             ReviveUnit(_actor1DuelUnit);
 
             // Продолжаем игру дальше
-        }
-        public void ExitTask()
-        {
-
         }
     }
 }

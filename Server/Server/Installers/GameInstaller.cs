@@ -60,8 +60,10 @@ namespace Plugin.Installers
         public UnitDamageMultiplicationService unitDamageMultiplicationService;
         public UnitsPublicModelService unitsPublicModelService;
         public BodyDamageConverterService bodyDamageConverterService;
+        public SyncProgressService syncProgressService;
+        public GameService gameService;
 
-       
+
         public GameInstaller()
         {
             _instance = this;
@@ -96,7 +98,7 @@ namespace Plugin.Installers
                 new ActorsPrivateModel()
             });
 
-            actorService = new ActorService(privateModelProvider.Get<ActorsPrivateModel>());
+            actorService = new ActorService(privateModelProvider.Get<ActorsPrivateModel>(), signalBus);
             hostsService = new HostsService(privateModelProvider.Get<HostsPrivateModel>());
             plotsModelService = new PlotsModelService(privateModelProvider.Get<PlotsPrivateModel>());
             gridBuilder = new GridBuilder();
@@ -105,9 +107,9 @@ namespace Plugin.Installers
             opStockService = new OpStockService(privateModelProvider.Get<OpStockPrivateModel>());
             syncService = new SyncService(privateModelProvider.Get<SyncPrivateModel>(), plotsModelService);
             stepSchemeBuilder = new StepSchemeBuilder(syncService);
-            syncStepService = new SyncStepService(stepSchemeBuilder, convertService, hostsService);
+            syncStepService = new SyncStepService(stepSchemeBuilder, convertService, hostsService, plotsModelService, actorService);
             moveService = new MoveService(syncService);
-            unitsService = new UnitsService(privateModelProvider.Get<UnitsPrivateModel>(), unitBuilder, signalBus, moveService);
+            unitsService = new UnitsService(privateModelProvider.Get<UnitsPrivateModel>(), unitBuilder, signalBus, moveService, plotPublicService);
             locationUnitsSpawner = new LocationUnitsSpawner(publicModelProvider, unitsService, signalBus);
             vipService = new VipService(syncService, unitsService);
             sortTargetOnGridService = new SortHitOnGridService();
@@ -118,6 +120,8 @@ namespace Plugin.Installers
             executeOpGroupService = new ExecuteOpGroupService(unitsService, moveService, vipService, actionService, additionalService);
             executeOpStepService = new ExecuteOpStepSchemeService(executeOpGroupService);
             resultService = new ResultService(backendBroadcastService);
+            syncProgressService = new SyncProgressService(backendBroadcastService, plotsModelService, plotPublicService);
+            gameService = new GameService(signalBus, plotsModelService, syncProgressService, actorService, hostsService, convertService);
         }
     }
 }

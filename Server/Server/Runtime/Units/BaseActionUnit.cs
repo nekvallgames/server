@@ -9,18 +9,18 @@ namespace Plugin.Runtime.Units
     /// <summary>
     /// Базовий клас для юнітів, котрі мають основний єкшен, це нанесення урона
     /// </summary>
-    public abstract class BaseDamageActionUnit : BaseUnit, IDamageAction
+    public abstract class BaseActionUnit : BaseUnit, IDamageAction
     {
         public int Damage { get; set; }
         public abstract int OriginalDamage { get; }   
 
 
-        public int DamageCapacity { get; set; }
-        public abstract int OriginalDamageCapacity { get; set; }
+        public int ActionCapacity { get; set; }
+        public abstract int OriginalActionCapacity { get; set; }
 
-        public abstract Int2[] DamageActionArea { get; }
+        public abstract Int2[] ActionArea { get; }
 
-        public BaseDamageActionUnit(UnitFactoryParameters parameters) : base(parameters)
+        public BaseActionUnit(UnitFactoryParameters parameters) : base(parameters)
         {
             
         }
@@ -37,19 +37,19 @@ namespace Plugin.Runtime.Units
 
         public void Reload()
         {
-            DamageCapacity = OriginalDamageCapacity;
+            ActionCapacity = OriginalActionCapacity;
         }
 
         public bool CanExecuteAction()
         {
-            return DamageCapacity > 0;
+            return ActionCapacity > 0;
         }
 
         public void SpendAction()
         {
             // Capacity--;      // TODO розкомітити, коли прикручу збільшення патронів в режимі перестрілки із віпом
-            if (DamageCapacity < 0){
-                DamageCapacity = 0;
+            if (ActionCapacity < 0){
+                ActionCapacity = 0;
                 throw new Exception($"BaseDamageActionUnit :: Used() capacity decrease below zero. ActorId = {OwnerActorNr}, unitId = {UnitId}, instanceId = {InstanceId}");
             }
         }

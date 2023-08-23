@@ -44,16 +44,16 @@ namespace Plugin.Interfaces.Actions
         /// <summary>
         /// Получить рисунок экшена
         /// </summary>
-        Int2[] DamageActionArea { get; }
+        Int2[] ActionArea { get; }
 
         /// <summary>
         /// Поточна кількість амуніції 
         /// </summary>
-        int DamageCapacity { get; set; }
+        int ActionCapacity { get; set; }
 
         /// <summary>
         /// Орігінальна кількість амуніції при створенні юніта
         /// </summary>
-        int OriginalDamageCapacity { get; set; }
+        int OriginalActionCapacity { get; set; }
     }
 }

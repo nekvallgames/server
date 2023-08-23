@@ -33,5 +33,10 @@
         /// Локальный игрок сообщает серверу, что он изменил VIP какому то юниту
         /// </summary>
         public static byte changeVip = 5;
+
+        /// <summary>
+        /// Сервер призупинив гру
+        /// </summary>
+        public static byte abort = 6;
     }
 }

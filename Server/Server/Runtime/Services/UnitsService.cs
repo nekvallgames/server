@@ -4,6 +4,7 @@ using Plugin.Interfaces.UnitComponents;
 using Plugin.Models.Private;
 using Plugin.Runtime.Services.ExecuteAction;
 using Plugin.Tools;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -18,16 +19,19 @@ namespace Plugin.Runtime.Services
         private UnitsPrivateModel _model;
         private UnitBuilder _unitBuilder;
         private MoveService _moveService;
+        private PlotPublicService _plotPublicService;
 
         public UnitsService(UnitsPrivateModel model,  
                             UnitBuilder unitBuilder, 
                             SignalBus signalBus, 
-                            MoveService moveService)
+                            MoveService moveService,
+                            PlotPublicService plotPublicService)
         {
             _model = model;
 
             _unitBuilder = unitBuilder;
             _moveService = moveService;
+            _plotPublicService = plotPublicService;
         }
 
         /// <summary>
@@ -124,6 +128,8 @@ namespace Plugin.Runtime.Services
         /// </summary>
         public void SetDamage(IUnit unit, int damage)
         {
+            // Debug.WriteLine("id = " + unit.UnitId + ", damage = " + damage);
+
             bool hasHealth = HasComponent<IHealthComponent>(unit);
             bool hasArmor = HasComponent<IArmorComponent>(unit);
 
@@ -147,14 +153,24 @@ namespace Plugin.Runtime.Services
             }
 
             var healthComponent = (IHealthComponent)unit;
+            int healingPower = healthPower;
 
-            int health = healthComponent.HealthCapacity + healthPower;
+            // 1. Перед изменением уровня баффа для сущности,
+            // сначала снимаем бафф, который уже повешен на сущность
+            int originalHealth = GetHealthWithoutBuff(unit);
 
-            if (health > healthComponent.HealthCapacityMax){
-                health = healthComponent.HealthCapacityMax;
+            // 2. Применить лечения юнита
+            int currHealth = (int)originalHealth;
+            currHealth += healingPower;
+
+            if (currHealth > healthComponent.HealthCapacityMax)
+            {
+                currHealth = healthComponent.HealthCapacityMax;    // юнита нельзя вылечить больше, чем его максимальный уровень жизней
             }
 
-            ((IHealthComponent)unit).HealthCapacity = health;
+            currHealth = (int)CalculateHealthWithBuff(((IHealthBuffComponent)unit).HealthBuffCapacity, currHealth);
+
+            ((IHealthComponent)unit).HealthCapacity = currHealth;
         }
 
         /// <summary>
@@ -183,7 +199,7 @@ namespace Plugin.Runtime.Services
         /// </summary>
         public bool HasAliveUnit(string gameId, int actorNr)
         {
-            return _model.Items.Any(x => x.GameId == gameId && x.OwnerActorNr == actorNr && !x.IsDead);
+            return _model.Items.Any(x => x.GameId == gameId && x.OwnerActorNr == actorNr && !x.IsDead && !HasComponent<IBarrier>(x));
         }
 
         /// <summary>
@@ -200,6 +216,14 @@ namespace Plugin.Runtime.Services
         public IUnit GetAnyAliveUnitWhoWillBeAbleToVip(string gameId, int actorNr)
         {
             return _model.Items.Find(x => x.GameId == gameId && x.OwnerActorNr == actorNr && !x.IsDead && HasComponent<IVipComponent>(x));
+        }
+
+        /// <summary>
+        /// Отримати живого юніта
+        /// </summary>
+        public IUnit GetAnyAliveUnit(string gameId, int actorNr)
+        {
+            return _model.Items.Find(x => x.GameId == gameId && x.OwnerActorNr == actorNr && !x.IsDead && !HasComponent<IBarrier>(x));
         }
 
         /// <summary>
@@ -265,6 +289,11 @@ namespace Plugin.Runtime.Services
             if (curr < 0) curr = 0;
             
             ((IHealthComponent)unit).HealthCapacity = curr;
+
+            if (curr <= 0)
+            {
+                unit.IsDead = true;
+            }
         }
 
         /// <summary>
@@ -276,6 +305,11 @@ namespace Plugin.Runtime.Services
             if (curr < 0) curr = 0;
 
             ((IArmorComponent)unit).ArmorCapacity = curr;
+
+            if (curr <= 0 && !HasComponent<IHealthComponent>(unit))
+            {
+                unit.IsDead = true;
+            }
         }
 
         public void RemoveAllIfExist(string gameId)
@@ -299,9 +333,97 @@ namespace Plugin.Runtime.Services
         /// <summary>
         /// Зробити юніта VIP-ом
         /// </summary>
-        public void MakeVip(IUnit unit)
+        public void MakeVip(IUnit unit, bool enable)
         {
-            (unit as IVipComponent).Enable = true;
+            if ((unit as IVipComponent).IsVip == enable){
+                return;
+            }
+
+            (unit as IVipComponent).IsVip = enable;
+
+            ApplyHealthBuff(unit, enable ? _plotPublicService.Data.VipHealthBuff : -_plotPublicService.Data.VipHealthBuff);
+        }
+
+        public void ApplyHealthBuff(IUnit unit, int buffCapacity)
+        {
+            if (!HasComponent<IHealthBuffComponent>(unit))
+                return;
+
+            int healthBuffCapacity = (unit as IHealthBuffComponent).HealthBuffCapacity;
+            int originalHealth = (unit as IHealthComponent).HealthCapacity;
+            int healthWithBuff = originalHealth;
+
+            // 1. Перед изменением уровня баффа для сущности,
+            // сначала снимаем бафф, который уже повешен на сущность
+            originalHealth = GetHealthWithoutBuff(unit);
+
+            // 2. Пересчитываем бафф
+            int currBuff = healthBuffCapacity + buffCapacity;
+
+            // 3. Снова применяем уже измененный бафф на жизни сущности
+            healthWithBuff = CalculateHealthWithBuff(currBuff, originalHealth);
+
+            (unit as IHealthComponent).HealthCapacity = healthWithBuff;
+            (unit as IHealthBuffComponent).HealthBuffCapacity = currBuff;
+        }
+
+        /// <summary>
+        /// Получить количество жизней юнита без учета баффа на жизни
+        /// </summary>
+        public int GetHealthWithoutBuff(IUnit unit)
+        {
+            int originalHealth = (unit as IHealthComponent).HealthCapacity;
+            int healthBuffCapacity = (unit as IHealthBuffComponent).HealthBuffCapacity;
+
+            if (healthBuffCapacity > 0)
+            {
+                // 1.1 снять бафф
+                float health = (originalHealth * 100f) / (healthBuffCapacity + 100f);
+
+                // TODO Округляем число health в большею или меньшею сторону
+                // TODO числа от 0 до 0.5 -> 0
+                // TODO числа от 0.6 до 0.9 -> 1
+                health = (float)Math.Ceiling(health);
+
+                originalHealth = (int)health;
+            }
+            else
+            if (healthBuffCapacity < 0)
+            {
+                // 1.2 снять дебафф
+                float health = (originalHealth * 100f) / (100f - healthBuffCapacity);
+
+                // TODO Округляем число health в большею или меньшею сторону
+                // TODO числа от 0 до 0.5 -> 0
+                // TODO числа от 0.6 до 0.9 -> 1
+                health = (float)Math.Ceiling(health);
+
+                originalHealth = (int)health;
+            }
+
+            return originalHealth;
+        }
+
+        /// <summary>
+        /// Получить количество жизней юнита c учетом баффа юнита на жизни
+        /// </summary>
+        public int CalculateHealthWithBuff(int currBuff, int originalHealth)
+        {
+            int healthWithBuff = originalHealth;
+
+            if (currBuff > 0)
+            {
+                // 3.1 применить бафф
+                healthWithBuff = (originalHealth * (currBuff + 100)) / 100;
+            }
+            else
+            if (currBuff < 0)
+            {
+                // 3.2 применить дебафф
+                healthWithBuff = (originalHealth * currBuff) / 100;
+            }
+
+            return healthWithBuff;
         }
 
         /// <summary>
@@ -313,7 +435,7 @@ namespace Plugin.Runtime.Services
 
             foreach (IUnit unit in units)
             {
-                if (unit is IVipComponent && !unit.IsDead && (unit as IVipComponent).Enable)
+                if (unit is IVipComponent && !unit.IsDead && (unit as IVipComponent).IsVip)
                 {
                     return true;
                 }
@@ -361,7 +483,7 @@ namespace Plugin.Runtime.Services
 
             foreach (IUnit unit in units)
             {
-                if (unit is IVipComponent && ((IVipComponent)unit).Enable)
+                if (unit is IVipComponent && ((IVipComponent)unit).IsVip)
                 {
                     return unit;
                 }

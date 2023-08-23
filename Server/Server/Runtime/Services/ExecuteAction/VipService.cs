@@ -25,7 +25,7 @@ namespace Plugin.Runtime.Services.ExecuteAction
             _unitsService = unitsService;
         }
 
-        public void ChangeVip( IUnit unitNextVip, bool enable )
+        public void ChangeVip(IUnit unitNextVip, bool enable)
         {
             // Перевіряємо, чи може поточний юніт бути vip?
             if (!_unitsService.HasComponent<IVipComponent>(unitNextVip)){
@@ -43,13 +43,14 @@ namespace Plugin.Runtime.Services.ExecuteAction
             List<IUnit> units = _unitsService.GetUnits(unitNextVip.GameId, unitNextVip.OwnerActorNr);
             foreach (IUnit unit in units)
             {
-                if (_unitsService.HasComponent<IVipComponent>(unit)){
-                    ((IVipComponent)unit).Enable = false;
+                if (_unitsService.HasComponent<IVipComponent>(unit))
+                {
+                    _unitsService.MakeVip(unit, false);
                 }
             }
 
             // Активуємо vip для поточного юніта 
-            ((IVipComponent)unitNextVip).Enable = enable;
+            _unitsService.MakeVip(unitNextVip, enable);
 
             // Синхронизировать статус Vip для юнита
             var syncVip = new SyncVipGroup(unitNextVip);

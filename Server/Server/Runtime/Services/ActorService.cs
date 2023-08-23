@@ -1,6 +1,7 @@
 ﻿using Plugin.Interfaces;
 using Plugin.Models.Private;
 using Plugin.Schemes;
+using Plugin.Signals;
 using System.Collections.Generic;
 
 namespace Plugin.Runtime.Services
@@ -8,10 +9,12 @@ namespace Plugin.Runtime.Services
     public class ActorService
     {
         private ActorsPrivateModel _model;
+        private SignalBus _signalBus;
 
-        public ActorService(ActorsPrivateModel model)
+        public ActorService(ActorsPrivateModel model, SignalBus signalBus)
         {
             _model = model;
+            _signalBus = signalBus;
         }
 
         public void CreateActor(string gameId, int actorNr, string profileId)
@@ -25,6 +28,20 @@ namespace Plugin.Runtime.Services
             if (actor != null)
             {
                 _model.Items.Remove(actor);
+            }
+        }
+
+        /// <summary>
+        /// Actor left from room
+        /// </summary>
+        public void ActorLeft(string gameId, int actorNr)
+        {
+            IActorScheme actor = _model.Items.Find(x => x.GameId == gameId && x.ActorNr == actorNr);
+            if (actor != null)
+            {
+                actor.IsLeft = true;
+
+                _signalBus.Fire(new ActorLeftSignal(actor));
             }
         }
 
