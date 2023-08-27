@@ -47,6 +47,15 @@ namespace Plugin.Runtime.Services
 
             model.IsAbort = true;
 
+            // set win players, who still in room
+            foreach (IActorScheme actor in actors)
+            {
+                if (!actor.IsLeft)
+                {
+                    model.WinnerActorsNr.Add(actor.ActorNr);
+                }
+            }
+
             // sync progress
             foreach (IActorScheme actor in actors)
             {

@@ -1,7 +1,9 @@
 ﻿using Newtonsoft.Json;
+using System;
 
 namespace Plugin.Schemes
 {
+    [Serializable]
     public struct AbortScheme
     {
         /// <summary>
