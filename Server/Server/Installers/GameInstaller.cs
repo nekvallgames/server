@@ -9,6 +9,7 @@ using Plugin.Runtime.Services.ExecuteAction.Action;
 using Plugin.Runtime.Services.ExecuteAction.Additional;
 using Plugin.Runtime.Services.ExecuteOp;
 using Plugin.Runtime.Services.Sync;
+using Plugin.Runtime.Services.UnitsPath;
 using Plugin.Runtime.Spawners;
 using Plugin.Schemes;
 using System.Collections.Generic;
@@ -62,6 +63,9 @@ namespace Plugin.Installers
         public BodyDamageConverterService bodyDamageConverterService;
         public SyncProgressService syncProgressService;
         public GameService gameService;
+        public CellWalkableService cellWalkableService;
+        public UnitsPathService unitsPathService;
+        public PathService pathService;
 
 
         public GameInstaller()
@@ -84,7 +88,8 @@ namespace Plugin.Installers
 
             publicModelProvider = new PublicModelProvider(new List<IPublicModel>
             {
-                new LocationsPublicModel<LocationScheme>(convertService)
+                new LocationsPublicModel<LocationScheme>(convertService),
+                new NavigationMapPublicModel()
             });
 
             privateModelProvider = new PrivateModelProvider(new List<IPrivateModel>
@@ -95,13 +100,17 @@ namespace Plugin.Installers
                 new GridsPrivateModel(signalBus),
                 new HostsPrivateModel(signalBus),
                 new PlotsPrivateModel(),
-                new ActorsPrivateModel()
+                new ActorsPrivateModel(),
+                new TemperatureWalkableTracePrivateModel(),
+                new CellWalkablePrivateModel(),
+                new ActorUnitsPathPrivateModel()
             });
 
             actorService = new ActorService(privateModelProvider.Get<ActorsPrivateModel>(), signalBus);
             hostsService = new HostsService(privateModelProvider.Get<HostsPrivateModel>());
             plotsModelService = new PlotsModelService(privateModelProvider.Get<PlotsPrivateModel>());
             gridBuilder = new GridBuilder();
+            gridService = new GridService(publicModelProvider, privateModelProvider, gridBuilder);
             unitInstanceService = new UnitInstanceService(privateModelProvider.Get<UnitsPrivateModel>());
             unitBuilder = new UnitBuilder(unitInstanceService, unitsPublicModelService, increaseUnitDamageService, increaseUnitHealthService);
             opStockService = new OpStockService(privateModelProvider.Get<OpStockPrivateModel>());
@@ -113,15 +122,35 @@ namespace Plugin.Installers
             locationUnitsSpawner = new LocationUnitsSpawner(publicModelProvider, unitsService, signalBus);
             vipService = new VipService(syncService, unitsService);
             sortTargetOnGridService = new SortHitOnGridService();
-            actionService = new ActionService(syncService, unitsService, sortTargetOnGridService, bodyDamageConverterService);
+            actionService = new ActionService(syncService, 
+                unitsService, 
+                sortTargetOnGridService, 
+                bodyDamageConverterService,
+                gridService);
             additionalService = new AdditionalService(syncService, unitsService);
-            gridService = new GridService(publicModelProvider, privateModelProvider, gridBuilder);
+            unitsPathService = new UnitsPathService(publicModelProvider.Get<NavigationMapPublicModel>(), privateModelProvider.Get<ActorUnitsPathPrivateModel>(), gridService, unitsService);
             notificationChangeVipService = new NotificationChangeVipService(hostsService, opStockService, signalBus);
-            executeOpGroupService = new ExecuteOpGroupService(unitsService, moveService, vipService, actionService, additionalService);
+            cellWalkableService = new CellWalkableService(unitsPathService, 
+                                                          gridService, 
+                                                          privateModelProvider.Get<CellWalkablePrivateModel>());
+            executeOpGroupService = new ExecuteOpGroupService(unitsService, 
+                                                              moveService, 
+                                                              vipService, 
+                                                              actionService, 
+                                                              additionalService, 
+                                                              unitsPathService, 
+                                                              plotsModelService,
+                                                              cellWalkableService);
             executeOpStepService = new ExecuteOpStepSchemeService(executeOpGroupService);
             resultService = new ResultService(backendBroadcastService);
             syncProgressService = new SyncProgressService(backendBroadcastService, plotsModelService, plotPublicService);
-            gameService = new GameService(signalBus, plotsModelService, syncProgressService, actorService, hostsService, convertService);
+            gameService = new GameService(signalBus, 
+                                          plotsModelService, 
+                                          syncProgressService, 
+                                          actorService, 
+                                          hostsService, 
+                                          convertService);
+            pathService = new PathService(unitsPathService, cellWalkableService);
         }
     }
 }

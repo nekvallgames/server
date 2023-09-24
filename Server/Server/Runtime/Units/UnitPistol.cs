@@ -9,7 +9,14 @@ namespace Plugin.Runtime.Units
     /// <summary>
     /// Обычный юнит с огнестрельным пистолетом
     /// </summary>
-    public class UnitPistol : BaseActionUnit, IHealthComponent, IHealthBuffComponent, IVipComponent, IHealingAdditional
+    public class UnitPistol : BaseActionUnit, 
+        IHealthComponent, 
+        IHealthBuffComponent, 
+        IVipComponent, 
+        IHealingAdditional, 
+        IWalkableComponent,
+        INavigationWayForDuelComponent,
+        IGodModeWalkableComponent
     {
         public const int UnitId = 0;
 
@@ -32,6 +39,12 @@ namespace Plugin.Runtime.Units
 
         public bool IsVip { get; set; }
         public int HealthBuffCapacity { get; set; }
+
+        public int WayMask => 6;
+        public Enums.WalkNavigation NavigationWay { get; set; } = Enums.WalkNavigation.body_width_1;
+        public Enums.WalkNavigation NavigationWayForDuel => Enums.WalkNavigation.body_width_1_for_duel;
+
+        public bool HasGodModeWalkable { get; set; }
 
         #region additional
 

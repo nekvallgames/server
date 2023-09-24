@@ -71,11 +71,10 @@ namespace Plugin.Builders
             switch (maskIndex)
             {
                 default:
-                case 1: return Enums.CellMask.wall;
-                case 2: return Enums.CellMask.wallLock;
-                case 4: return Enums.CellMask.floor;
-                case 8: return Enums.CellMask.floorLock;
-                case 16: return Enums.CellMask.border;
+                case 1: return Enums.CellMask.backWall;
+                case 2: return Enums.CellMask.floor;
+                case 4: return Enums.CellMask.backFloorWall;
+                case 8: return Enums.CellMask.border;
             }
         }
 

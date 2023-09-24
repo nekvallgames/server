@@ -51,6 +51,7 @@ namespace Plugin.Runtime.Services.PlotMode.States.PVP
 
             _success = success;
             _model.GameMode = (int)Mode;
+            _model.IsNeedToCheckOnCorrectPosition = true;
 
             _actors = _actorService.GetActorsInRoom(_host.GameId);
 

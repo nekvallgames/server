@@ -40,6 +40,7 @@ namespace Plugin.Runtime.Services.PlotMode.States.PVP
             LogChannel.Log("PlotModeService :: FightToFirstDeadMode :: EnterTask()", LogChannel.Type.Plot);
 
             _model.GameMode = (int)Mode;
+            _model.IsNeedToCheckOnCorrectPosition = true;
 
             List<IActorScheme> actors = _actorService.GetActorsInRoom(_host.GameId);
 

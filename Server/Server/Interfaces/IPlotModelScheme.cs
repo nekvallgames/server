@@ -33,5 +33,10 @@ namespace Plugin.Interfaces
         /// Номер гравців в ігровій кімнаті, хто отримав перемогу
         /// </summary>
         List<int> WinnerActorsNr { get; set; }
+
+        /// <summary>
+        /// Чи потрібно перевіряти юніта, корректна в нього позиція чи ні? 
+        /// </summary>
+        bool IsNeedToCheckOnCorrectPosition { get; set; }
     }
 }

@@ -7,7 +7,7 @@ namespace Plugin.Schemes
         /// <summary>
         /// Список с селлами из которых создана игровая сетка
         /// </summary>
-        public Cell[] СellsList { get; }
+        public Cell[] CellsList { get; }
 
         /// <summary>
         /// Вказати id ігрової кімнати
@@ -36,7 +36,7 @@ namespace Plugin.Schemes
             OwnerActorNr = ownerActorId;
             SizeGridW = sizeGridW;
             SizeGridH = sizeGridH;
-            СellsList = cellsList;
+            CellsList = cellsList;
         }
     }
 }

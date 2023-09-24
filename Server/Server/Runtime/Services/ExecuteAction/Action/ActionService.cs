@@ -18,12 +18,13 @@ namespace Plugin.Runtime.Services.ExecuteAction.Action
         public ActionService(SyncService syncService, 
                              UnitsService unitsService, 
                              SortHitOnGridService sortTargetOnGridService,
-                             BodyDamageConverterService bodyDamageConverterService)
+                             BodyDamageConverterService bodyDamageConverterService,
+                             GridService gridService)
         {
             _executorsActions = new IExecuteAction[]
             {
                 new WaveDamageAction(syncService, unitsService, sortTargetOnGridService),    // выполнить бросок гранаты и взорвать ее
-                new DamageAction(syncService, unitsService, sortTargetOnGridService, bodyDamageConverterService)      // выстрелить 1 раз с огнестрельного оружия
+                new DamageAction(syncService, unitsService, sortTargetOnGridService, bodyDamageConverterService, gridService)      // выстрелить 1 раз с огнестрельного оружия
             };
         }
 

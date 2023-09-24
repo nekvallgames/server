@@ -12,6 +12,7 @@ namespace Plugin.Tools
             Default,                // логирование по умолчанию
             Plot,                   // логирование игрового сценария
             ExecuteAction,          // логирование выполнить действие 
+            Error
         }
 
         /// <summary>

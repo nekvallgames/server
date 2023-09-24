@@ -3,6 +3,7 @@ using Plugin.Runtime.Services.ExecuteAction;
 using Plugin.Runtime.Services.ExecuteAction.Action;
 using Plugin.Runtime.Services.ExecuteAction.Additional;
 using Plugin.Runtime.Services.ExecuteOp.Executors;
+using Plugin.Runtime.Services.UnitsPath;
 using System.Collections.Generic;
 
 namespace Plugin.Runtime.Services.ExecuteOp
@@ -18,14 +19,17 @@ namespace Plugin.Runtime.Services.ExecuteOp
                                      MoveService moveService, 
                                      VipService vipService, 
                                      ActionService actionService, 
-                                     AdditionalService additionalService)
+                                     AdditionalService additionalService,
+                                     UnitsPathService unitsPathService,
+                                     PlotsModelService plotsModelService,
+                                     CellWalkableService cellWalkableService)
         {
             // Перетасовывая выполнители, можно выставить их приоритет выполнения
             _executors = new IExecuteOpGroup[]
             {
                 new ExecuteOpGroupAction(unitsService, actionService),
                 new ExecuteOpGroupAdditionalByPos(unitsService, additionalService),
-                new ExecuteOpGroupPositionOnGrid(unitsService, moveService),
+                new ExecuteOpGroupPositionOnGrid(unitsService, moveService, unitsPathService, plotsModelService, cellWalkableService),
                 new ExecuteOpGroupVip(unitsService, vipService)
             };
         }

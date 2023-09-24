@@ -1,4 +1,6 @@
-﻿using Plugin.Tools;
+﻿using Plugin.Interfaces;
+using Plugin.Tools;
+using System.Collections.Generic;
 
 namespace Plugin.Schemes
 {
@@ -38,6 +40,13 @@ namespace Plugin.Schemes
         /// Сосед справа от текущей ячейки
         /// </summary>
         public Cell right;
+
+        /// <summary>
+        /// Чи ходібельний поточний селл для юніта?
+        /// </summary>
+        public bool IsWalk;
+
+        public List<IUnit> Occupied { get; set; } = new List<IUnit>();
 
         public void Initialize(uint wIndex,
                                uint hIndex,

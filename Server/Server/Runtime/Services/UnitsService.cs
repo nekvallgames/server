@@ -78,7 +78,7 @@ namespace Plugin.Runtime.Services
         /// posW - позиция на игровой сетке по ширине
         /// posH - позиция на игровой сетке по ширине
         /// </summary>
-        public List<IUnit> GetUnitsUnderThisPosition(string gameId, int unitOwnerId, int posW, int posH )
+        public List<IUnit> GetUnitsUnderThisPosition(string gameId, int unitOwnerId, int posW, int posH)
         {
             var unitsUnderPos = new List<IUnit>();
 

@@ -9,7 +9,15 @@ namespace Plugin.Runtime.Units
     /// <summary>
     /// Юнит с огнестрельным дробовиком
     /// </summary>
-    public class UnitUmp45 : BaseActionUnit, IHealthComponent, IHealthBuffComponent, IArmorComponent, IVipComponent, IHealingAdditional
+    public class UnitUmp45 : BaseActionUnit, 
+        IHealthComponent, 
+        IHealthBuffComponent, 
+        IArmorComponent, 
+        IVipComponent, 
+        IHealingAdditional,
+        IWalkableComponent,
+        INavigationWayForDuelComponent,
+        IGodModeWalkableComponent
     {
         public const int UnitId = 15;
 
@@ -37,6 +45,11 @@ namespace Plugin.Runtime.Units
         public bool IsVip { get; set; }
         public int HealthBuffCapacity { get; set; }
 
+        public int WayMask => 6;
+        public Enums.WalkNavigation NavigationWay { get; set; } = Enums.WalkNavigation.body_width_2;
+        public Enums.WalkNavigation NavigationWayForDuel => Enums.WalkNavigation.body_width_2_for_duel;
+
+        public bool HasGodModeWalkable { get; set; }
 
         #region additional
 

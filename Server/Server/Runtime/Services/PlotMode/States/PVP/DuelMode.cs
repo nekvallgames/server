@@ -43,6 +43,7 @@ namespace Plugin.Runtime.Services.PlotMode.States.PVP
         {
             LogChannel.Log("PlotModeService :: DuelMode :: EnterTask()", LogChannel.Type.Plot);
             _model.GameMode = (int)Mode;
+            _model.IsNeedToCheckOnCorrectPosition = true;
 
             _actors = _actorService.GetActorsInRoom(_host.GameId);
 

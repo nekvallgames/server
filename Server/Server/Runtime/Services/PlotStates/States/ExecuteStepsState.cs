@@ -28,6 +28,7 @@ namespace Plugin.Runtime.Services.PlotStates.States
         private ExecuteOpStepSchemeService _executeOpStepService;
         private HostsService _hostsService;
         private PlotsModelService _plotsModelService;
+        private PathService _pathService;
 
         public ExecuteStepsState(PlotStatesService plotStatesService,
                                  IPluginHost host, 
@@ -41,6 +42,7 @@ namespace Plugin.Runtime.Services.PlotStates.States
             _executeOpStepService = gameInstaller.executeOpStepService;
             _hostsService = gameInstaller.hostsService;
             _plotsModelService = gameInstaller.plotsModelService;
+            _pathService = gameInstaller.pathService;
         }
 
         public override void EnterState()
@@ -52,6 +54,12 @@ namespace Plugin.Runtime.Services.PlotStates.States
             foreach (IActor actor in _hostsService.GetActors(host.GameId))
             {
                 _unitsService.ReviveAction(host.GameId, actor.ActorNr);  // Всiм юнітам перезарядити їхні єкшени
+
+                // Высчитать путь, куда может переместится каждый юнит игрока
+                if (plotModel.IsNeedToCheckOnCorrectPosition)
+                {
+                    _pathService.Calculate(host.GameId, actor.ActorNr);
+                }
             }
 
             // Десериализировать операцію StepScheme акторів, котрі вони прислали 

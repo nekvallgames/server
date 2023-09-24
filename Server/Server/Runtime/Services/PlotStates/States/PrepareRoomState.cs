@@ -1,6 +1,7 @@
 ﻿using Photon.Hive.Plugin;
 using Plugin.Installers;
 using Plugin.Interfaces;
+using Plugin.Runtime.Services.UnitsPath;
 using Plugin.Tools;
 using System.Collections.Generic;
 
@@ -17,6 +18,8 @@ namespace Plugin.Runtime.Services.PlotStates.States
         private ActorService _actorService;
         private UnitsService _unitsService;
         private GridService _gridService;
+        private UnitsPathService _unitsPathService;
+        private CellWalkableService _cellWalkableService;
 
         public PrepareRoomState(PlotStatesService plotStatesService,
                                 IPluginHost host,
@@ -26,6 +29,8 @@ namespace Plugin.Runtime.Services.PlotStates.States
             _actorService = gameInstaller.actorService;
             _unitsService = gameInstaller.unitsService;
             _gridService = gameInstaller.gridService;
+            _unitsPathService = gameInstaller.unitsPathService;
+            _cellWalkableService = gameInstaller.cellWalkableService;
         }
 
         public override void EnterState()
@@ -33,6 +38,12 @@ namespace Plugin.Runtime.Services.PlotStates.States
             LogChannel.Log("PlotStatesService :: CreateUnitsState :: EnterState()", LogChannel.Type.Plot);
 
             List<IActorScheme> actors = _actorService.GetActorsInRoom(host.GameId);
+
+            foreach (IActorScheme actor in actors)
+            {
+                _unitsPathService.CreateScheme(host.GameId, actor.ActorNr);
+                _cellWalkableService.CreateScheme(host.GameId, actor.ActorNr);
+            }
 
             CreateUnits(ref actors);
             CreateGrids(ref actors);

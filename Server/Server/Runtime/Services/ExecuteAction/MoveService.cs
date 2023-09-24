@@ -24,12 +24,7 @@ namespace Plugin.Runtime.Services.ExecuteAction
         /// </summary>
         public void PositionOnGrid(IUnit unit, int posW, int posH)
         {
-            // TODO в будущем добавить проверку на то, может ли юнит дойти 
-            // или стать в текущих координатах
-
             unit.Position = new Int2(posW, posH);
-
-            // LogChannel.Log($"MoveService :: PositionOnGrid() ownerId = {unit.OwnerActorNr}, uId = {unit.UnitId}, instance = {unit.InstanceId}, w = {posW}, h = {posH}", LogChannel.Type.ExecuteAction);
 
             if (unit is IIgnoreSyncComponent){
                 return;     // для поточного юніта не потрібно синхронізувати позіцію

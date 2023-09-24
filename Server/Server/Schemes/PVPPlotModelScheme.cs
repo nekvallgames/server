@@ -40,27 +40,31 @@ namespace Plugin.Schemes
         /// Время, на выполнение шага First Attack
         /// </summary>
         public int FirstAttackTimeDuration { get; private set; }
+        /// <summary>
+        /// Чи потрібно перевіряти юніта, корректна в нього позиція чи ні? 
+        /// </summary>
+        public bool IsNeedToCheckOnCorrectPosition { get; set; }
 
         /// <summary>
         /// Время, которое локальный игрок секономил,
         /// выделеное ему на выполнение шага перемещения
         /// </summary>
-        public int FirstMoveSaveTime { get; set; }
+        //public int FirstMoveSaveTime { get; set; }
 
         /// <summary>
         /// Сохранить время, когда стартовал стейт FirstMove
         /// </summary>
-        public int StartFirstMoveTime { get; set; }
+        //public int StartFirstMoveTime { get; set; }
 
         /// <summary>
         /// Нужно спрятать VIP атрибуты для вражеского юнита?
         /// </summary>
-        public bool IsNeedToHideVipElements { get; set; }
+        //public bool IsNeedToHideVipElements { get; set; }
 
         /// <summary>
         /// Нужно отобразить VIP атрибуты для вражеского юнита?
         /// </summary>
-        public bool IsNeedToShowVipElements { get; set; }
+        //public bool IsNeedToShowVipElements { get; set; }
 
         /// <summary>
         /// Гравець має тільки одного юніта в команді

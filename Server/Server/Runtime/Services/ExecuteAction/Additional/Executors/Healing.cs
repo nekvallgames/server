@@ -1,8 +1,8 @@
 ﻿using Plugin.Interfaces;
+using Plugin.Interfaces.UnitComponents;
 using Plugin.Runtime.Services.Sync;
 using Plugin.Runtime.Services.Sync.Groups;
 using Plugin.Tools;
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
@@ -74,15 +74,21 @@ namespace Plugin.Runtime.Services.ExecuteAction.Additional.Executors
                                                                                   targetW,
                                                                                   targetH);
 
-                if (unitTargets.Count <= 0)
-                {
+                if (unitTargets.Count <= 0){
+                    return;                     // в текущий координатах тапа некого лечить
+                }
+
+                // викинути із списка юнітів, котрих не можно лікувати (наприклад це барр'єр)
+                List<IUnit> units = unitTargets.FindAll(x => x is IHealthComponent);
+
+                if (units.Count <= 0){
                     return;                     // в текущий координатах тапа некого лечить
                 }
 
                 int healthPower = unitMedic.GetHealthPower(); // сила лечения
 
                 // Вылечить юнита
-                _unitsService.Healing(unitTargets[0], healthPower);
+                _unitsService.Healing(units[0], healthPower);
             }
         }
     }

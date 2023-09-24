@@ -7,7 +7,7 @@ namespace Plugin.Interfaces
         /// <summary>
         /// Список с селлами из которых создана игровая сетка
         /// </summary>
-        Cell[] СellsList { get; }
+        Cell[] CellsList { get; }
 
         /// <summary>
         /// Вказати id ігрової кімнати
