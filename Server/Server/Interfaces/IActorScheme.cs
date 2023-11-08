@@ -25,6 +25,10 @@ namespace Plugin.Interfaces
         /// </summary>
         bool IsLeft { get; set; }
         /// <summary>
+        /// Поточний актор являється ботом?
+        /// </summary>
+        bool IsAI { get; }
+        /// <summary>
         /// Id юнітів, котрими буде грати гравець
         /// </summary>
         List<int> Deck { get; set; }

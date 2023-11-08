@@ -9,7 +9,7 @@ namespace Plugin.Runtime.Units
     /// <summary>
     /// Обычный юнит барриер. Дорожня переграда
     /// </summary>
-    public class UnitRoadBlock : BaseUnit, IHealthComponent, IUnit, IIgnoreSyncComponent, IBarrier
+    public class UnitRoadBlock : BaseUnit, IHealthComponent, IUnit, IIgnoreSyncComponent, IBarrierComponent
     {
         public const int UnitId = 8;
 
@@ -21,7 +21,7 @@ namespace Plugin.Runtime.Units
 
         public int HealthCapacity { get; set; }
         public int HealthCapacityMax { get; private set; }    // Количество жизней юнита на старте игры
-
+        public override bool IsHumanoid => false;
         public UnitRoadBlock(UnitFactoryParameters parameters) : base(parameters)
         {
             // Set health

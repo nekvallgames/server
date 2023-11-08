@@ -30,12 +30,12 @@ namespace Plugin.Plugins.PVP
             plotService.Add(new IPlotState[] { 
                                             new AccumulateState(plotService, host, 2, SyncBackendState.NAME),
                                             new SyncBackendState(plotService, host, PrepareRoomState.NAME),
-                                            new PrepareRoomState(plotService, host, StartGameState.NAME),
+                                            new PrepareRoomState(plotService, host, 2, StartGameState.NAME),
                                             new StartGameState(plotService, host, WaitStepResultState.NAME),
                                                             
-                                            new WaitStepResultState(plotService, host, 2, ExecuteStepsState.NAME),
-                                            new ExecuteStepsState(plotService, host, PVPResultState.NAME),
-                                            new PVPResultState(plotService, host, SyncProgressState.NAME),
+                                            new WaitStepResultState(plotService, host, 2, PvpExecuteStepsState.NAME),
+                                            new PvpExecuteStepsState(plotService, host, PvpResultState.NAME),
+                                            new PvpResultState(plotService, host, SyncProgressState.NAME),
                                             new SyncProgressState(plotService, host, SyncStepsState.NAME),
                                             new SyncStepsState(plotService, host, StopRoomState.NAME),
                                             new StopRoomState(plotService, host, WaitStepResultState.NAME)
@@ -51,7 +51,7 @@ namespace Plugin.Plugins.PVP
             base.OnCreateGame(info);
 
             plotsModelService.RemoveIfExist(host.GameId);
-            plotsModelService.Add(new PVPPlotModelScheme(host.GameId));
+            plotsModelService.Add(new PvpPlotModelScheme(host.GameId));
 
 
             foreach (IPlotState state in plotService.States)

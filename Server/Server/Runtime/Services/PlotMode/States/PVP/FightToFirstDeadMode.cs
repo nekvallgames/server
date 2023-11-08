@@ -17,14 +17,14 @@ namespace Plugin.Runtime.Services.PlotMode.States.PVP
         public int ModeId => (int)Mode;
 
         private IPluginHost _host;
-        private PVPPlotModelScheme _model;
+        private PvpPlotModelScheme _model;
         private ActorService _actorService;
         private UnitsService _unitsService;
         private PlotModeService _plotModeService;
 
         public FightToFirstDeadMode(PlotModeService plotModeService,
                                     IPluginHost host,
-                                    PVPPlotModelScheme model,
+                                    PvpPlotModelScheme model,
                                     ActorService actorService,
                                     UnitsService unitsService)
         {
@@ -67,7 +67,6 @@ namespace Plugin.Runtime.Services.PlotMode.States.PVP
                     _plotModeService.ExecuteMode((int)ResultMode.Mode, success);
                     return;
                 }
-
 
                 if (actorsData[0].countAliveUnitWhoWillBeAbleToVip == 1 && actorsData[1].countAliveUnitWhoWillBeAbleToVip == 1)
                 {

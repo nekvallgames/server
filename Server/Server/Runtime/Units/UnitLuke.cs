@@ -9,7 +9,7 @@ namespace Plugin.Runtime.Units
     /// <summary>
     /// Обычный юнит барриер. Металевий люк
     /// </summary>
-    public class UnitLuke : BaseUnit, IHealthComponent, IUnit, IIgnoreSyncComponent, IBarrier
+    public class UnitLuke : BaseUnit, IHealthComponent, IUnit, IIgnoreSyncComponent, IBarrierComponent
     {
         public const int UnitId = 11;
 
@@ -22,6 +22,7 @@ namespace Plugin.Runtime.Units
 
         public int HealthCapacity { get; set; }
         public int HealthCapacityMax { get; private set; }    // Количество жизней юнита на старте игры
+        public override bool IsHumanoid => false;
 
         public UnitLuke(UnitFactoryParameters parameters) : base(parameters)
         {

@@ -1,5 +1,4 @@
 ﻿using Plugin.Tools;
-using System;
 
 namespace Plugin.Interfaces
 {
@@ -7,7 +6,7 @@ namespace Plugin.Interfaces
     /// Дополнительный (пассивный) навык медика. Имеет несколько хилок, 
     /// которыми может лечить своих членов команды
     /// </summary>
-    public interface IHealingAdditional
+    public interface IHealingAdditionalComponent
     {
         /// <summary>
         /// Может ли медик лечить? 
@@ -29,5 +28,7 @@ namespace Plugin.Interfaces
         /// Получить рисунок экшена
         /// </summary>
         Int2[] GetAdditionalArea();
+
+        int AdditionalCapacity { get; }
     }
 }

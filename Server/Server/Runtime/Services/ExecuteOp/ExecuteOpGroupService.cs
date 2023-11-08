@@ -22,14 +22,15 @@ namespace Plugin.Runtime.Services.ExecuteOp
                                      AdditionalService additionalService,
                                      UnitsPathService unitsPathService,
                                      PlotsModelService plotsModelService,
-                                     CellWalkableService cellWalkableService)
+                                     CellWalkableService cellWalkableService,
+                                     GridService gridService)
         {
             // Перетасовывая выполнители, можно выставить их приоритет выполнения
             _executors = new IExecuteOpGroup[]
             {
                 new ExecuteOpGroupAction(unitsService, actionService),
                 new ExecuteOpGroupAdditionalByPos(unitsService, additionalService),
-                new ExecuteOpGroupPositionOnGrid(unitsService, moveService, unitsPathService, plotsModelService, cellWalkableService),
+                new ExecuteOpGroupPositionOnGrid(unitsService, moveService, unitsPathService, plotsModelService, cellWalkableService, gridService),
                 new ExecuteOpGroupVip(unitsService, vipService)
             };
         }

@@ -9,7 +9,7 @@ namespace Plugin.Schemes
     /// Схема, котра буде зберігати в данні ігрового сценарія PVP
     /// Поточна схема буде лежати в моделі PlotsPrivateModel
     /// </summary>
-    public class PVPPlotModelScheme : IPlotModelScheme
+    public class PvpPlotModelScheme : IPlotModelScheme
     {
         /// <summary>
         /// Вказати id ігрової кімнати, в котрій знаходиться актер
@@ -25,6 +25,16 @@ namespace Plugin.Schemes
         /// Поточний ігровий мод
         /// </summary>
         public int GameMode { get; set; }
+
+        /// <summary>
+        /// Поточна гра із ботами?
+        /// </summary>
+        public bool IsGameWithAI { get; set; }
+
+        /// <summary>
+        /// Ігрова кімната була запущена?
+        /// </summary>
+        public bool IsStartRoom { get; set; }
 
         /// <summary>
         /// Чи була гра призупинена? Наприклад один із гравців покинув ігрову кімнату
@@ -44,27 +54,6 @@ namespace Plugin.Schemes
         /// Чи потрібно перевіряти юніта, корректна в нього позиція чи ні? 
         /// </summary>
         public bool IsNeedToCheckOnCorrectPosition { get; set; }
-
-        /// <summary>
-        /// Время, которое локальный игрок секономил,
-        /// выделеное ему на выполнение шага перемещения
-        /// </summary>
-        //public int FirstMoveSaveTime { get; set; }
-
-        /// <summary>
-        /// Сохранить время, когда стартовал стейт FirstMove
-        /// </summary>
-        //public int StartFirstMoveTime { get; set; }
-
-        /// <summary>
-        /// Нужно спрятать VIP атрибуты для вражеского юнита?
-        /// </summary>
-        //public bool IsNeedToHideVipElements { get; set; }
-
-        /// <summary>
-        /// Нужно отобразить VIP атрибуты для вражеского юнита?
-        /// </summary>
-        //public bool IsNeedToShowVipElements { get; set; }
 
         /// <summary>
         /// Гравець має тільки одного юніта в команді
@@ -94,13 +83,33 @@ namespace Plugin.Schemes
         /// Номер гравців в ігровій кімнаті, хто отримав перемогу
         /// </summary>
         public List<int> WinnerActorsNr { get; set; } = new List<int>();
-        
+
+        /// <summary>
+        /// Сервер почав синхронізувати database акторів? 
+        /// </summary>
+        public bool IsBeganSyncProgress { get; set; }
+
+        /// <summary>
+        /// Сервер вже синхронізував database акторів? 
+        /// </summary>
+        public bool IsSyncProgressComplete { get; set; }
+
+        /// <summary>
+        /// Кімната закрита? 
+        /// Після того, як гра закінчилася, усі гравці покинули кімнату, 
+        /// кімната закрита, потрібно задіспоузити все моделі і т.д.
+        /// </summary>
+        public bool IsRoomClosed { get; set; }
+        /// <summary>
+        /// Ігрова кімната доступна в лоббі? Чи можуть другі актори підключатися до неї?
+        /// </summary>
+        public bool IsRoomVisible { get; set; }
 
         private int _fightToFirstDeadStage_countGame;    // Количество игр, сыграных на этапе FightToFirstDeadStage
         private int _fightWithVipStage_countGame;        // Количество игр, сыграных на этапе FightWithVipStage
         private int _duelStage_countGame;                // Количество игр, сыграных на этапе DuelStage
 
-        public PVPPlotModelScheme(string gameId)
+        public PvpPlotModelScheme(string gameId)
         {
             GameId = gameId;
             GameMode = (int)FightToFirstDeadMode.Mode;

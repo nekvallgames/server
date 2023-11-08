@@ -9,7 +9,7 @@ namespace Plugin.Runtime.Units
     /// <summary>
     /// Обычный юнит барриер. Стенка из мешков
     /// </summary>
-    public class UnitBagBarrier : BaseUnit, IHealthComponent, IUnit, IIgnoreSyncComponent, IBarrier
+    public class UnitBagBarrier : BaseUnit, IHealthComponent, IUnit, IIgnoreSyncComponent, IBarrierComponent
     {
         public const int UnitId = 35;
 
@@ -19,9 +19,10 @@ namespace Plugin.Runtime.Units
             new PartBodyScheme(0,0, Enums.PartBody.body), new PartBodyScheme(1,0, Enums.PartBody.body), new PartBodyScheme(2,0, Enums.PartBody.body), new PartBodyScheme(3,0, Enums.PartBody.body)
         };
 
-
         public int HealthCapacity { get; set; }
         public int HealthCapacityMax { get; private set; }    // Количество жизней юнита на старте игры
+
+        public override bool IsHumanoid => false;
 
         public UnitBagBarrier(UnitFactoryParameters parameters) : base(parameters)
         {

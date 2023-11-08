@@ -89,7 +89,7 @@ namespace Plugin.Runtime.Services.UnitsPath
 
         private UnitPathPrivateScheme CalculatePath(IUnit unit, int positionOnGridW, int positionOnGridH, IGrid grid)
         {
-            bool hasGodModeMovement = ((IGodModeWalkableComponent)unit).HasGodModeWalkable;
+            bool hasGodModeMovement = ((IWalkableComponent)unit).IsGodModeMovement;
 
             var path = new List<PathCellPrivateScheme>();
 
@@ -140,6 +140,28 @@ namespace Plugin.Runtime.Services.UnitsPath
             }
 
             return paths.Find(x => x.UnitId == unitId && x.InstanceId == instanceId);
+        }
+
+        /// <summary>
+        /// Просто посчитать путь и нигде не сохраняя
+        /// Получить путь перемещения для юнита, но указав координаты,
+        /// где он сейчас позиционируется на игровой сетке
+        /// Это нужно, что бы показать игроку, где он будет находится,
+        /// например в следующем игровом шаге
+        /// </summary>
+        public List<PathCellPrivateScheme> CalculateAndGetPathUnit(IUnit unit, int positionOnGridW, int positionOnGridH, IGrid grid)
+        {
+            // Получить зону перемещения, куда может переместиться текущий юнит
+            return _findPathWorker.CalculatePath(unit, positionOnGridW, positionOnGridH, grid);
+        }
+
+        public void RemoveAllIfExist(string gameId)
+        {
+            List<ActorUnitsPathPrivateScheme> schemes = _actorUnitsPathPrivateModel.Items.FindAll(x => x.GameId == gameId);
+            foreach (ActorUnitsPathPrivateScheme scheme in schemes)
+            {
+                _actorUnitsPathPrivateModel.Items.Remove(scheme);
+            }
         }
     }
 }

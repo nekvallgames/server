@@ -22,7 +22,7 @@ namespace Plugin.Runtime.Services
         public async Task Sync(IActorScheme actor)
         {
             IPlotModelScheme plotModel = _plotsModelService.Get(actor.GameId);
-
+            
             bool isWin = plotModel.WinnerActorsNr.Any(x => x == actor.ActorNr);
 
             int rating = isWin

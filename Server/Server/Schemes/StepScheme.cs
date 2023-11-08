@@ -58,7 +58,7 @@ namespace Plugin.Schemes
             void DragAndDrop<T>(ref List<T> from, ref List<ISyncComponent> to) where T : ISyncComponent
             {
                 if (from.Any(x => x.SyncStep == syncStep && x.GroupIndex == groupIndex)){
-                    to.Add( from.First(x => x.SyncStep == syncStep && x.GroupIndex == groupIndex));
+                    to.Add(from.First(x => x.SyncStep == syncStep && x.GroupIndex == groupIndex));
                 }
             }
 

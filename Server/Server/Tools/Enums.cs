@@ -65,5 +65,24 @@
 
             body_width_1_horizontal_width_13,        // перемещение юнита при перестрелке. Ширина юнита 1. Ширина по горизонтали 13
         }
+
+        /// <summary>
+        /// Пассивный навык юнита. То, чем он может помочь поманде во время перемещения юнитов
+        /// </summary>
+        public enum Additional
+        {
+            Healing,
+            // Armor
+            // Teleport ect
+        }
+
+        public enum SyncGroup
+        {
+            vip,
+            action,
+            additionalByPos,
+            additionalByUnit,
+            positionOnGrid
+        }
     }
 }

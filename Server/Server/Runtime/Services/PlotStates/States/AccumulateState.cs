@@ -1,5 +1,6 @@
 ﻿using Photon.Hive.Plugin;
 using Plugin.Installers;
+using Plugin.Interfaces;
 using Plugin.Signals;
 using Plugin.Tools;
 
@@ -21,7 +22,9 @@ namespace Plugin.Runtime.Services.PlotStates.States
         /// </summary>
         private int _countActors;
 
-        private bool _isIgnore;
+        private PlotsModelService _plotsModelService;
+        private object _accumulateTimer;
+        private IPlotModelScheme _plotModelScheme;
 
         /// <summary>
         /// Constructor
@@ -39,14 +42,31 @@ namespace Plugin.Runtime.Services.PlotStates.States
 
             _signalBus = gameInstaller.signalBus;
             _hostsService = gameInstaller.hostsService;
+            _plotsModelService = gameInstaller.plotsModelService;
         }
 
         public override void EnterState()
         {
             LogChannel.Log("PlotStatesService :: AccumulateState :: EnterState()", LogChannel.Type.Plot);
-            _isIgnore = false;
+            
+            _plotModelScheme = _plotsModelService.Get(host.GameId);
+            _plotModelScheme.IsRoomVisible = true;
 
             _signalBus.Subscrible<HostsPrivateModelSignal>(OnChangeHostsModel);
+
+            _accumulateTimer = host.CreateOneTimeTimer(OnTimerIsFinish, 1000);
+        }
+
+        private void OnTimerIsFinish()
+        {
+            if (!_plotModelScheme.IsRoomVisible)
+                return;
+
+            // Актор не знайшов собі противника. Підключити актора до бота
+            _plotModelScheme.IsRoomVisible = false;
+            _plotModelScheme.IsGameWithAI = true;
+            
+            plotStatesService.ChangeState(nextState);
         }
 
         /// <summary>
@@ -57,7 +77,7 @@ namespace Plugin.Runtime.Services.PlotStates.States
             // TODO добавити перевірку, якщо в кімнаті буде більше гравців, а ніж потрібно,
             // то що би гравців, котрі лишні, дісконектнуло із кімнати
 
-            if (_isIgnore)
+            if (!_plotModelScheme.IsRoomVisible)
                 return;
 
             if (_hostsService.GetActors(host.GameId).Count == _countActors)
@@ -68,8 +88,14 @@ namespace Plugin.Runtime.Services.PlotStates.States
 
         public override void ExitState()
         {
-            _isIgnore = true;
+            _plotModelScheme.IsRoomVisible = false;
+
             _signalBus.Unsubscrible<HostsPrivateModelSignal>(OnChangeHostsModel);
+
+            host.StopTimer(_accumulateTimer);
+            _accumulateTimer = null;
         }
+
+        
     }
 }

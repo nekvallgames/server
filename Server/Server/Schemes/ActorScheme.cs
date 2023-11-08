@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Plugin.Schemes
 {
-    public struct ActorScheme : IActorScheme
+    public class ActorScheme : IActorScheme
     {
         public string GameId { get; private set; }
         public int ActorNr { get; private set; }
@@ -12,8 +12,9 @@ namespace Plugin.Schemes
         public List<int> Levels { get; set; }
         public int Rating { get; set; }
         public bool IsLeft { get; set; }
+        public bool IsAI { get; private set; }
 
-        public ActorScheme(string gameId, int actorId, string profileId)
+        public ActorScheme(string gameId, int actorId, string profileId, bool isAI)
         {
             GameId = gameId;
             ActorNr = actorId;
@@ -23,6 +24,7 @@ namespace Plugin.Schemes
             Deck = new List<int>();
             Levels = new List<int>();
             IsLeft = false;
+            IsAI = isAI;
         }
     }
 }

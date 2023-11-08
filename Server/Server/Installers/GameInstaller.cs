@@ -4,6 +4,7 @@ using Plugin.Models.Private;
 using Plugin.Models.Public;
 using Plugin.Runtime.Providers;
 using Plugin.Runtime.Services;
+using Plugin.Runtime.Services.AI;
 using Plugin.Runtime.Services.ExecuteAction;
 using Plugin.Runtime.Services.ExecuteAction.Action;
 using Plugin.Runtime.Services.ExecuteAction.Additional;
@@ -66,7 +67,19 @@ namespace Plugin.Installers
         public CellWalkableService cellWalkableService;
         public UnitsPathService unitsPathService;
         public PathService pathService;
-
+        public AIService aiService;
+        public DestinationDecisionService destinationDecisionService;
+        public HealingDecisionService healingDecisionService;
+        public PoisonActionDecisionService poisonActionDecisionService;
+        public VipDecisionService vipDecisionService;
+        public WeaponActionDecisionService weaponActionDecisionService;
+        public SimulateNotificationChangeVipService simulateNotificationChangeVipService;
+        public ActorStepsService actorStepsService;
+        public DeserializeStepService deserializeStepService;
+        public SyncRoomService syncRoomService;
+        public CellTemperatureTraceService temperatureWalkableTraceService;
+        public SimulateSyncActionService simulateSyncActionService;
+        public HitAreaService hitAreaService;
 
         public GameInstaller()
         {
@@ -74,7 +87,7 @@ namespace Plugin.Installers
 
             signalBus = new SignalBus();
             convertService = new ConvertService();
-
+            
             jsonReaderService = new JsonReaderService();
             unitLevelService = new UnitLevelService(jsonReaderService);
             increaseUnitDamageService = new IncreaseUnitDamageService(jsonReaderService);
@@ -103,22 +116,42 @@ namespace Plugin.Installers
                 new ActorsPrivateModel(),
                 new TemperatureWalkableTracePrivateModel(),
                 new CellWalkablePrivateModel(),
-                new ActorUnitsPathPrivateModel()
+                new ActorUnitsPathPrivateModel(),
+                new ActorStepsPrivateModel(),
+                new CellTemperaturePrivateModel()
             });
 
+            actorStepsService = new ActorStepsService(privateModelProvider.Get<ActorStepsPrivateModel>());
             actorService = new ActorService(privateModelProvider.Get<ActorsPrivateModel>(), signalBus);
             hostsService = new HostsService(privateModelProvider.Get<HostsPrivateModel>());
             plotsModelService = new PlotsModelService(privateModelProvider.Get<PlotsPrivateModel>());
             gridBuilder = new GridBuilder();
             gridService = new GridService(publicModelProvider, privateModelProvider, gridBuilder);
             unitInstanceService = new UnitInstanceService(privateModelProvider.Get<UnitsPrivateModel>());
-            unitBuilder = new UnitBuilder(unitInstanceService, unitsPublicModelService, increaseUnitDamageService, increaseUnitHealthService);
+            unitBuilder = new UnitBuilder(unitInstanceService, 
+                                          unitsPublicModelService, 
+                                          increaseUnitDamageService, 
+                                          increaseUnitHealthService);
             opStockService = new OpStockService(privateModelProvider.Get<OpStockPrivateModel>());
+            deserializeStepService = new DeserializeStepService(opStockService,
+                                                                actorStepsService,
+                                                                convertService);
             syncService = new SyncService(privateModelProvider.Get<SyncPrivateModel>(), plotsModelService);
             stepSchemeBuilder = new StepSchemeBuilder(syncService);
-            syncStepService = new SyncStepService(stepSchemeBuilder, convertService, hostsService, plotsModelService, actorService);
+            syncStepService = new SyncStepService(stepSchemeBuilder, 
+                                                  convertService, 
+                                                  hostsService, 
+                                                  plotsModelService, 
+                                                  actorService);
             moveService = new MoveService(syncService);
-            unitsService = new UnitsService(privateModelProvider.Get<UnitsPrivateModel>(), unitBuilder, signalBus, moveService, plotPublicService);
+            unitsService = new UnitsService(privateModelProvider.Get<UnitsPrivateModel>(), 
+                                            unitBuilder, 
+                                            signalBus, 
+                                            moveService, 
+                                            plotPublicService);
+            syncRoomService = new SyncRoomService(unitsService,
+                                                  actorStepsService,
+                                                  plotsModelService);
             locationUnitsSpawner = new LocationUnitsSpawner(publicModelProvider, unitsService, signalBus);
             vipService = new VipService(syncService, unitsService);
             sortTargetOnGridService = new SortHitOnGridService();
@@ -127,9 +160,15 @@ namespace Plugin.Installers
                 sortTargetOnGridService, 
                 bodyDamageConverterService,
                 gridService);
-            additionalService = new AdditionalService(syncService, unitsService);
-            unitsPathService = new UnitsPathService(publicModelProvider.Get<NavigationMapPublicModel>(), privateModelProvider.Get<ActorUnitsPathPrivateModel>(), gridService, unitsService);
-            notificationChangeVipService = new NotificationChangeVipService(hostsService, opStockService, signalBus);
+            additionalService = new AdditionalService(syncService, 
+                                                      unitsService);
+            unitsPathService = new UnitsPathService(publicModelProvider.Get<NavigationMapPublicModel>(), 
+                                                    privateModelProvider.Get<ActorUnitsPathPrivateModel>(), 
+                                                    gridService, 
+                                                    unitsService);
+            notificationChangeVipService = new NotificationChangeVipService(hostsService, 
+                                                                            opStockService, 
+                                                                            signalBus);
             cellWalkableService = new CellWalkableService(unitsPathService, 
                                                           gridService, 
                                                           privateModelProvider.Get<CellWalkablePrivateModel>());
@@ -140,17 +179,55 @@ namespace Plugin.Installers
                                                               additionalService, 
                                                               unitsPathService, 
                                                               plotsModelService,
-                                                              cellWalkableService);
+                                                              cellWalkableService,
+                                                              gridService);
             executeOpStepService = new ExecuteOpStepSchemeService(executeOpGroupService);
             resultService = new ResultService(backendBroadcastService);
-            syncProgressService = new SyncProgressService(backendBroadcastService, plotsModelService, plotPublicService);
+            syncProgressService = new SyncProgressService(backendBroadcastService, 
+                                                          plotsModelService, 
+                                                          plotPublicService);
             gameService = new GameService(signalBus, 
                                           plotsModelService, 
                                           syncProgressService, 
                                           actorService, 
                                           hostsService, 
-                                          convertService);
+                                          convertService,
+                                          unitsService,
+                                          gridService,
+                                          unitsPathService,
+                                          cellWalkableService);
             pathService = new PathService(unitsPathService, cellWalkableService);
+            
+            // AI
+            destinationDecisionService = new DestinationDecisionService(cellWalkableService,
+                                                                        unitsService,
+                                                                        gridService,
+                                                                        unitsPathService);
+            healingDecisionService = new HealingDecisionService(unitsService);
+            poisonActionDecisionService = new PoisonActionDecisionService(unitsService);
+            vipDecisionService = new VipDecisionService(unitsService, unitsPathService);
+            weaponActionDecisionService = new WeaponActionDecisionService(unitsService, unitsPathService);
+            simulateNotificationChangeVipService = new SimulateNotificationChangeVipService(signalBus);
+            hitAreaService = new HitAreaService(cellWalkableService,
+                                                unitsService,
+                                                gridService);
+            temperatureWalkableTraceService = new CellTemperatureTraceService(privateModelProvider.Get<CellTemperaturePrivateModel>());
+            simulateSyncActionService = new SimulateSyncActionService(syncRoomService,
+                                                                      temperatureWalkableTraceService,
+                                                                      hitAreaService);
+            aiService = new AIService(actorService,
+                                      unitsService,
+                                      weaponActionDecisionService,
+                                      poisonActionDecisionService,
+                                      pathService,
+                                      healingDecisionService,
+                                      cellWalkableService,
+                                      destinationDecisionService,
+                                      vipDecisionService,
+                                      simulateNotificationChangeVipService,
+                                      syncRoomService,
+                                      actorStepsService,
+                                      simulateSyncActionService);
         }
     }
 }

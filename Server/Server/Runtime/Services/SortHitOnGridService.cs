@@ -40,7 +40,7 @@ namespace Plugin.Runtime.Services
                     positionOnGridH = occupied.Position.y
                 };
 
-                if (occupied is IBarrier)
+                if (occupied is IBarrierComponent)
                 {
                     barrierList.Add(sortVo);      // unit is barrier
                 }

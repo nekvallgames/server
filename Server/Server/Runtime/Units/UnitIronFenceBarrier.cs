@@ -9,7 +9,7 @@ namespace Plugin.Runtime.Units
     /// <summary>
     /// Обычный юнит барриер. Стенка из металического забора с сеткой
     /// </summary>
-    public class UnitIronFenceBarrier : BaseUnit, IHealthComponent, IUnit, IIgnoreSyncComponent, IBarrier
+    public class UnitIronFenceBarrier : BaseUnit, IHealthComponent, IUnit, IIgnoreSyncComponent, IBarrierComponent
     {
         public const int UnitId = 36;
 
@@ -21,7 +21,7 @@ namespace Plugin.Runtime.Units
 
         public int HealthCapacity { get; set; }
         public int HealthCapacityMax { get; private set; }    // Количество жизней юнита на старте игры
-
+        public override bool IsHumanoid => false;
         public UnitIronFenceBarrier(UnitFactoryParameters parameters) : base(parameters)
         {
             // Set health

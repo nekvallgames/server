@@ -36,7 +36,7 @@ namespace Plugin.Runtime.Services.ExecuteAction.Additional.Executors
         /// </summary>
         public bool CanExecute(IUnit unit)
         {
-            return unit is IHealingAdditional;
+            return unit is IHealingAdditionalComponent;
         }
 
         /// <summary>
@@ -45,7 +45,7 @@ namespace Plugin.Runtime.Services.ExecuteAction.Additional.Executors
         public void Execute(IUnit unit, string gameId, int targetActorId, int posW, int posH)
         {
             // Проверяем, может ли юнит вылечить?
-            IHealingAdditional unitMedic = (IHealingAdditional)unit;
+            IHealingAdditionalComponent unitMedic = (IHealingAdditionalComponent)unit;
 
             if (!unitMedic.CanExecuteAdditional()){
                 Debug.Fail($"ExecuteAdditionalService :: Healing :: Execute() ownerId = {unit.OwnerActorNr}, unitId = {unit.UnitId}, instanceId = {unit.InstanceId}, targetActorId = {targetActorId}, posH = {posH}, I can't healing, maybe I don't have ammunition.");

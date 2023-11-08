@@ -13,10 +13,10 @@ namespace Plugin.Runtime.Units
         IHealthComponent, 
         IHealthBuffComponent, 
         IVipComponent, 
-        IHealingAdditional,
+        IHealingAdditionalComponent,
         IWalkableComponent,
         INavigationWayForDuelComponent,
-        IGodModeWalkableComponent
+        IPoisonBuffComponent
     {
         public const int UnitId = 3;
 
@@ -46,7 +46,21 @@ namespace Plugin.Runtime.Units
 
         public bool HasGodModeWalkable { get; set; }
 
+        public override bool IsHumanoid => true;
+
+        /// <summary>
+        /// Сила яда, котра буде дамажити поточного юніта
+        /// </summary>
+        public int PoisonBuff { get; set; }
+
+        /// <summary>
+        /// Чи може поточний юніт переміщатися по всій ігровій сітці без ніяких огранічєній?
+        /// </summary>
+        public bool IsGodModeMovement { get; set; }
+
         #region additional
+
+        public int AdditionalCapacity => _additionalCapacity;
 
         private int _additionalCapacity;
         private int _additionalPower;
@@ -71,6 +85,20 @@ namespace Plugin.Runtime.Units
         public Int2[] GetAdditionalArea() => new Int2[] { new Int2(0, 0) };
 
         #endregion
+
+        public override Int2 Position {
+            get { return _position; }
+            set {
+
+                if (OwnerActorNr == 2)
+                {
+                    int a = 2;
+                }
+
+                _position = value; 
+            } 
+        }
+        private Int2 _position;
 
         public UnitSniper(UnitFactoryParameters parameters) : base(parameters)
         {

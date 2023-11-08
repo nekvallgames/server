@@ -37,5 +37,12 @@ namespace Plugin.Runtime.Services.PlotStates
 
             CurrState.EnterState();
         }
+
+        public void Dispose()
+        {
+            if (CurrState != null){
+                CurrState.ExitState();
+            }
+        }
     }
 }

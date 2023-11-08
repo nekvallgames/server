@@ -14,10 +14,10 @@ namespace Plugin.Runtime.Units
         IHealthBuffComponent, 
         IArmorComponent, 
         IVipComponent, 
-        IHealingAdditional,
+        IHealingAdditionalComponent,
         IWalkableComponent,
         INavigationWayForDuelComponent,
-        IGodModeWalkableComponent
+        IPoisonBuffComponent
     {
         public const int UnitId = 15;
 
@@ -51,7 +51,21 @@ namespace Plugin.Runtime.Units
 
         public bool HasGodModeWalkable { get; set; }
 
+        public override bool IsHumanoid => true;
+
+        /// <summary>
+        /// Сила яда, котра буде дамажити поточного юніта
+        /// </summary>
+        public int PoisonBuff { get; set; }
+
+        /// <summary>
+        /// Чи може поточний юніт переміщатися по всій ігровій сітці без ніяких огранічєній?
+        /// </summary>
+        public bool IsGodModeMovement { get; set; }
+
         #region additional
+
+        public int AdditionalCapacity => _additionalCapacity;
 
         private int _additionalCapacity;
         private int _additionalPower;

@@ -14,6 +14,7 @@ namespace Plugin.Runtime.Services.PlotStates.States
 
         private ActorService _actorService;
         private ConvertService _convertService;
+        private PlotsModelService _plotsModelService;
 
         public StartGameState(PlotStatesService plotStatesService,
                               IPluginHost host,
@@ -23,11 +24,15 @@ namespace Plugin.Runtime.Services.PlotStates.States
 
             _actorService = gameInstaller.actorService;
             _convertService = gameInstaller.convertService;
+            _plotsModelService = gameInstaller.plotsModelService;
         }
 
         public override void EnterState()
         {
             LogChannel.Log("PlotStatesService :: StartGameState :: EnterState()", LogChannel.Type.Plot);
+
+            IPlotModelScheme plotModel = _plotsModelService.Get(host.GameId);
+            plotModel.IsStartRoom = true;
 
             SendStartGame();
 

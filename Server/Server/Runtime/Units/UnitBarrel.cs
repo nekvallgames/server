@@ -9,7 +9,7 @@ namespace Plugin.Runtime.Units
     /// <summary>
     /// Обычный юнит барриер. Металева бочка
     /// </summary>
-    public class UnitBarrel : BaseUnit, IHealthComponent, IUnit, IIgnoreSyncComponent, IBarrier
+    public class UnitBarrel : BaseUnit, IHealthComponent, IUnit, IIgnoreSyncComponent, IBarrierComponent
     {
         public const int UnitId = 6;
 
@@ -22,7 +22,7 @@ namespace Plugin.Runtime.Units
 
         public int HealthCapacity { get; set; }
         public int HealthCapacityMax { get; private set; }    // Количество жизней юнита на старте игры
-
+        public override bool IsHumanoid => false;
         public UnitBarrel(UnitFactoryParameters parameters) : base(parameters)
         {
             // Set health

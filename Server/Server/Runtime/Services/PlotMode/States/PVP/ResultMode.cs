@@ -16,12 +16,12 @@ namespace Plugin.Runtime.Services.PlotMode.States.PVP
         public int ModeId => (int)Mode;
 
         private IPluginHost _host;
-        private PVPPlotModelScheme _model;
+        private PvpPlotModelScheme _model;
         private ActorService _actorService;
         private UnitsService _unitsService;
 
         public ResultMode(IPluginHost host, 
-                          PVPPlotModelScheme model,
+                          PvpPlotModelScheme model,
                           ActorService actorService,
                           UnitsService unitsService)
         {

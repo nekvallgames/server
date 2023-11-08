@@ -2,6 +2,7 @@
 using Plugin.Models.Private;
 using Plugin.Schemes;
 using Plugin.Signals;
+using System;
 using System.Collections.Generic;
 
 namespace Plugin.Runtime.Services
@@ -17,9 +18,12 @@ namespace Plugin.Runtime.Services
             _signalBus = signalBus;
         }
 
-        public void CreateActor(string gameId, int actorNr, string profileId)
+        public ActorScheme CreateActor(string gameId, int actorNr, string profileId, bool isAI)
         {
-            _model.Add(new ActorScheme(gameId, actorNr, profileId));
+            var actorScheme = new ActorScheme(gameId, actorNr, profileId, isAI);
+            _model.Add(actorScheme);
+
+            return actorScheme;
         }
 
         public void RemoveActor(string gameId, int actorNr)
@@ -57,6 +61,20 @@ namespace Plugin.Runtime.Services
         public List<IActorScheme> GetActorsInRoom(string gameId)
         {
             return _model.Items.FindAll(x => x.GameId == gameId);
+        }
+
+        public IActorScheme GetRealActor(string gameId)
+        {
+            List<IActorScheme> actors = GetActorsInRoom(gameId);
+
+            return actors.Find(x => !x.IsAI);
+        }
+
+        public IActorScheme GetAiActor(string gameId)
+        {
+            List<IActorScheme> actors = GetActorsInRoom(gameId);
+
+            return actors.Find(x => x.IsAI);
         }
     }
 }

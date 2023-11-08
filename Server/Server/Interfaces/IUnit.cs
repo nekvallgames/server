@@ -49,5 +49,11 @@ namespace Plugin.Interfaces
         /// Рiвень юніта
         /// </summary>
         int Level { get; }
+
+        bool IsHumanoid { get; }
+
+        bool Compare(IUnit unit);
+        bool Compare(int ownerActorNr, int unitId, int instanceId);
+        bool Compare(int unitId, int instanceId);
     }
 }

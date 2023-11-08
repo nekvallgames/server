@@ -84,7 +84,7 @@ namespace Plugin.Runtime.Services
                                                                                  unit.InstanceId);
 
             var moveTypeComponent = ((IWalkableComponent)unit);
-            var isBorderMoveType = ((IGodModeWalkableComponent)unit).HasGodModeWalkable;
+            var isBorderMoveType = ((IWalkableComponent)unit).IsGodModeMovement;
 
             IGrid grid = _gridService.Get(unit.GameId, unit.OwnerActorNr);
 
@@ -253,6 +253,41 @@ namespace Plugin.Runtime.Services
                 {
                     cellsSettleArea.Add(cell);
                 }
+            }
+        }
+
+        /// <summary>
+        /// Добавити позицію до ігнор списка
+        /// </summary>
+        public void AddPositionToIgnoreList(string gameId, int actorNr, (int, int) ignorePosition)
+        {
+            CellWalkablePrivateScheme cellWalkablePrivateScheme = _cellWalkablePrivateModel.Get(gameId, actorNr);
+            cellWalkablePrivateScheme.IgnoreList.Add(ignorePosition);
+        }
+
+        public bool IsIgnorePosition(string gameId, int actorNr, int w, int h)
+        {
+            CellWalkablePrivateScheme cellWalkablePrivateScheme = _cellWalkablePrivateModel.Get(gameId, actorNr);
+            
+            return cellWalkablePrivateScheme.IgnoreList.Any(x => x.Item1 == w && x.Item2 == h);
+        }
+
+        /// <summary>
+        /// Очистити ігнор список
+        /// </summary>
+        public void ClearIgnoreList(string gameId, int actorNr)
+        {
+            CellWalkablePrivateScheme cellWalkablePrivateScheme = _cellWalkablePrivateModel.Get(gameId, actorNr);
+
+            cellWalkablePrivateScheme.IgnoreList.Clear();
+        }
+
+        public void RemoveAllIfExist(string gameId)
+        {
+            List<CellWalkablePrivateScheme> schemes = _cellWalkablePrivateModel.Items.FindAll(x => x.GameId == gameId);
+            foreach (CellWalkablePrivateScheme scheme in schemes)
+            {
+                _cellWalkablePrivateModel.Items.Remove(scheme);
             }
         }
     }

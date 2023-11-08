@@ -87,7 +87,11 @@ namespace Plugin.Runtime.Services
                 // 1. Проверяем, юнит принадлежит игроку unitOwnerID
                 if (unit.GameId == gameId && unit.OwnerActorNr == unitOwnerId){
                     // 2. Проверяем, попали мы по этому юниту
-                    if (IsPositionUnderUnitArea(unit, posW, posH)){
+                    if (IsPositionUnderUnitArea(unit, posW, posH))
+                    {
+                        if (unit.IsDead)
+                            continue;
+
                         unitsUnderPos.Add(unit);
                     }
                 }
@@ -128,7 +132,7 @@ namespace Plugin.Runtime.Services
         /// </summary>
         public void SetDamage(IUnit unit, int damage)
         {
-            // Debug.WriteLine("id = " + unit.UnitId + ", damage = " + damage);
+            Debug.WriteLine("hit owner = " + unit.OwnerActorNr + ", id = " + unit.UnitId + ", instance = " + unit.InstanceId + ", damage = " + damage);
 
             bool hasHealth = HasComponent<IHealthComponent>(unit);
             bool hasArmor = HasComponent<IArmorComponent>(unit);
@@ -199,7 +203,7 @@ namespace Plugin.Runtime.Services
         /// </summary>
         public bool HasAliveUnit(string gameId, int actorNr)
         {
-            return _model.Items.Any(x => x.GameId == gameId && x.OwnerActorNr == actorNr && !x.IsDead && !HasComponent<IBarrier>(x));
+            return _model.Items.Any(x => x.GameId == gameId && x.OwnerActorNr == actorNr && !x.IsDead && !HasComponent<IBarrierComponent>(x));
         }
 
         /// <summary>
@@ -207,7 +211,7 @@ namespace Plugin.Runtime.Services
         /// </summary>
         public int GetAliveUnitsCount(string gameId, int actorNr)
         {
-            return _model.Items.FindAll(x => x.GameId == gameId && x.OwnerActorNr == actorNr && !x.IsDead && !HasComponent<IBarrier>(x)).Count;
+            return _model.Items.FindAll(x => x.GameId == gameId && x.OwnerActorNr == actorNr && !x.IsDead && !HasComponent<IBarrierComponent>(x)).Count;
         }
 
         /// <summary>
@@ -223,7 +227,7 @@ namespace Plugin.Runtime.Services
         /// </summary>
         public IUnit GetAnyAliveUnit(string gameId, int actorNr)
         {
-            return _model.Items.Find(x => x.GameId == gameId && x.OwnerActorNr == actorNr && !x.IsDead && !HasComponent<IBarrier>(x));
+            return _model.Items.Find(x => x.GameId == gameId && x.OwnerActorNr == actorNr && !x.IsDead && !HasComponent<IBarrierComponent>(x));
         }
 
         /// <summary>
@@ -269,7 +273,7 @@ namespace Plugin.Runtime.Services
         /// </summary>
         public bool HasAnyDeadUnit(string gameId, int actorNr)
         {
-            return _model.Items.Any(x => x.GameId == gameId && x.OwnerActorNr == actorNr && x.IsDead && !HasComponent<IBarrier>(x));
+            return _model.Items.Any(x => x.GameId == gameId && x.OwnerActorNr == actorNr && x.IsDead && !HasComponent<IBarrierComponent>(x));
         }
 
         /// <summary>
@@ -451,7 +455,7 @@ namespace Plugin.Runtime.Services
         {
             foreach (IUnit unit in GetUnits(gameId, actorNr))
             {
-                if (!unit.IsDead && !HasComponent<IBarrier>(unit))
+                if (!unit.IsDead && !HasComponent<IBarrierComponent>(unit))
                 {
                     units.Add(unit);
                 }                
@@ -490,6 +494,46 @@ namespace Plugin.Runtime.Services
             }
 
             return null;
+        }
+
+        /// <summary>
+        /// Отримати юнітів, у котрих є аптечка
+        /// </summary>
+        public void GetUnitsWithMedicPack(string gameId, int actorNr, ref List<IUnit> units)
+        {
+            var aliveUnits = new List<IUnit>();
+            GetAliveUnits(gameId, actorNr, ref aliveUnits);
+
+            if (aliveUnits.Count <= 0)
+                return;
+
+            foreach (IUnit unit in aliveUnits)
+            {
+                if (!(unit is IHealingAdditionalComponent))
+                    continue;
+
+                var capacity = (unit as IHealingAdditionalComponent).AdditionalCapacity;
+                if (capacity > 0)
+                    units.Add(unit);
+            }
+        }
+
+        /// <summary>
+        /// Отримати всих живих юнітів, котрі можуть стати VIP
+        /// </summary>
+        public void GetAliveUnitsForVip(string gameId, int actorNr, ref List<IUnit> result)
+        {
+            List<IUnit> units = GetUnits(gameId, actorNr);
+
+            foreach (IUnit unit in units)
+            {
+                if (unit.IsDead || !(unit is IVipComponent)){
+                    // текущий юнит мертв.
+                    continue;
+                }
+
+                result.Add(unit);
+            }
         }
     }
 

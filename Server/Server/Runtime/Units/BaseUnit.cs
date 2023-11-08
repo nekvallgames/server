@@ -32,7 +32,7 @@ namespace Plugin.Runtime.Units
         /// <summary>
         /// Позиція на ігровій сітці
         /// </summary>
-        public Int2 Position { get; set; }
+        public virtual Int2 Position { get; set; }
 
         /// <summary>
         /// Ширина та висота юніта
@@ -54,7 +54,8 @@ namespace Plugin.Runtime.Units
         /// Рiвень юніта
         /// </summary>
         public int Level { get; private set; }
-        
+
+        public abstract bool IsHumanoid { get; }
 
         protected UnitPublicScheme unitPublicScheme;
         protected IncreaseUnitDamageService increaseUnitDamageService;
@@ -73,6 +74,21 @@ namespace Plugin.Runtime.Units
             increaseUnitHealthService = parameters.IncreaseUnitHealthService;
 
             // LogChannel.Log($"Created unit ownerId = {OwnerActorNr}, uId = {UnitId}, instance = {InstanceId}, level = {Level}", LogChannel.Type.Default);
+        }
+
+        public bool Compare(IUnit unit)
+        {
+            return Compare(unit.OwnerActorNr, unit.UnitId, unit.InstanceId);
+        }
+
+        public bool Compare(int ownerActorId, int unitId, int instanceId)
+        {
+            return OwnerActorNr == ownerActorId && UnitId == unitId && InstanceId == instanceId;
+        }
+
+        public bool Compare(int unitId, int instanceId)
+        {
+            return UnitId == unitId && InstanceId == instanceId;
         }
 
         protected BaseUnit()

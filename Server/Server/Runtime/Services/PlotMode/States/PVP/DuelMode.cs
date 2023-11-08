@@ -16,7 +16,7 @@ namespace Plugin.Runtime.Services.PlotMode.States.PVP
 
         private PlotModeService _plotModeService;
         private IPluginHost _host;
-        private PVPPlotModelScheme _model;
+        private PvpPlotModelScheme _model;
         private ActorService _actorService;
         private UnitsService _unitsService;
 
@@ -28,7 +28,7 @@ namespace Plugin.Runtime.Services.PlotMode.States.PVP
 
         public DuelMode(PlotModeService plotModeService, 
                         IPluginHost host, 
-                        PVPPlotModelScheme model, 
+                        PvpPlotModelScheme model, 
                         ActorService actorService,
                         UnitsService unitsService)
         {
@@ -64,6 +64,17 @@ namespace Plugin.Runtime.Services.PlotMode.States.PVP
                 foreach (ActorScheme actor in _actors)
                 {
                     _unitsService.RemoveAllMedicHealing(_host.GameId, actor.ActorNr);
+                }
+
+                ChangeWayForDuel(_actor0DuelUnit);
+                ChangeWayForDuel(_actor1DuelUnit);
+
+                // Перебрати юнітів гравців, і відключити режим GodMode для переміщення по всій ігровій сітці
+                if (_actor0DuelUnit is IWalkableComponent){
+                    (_actor0DuelUnit as IWalkableComponent).IsGodModeMovement = false;
+                }
+                if (_actor1DuelUnit is IWalkableComponent){
+                    (_actor1DuelUnit as IWalkableComponent).IsGodModeMovement = false;
                 }
             }
             else
@@ -128,6 +139,7 @@ namespace Plugin.Runtime.Services.PlotMode.States.PVP
             unit.IsDead = false;
             ((IHealthComponent)unit).HealthCapacity = 1;
             ((IDamageAction)unit).ActionCapacity = 1;
+            ((IDamageAction)unit).OriginalActionCapacity = 1;
         }
 
         /// <summary>
@@ -145,6 +157,17 @@ namespace Plugin.Runtime.Services.PlotMode.States.PVP
             ReviveUnit(_actor1DuelUnit);
 
             // Продолжаем игру дальше
+        }
+
+        /// <summary>
+        /// Для дуэли юнитам нужно сменить карту навигации
+        /// </summary>
+        private void ChangeWayForDuel(IUnit unit)
+        {
+            if (!(unit is IWalkableComponent) && !(unit is INavigationWayForDuelComponent))
+                return;
+
+            (unit as IWalkableComponent).NavigationWay = (unit as INavigationWayForDuelComponent).NavigationWayForDuel;
         }
     }
 }

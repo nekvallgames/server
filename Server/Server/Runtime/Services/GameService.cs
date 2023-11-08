@@ -1,10 +1,12 @@
 ﻿using Photon.Hive.Plugin;
 using Plugin.Interfaces;
+using Plugin.Runtime.Services.UnitsPath;
 using Plugin.Schemes;
 using Plugin.Signals;
 using Plugin.Tools;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Plugin.Runtime.Services
 {
@@ -15,19 +17,31 @@ namespace Plugin.Runtime.Services
         private ActorService _actorService;
         private HostsService _hostsService;
         private ConvertService _convertService;
+        private UnitsService _unitsService;
+        private GridService _gridService;
+        private UnitsPathService _unitsPathService;
+        private CellWalkableService _cellWalkableService;
 
         public GameService(SignalBus signalBus, 
                            PlotsModelService plotsModelService, 
                            SyncProgressService syncProgressService,
                            ActorService actorService,
                            HostsService hostsService,
-                           ConvertService convertService)
+                           ConvertService convertService,
+                           UnitsService unitsService,
+                           GridService gridService,
+                           UnitsPathService unitsPathService,
+                           CellWalkableService cellWalkableService)
         {
             _plotsModelService = plotsModelService;
             _syncProgressService = syncProgressService;
             _actorService = actorService;
             _hostsService = hostsService;
             _convertService = convertService;
+            _unitsService = unitsService;
+            _gridService = gridService;
+            _unitsPathService = unitsPathService;
+            _cellWalkableService = cellWalkableService;
 
             signalBus.Subscrible<ActorLeftSignal>(OnActorLeft);
         }
@@ -40,7 +54,13 @@ namespace Plugin.Runtime.Services
             IPlotModelScheme model = _plotsModelService.Get(signalData.Actor.GameId);
             IList<IActorScheme> actors = _actorService.GetActorsInRoom(signalData.Actor.GameId);
 
-            if (model == null || model.IsAbort || model.IsGameFinished || actors.Count <= 0)
+            if (model == null 
+                || model.IsAbort 
+                || model.IsGameFinished 
+                || actors.Count <= 0
+                || model.IsBeganSyncProgress
+                || model.IsSyncProgressComplete
+                || !model.IsStartRoom)
             {
                 return;
             }
@@ -48,23 +68,18 @@ namespace Plugin.Runtime.Services
             model.IsAbort = true;
 
             // set win players, who still in room
-            foreach (IActorScheme actor in actors)
-            {
-                if (!actor.IsLeft)
-                {
+            foreach (IActorScheme actor in actors){
+                if (!actor.IsLeft){
                     model.WinnerActorsNr.Add(actor.ActorNr);
                 }
             }
 
-            // sync progress
-            foreach (IActorScheme actor in actors)
-            {
-                await _syncProgressService.Sync(actor);
-            }
+            await SyncProgress(signalData.Actor.GameId);
 
             if (!actors.Any(x => !x.IsLeft))
             {
                 // all actors left from room
+                TryToDisposeRoom(signalData.Actor.GameId);
                 return;
             }
 
@@ -90,6 +105,58 @@ namespace Plugin.Runtime.Services
                                   OperationCode.abort,
                                   pushData,
                                   CacheOperations.DoNotCache);        // не кэшировать сообщение
+        }
+
+        public async Task SyncProgress(string gameId)
+        {
+            IList<IActorScheme> actors = _actorService.GetActorsInRoom(gameId);
+            IPlotModelScheme plotModel = _plotsModelService.Get(gameId);
+
+            if (plotModel.IsBeganSyncProgress || plotModel.IsSyncProgressComplete)
+                return;
+
+            plotModel.IsBeganSyncProgress = true;
+
+            foreach (IActorScheme actor in actors)
+            {
+                if (actor.IsAI)
+                    continue;
+
+                await _syncProgressService.Sync(actor);
+            }
+
+            plotModel.IsSyncProgressComplete = true;
+        }
+
+        public void CloseRoom(string gameId)
+        {
+            if (!_plotsModelService.IsExist(gameId))
+                return;
+
+            IPlotModelScheme plotModelScheme = _plotsModelService.Get(gameId);
+            plotModelScheme.IsRoomClosed = true;
+
+            TryToDisposeRoom(gameId);
+        }
+
+        public void TryToDisposeRoom(string gameId)
+        {
+            IPlotModelScheme plotModelScheme = _plotsModelService.Get(gameId);
+
+            if (plotModelScheme.IsStartRoom && (!plotModelScheme.IsSyncProgressComplete || !plotModelScheme.IsRoomClosed))
+                return;
+
+            DisposeRoom(gameId);
+        }
+
+        private void DisposeRoom(string gameId)
+        {
+            _plotsModelService.RemoveIfExist(gameId);
+            _unitsService.RemoveAllIfExist(gameId);
+            _gridService.RemoveAllIfExist(gameId);
+            _actorService.RemoveActorsInRoom(gameId);
+            _unitsPathService.RemoveAllIfExist(gameId);
+            _cellWalkableService.RemoveAllIfExist(gameId);
         }
     }
 }

@@ -11,18 +11,18 @@ namespace Plugin.Runtime.Services.PlotStates.States
     /// Стейт, в котрому ми перепровіряємо хто виграв, хто ні в PVP
     /// Зміна мода та таке інше
     /// </summary>
-    public class PVPResultState : BasePlotState
+    public class PvpResultState : BasePlotState
     {
-        public const string NAME = "PVPResultState";
+        public const string NAME = "PvpResultState";
         public override string Name => NAME;
 
         private PlotsModelService _plotsModelService;
         private UnitsService _unitsService;
         private ActorService _actorService;
-        private PVPPlotModelScheme _plotModelScheme;
+        private PvpPlotModelScheme _plotModelScheme;
         private PlotModeService _plotModeService;
 
-        public PVPResultState(PlotStatesService plotStatesService,
+        public PvpResultState(PlotStatesService plotStatesService,
                               IPluginHost host,
                               string nextState) : base(plotStatesService, host, nextState)
         {
@@ -35,7 +35,7 @@ namespace Plugin.Runtime.Services.PlotStates.States
 
         public override void Initialize()
         {
-            _plotModelScheme = (PVPPlotModelScheme)_plotsModelService.Get(host.GameId);
+            _plotModelScheme = (PvpPlotModelScheme)_plotsModelService.Get(host.GameId);
 
             _plotModeService = new PlotModeService();
             _plotModeService.Add(new IMode[] {

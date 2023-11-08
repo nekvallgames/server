@@ -16,6 +16,7 @@ namespace Plugin.Runtime.Services.PlotStates.States
         private PlotsModelService _plotsModelService;
         private ActorService _actorService;
         private SyncProgressService _syncProgressService;
+        private GameService _gameService;
 
         private IPlotModelScheme _plotModel;
 
@@ -28,15 +29,20 @@ namespace Plugin.Runtime.Services.PlotStates.States
             _plotsModelService = gameInstaller.plotsModelService;
             _actorService = gameInstaller.actorService;
             _syncProgressService = gameInstaller.syncProgressService;
+            _gameService = gameInstaller.gameService;
         }
 
         public override void EnterState()
         {
             _plotModel = _plotsModelService.Get(host.GameId);
 
-            if (!_plotModel.IsAbort && _plotModel.IsGameFinished)
+            if (_plotModel.IsAbort)
+                return;
+
+            if (_plotModel.IsGameFinished)
             {
-                SyncProgress(() => {
+                SyncProgress(host.GameId, () => {
+                    _gameService.TryToDisposeRoom(host.GameId);
                     plotStatesService.ChangeState(nextState);
                 });
             }
@@ -46,13 +52,9 @@ namespace Plugin.Runtime.Services.PlotStates.States
             }
         }
 
-        private async void SyncProgress(Action success)
+        private async void SyncProgress(string gameId, Action success)
         {
-            foreach (IActorScheme actor in _actorService.GetActorsInRoom(host.GameId))
-            {
-                await _syncProgressService.Sync(actor);
-            }
-
+            await _gameService.SyncProgress(gameId);
             success?.Invoke();
         }
     }

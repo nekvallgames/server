@@ -20,18 +20,21 @@ namespace Plugin.Runtime.Services.ExecuteOp.Executors
         private UnitsPathService _unitsPathService;
         private PlotsModelService _plotsModelService;
         private CellWalkableService _cellWalkableService;
+        private GridService _gridService;
 
         public ExecuteOpGroupPositionOnGrid(UnitsService unitsService, 
                                             MoveService moveService, 
                                             UnitsPathService unitsPathService,
                                             PlotsModelService plotsModelService,
-                                            CellWalkableService cellWalkableService)
+                                            CellWalkableService cellWalkableService,
+                                            GridService gridService)
         {
             _unitsService = unitsService;
             _moveService = moveService;
             _unitsPathService = unitsPathService;
             _plotsModelService = plotsModelService;
             _cellWalkableService = cellWalkableService;
+            _gridService = gridService;
         }
 
         /// <summary>
@@ -82,9 +85,16 @@ namespace Plugin.Runtime.Services.ExecuteOp.Executors
                 positionW = unit.Position.x;
                 positionH = unit.Position.y;
             }
-               
+
+            // Очистити сели, на котрих стояв юніт
+            IGrid grid = _gridService.Get(gameId, playerActorNr);
+            _gridService.FreeArea(unit, grid, unit.Position.x, unit.Position.y);
+
             // Переместить юнита в указаную позицию
             _moveService.PositionOnGrid(unit, positionW, positionH);
+
+            // Заняти сели, на котрих став юніт
+            _gridService.BusyArea(unit, grid, unit.Position.x, unit.Position.y);
         }
 
         /// <summary>

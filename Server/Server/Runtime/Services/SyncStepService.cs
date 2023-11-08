@@ -59,6 +59,8 @@ namespace Plugin.Runtime.Services
                 pushData.Add((byte)actor.ActorNr, jsonString);
             }
 
+            int a = 2;
+
             host.BroadcastEvent(ReciverGroup.All,                   // отправить сообщение всем
                                 0,                                  // номер актера, если нужно отправить уникальное сообщение
                                 0,

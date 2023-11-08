@@ -83,6 +83,8 @@ namespace Plugin.Runtime.Services.ExecuteAction.Action.Executors
                 // Находим всех противников, в которых мы выстрелили
                 List<IUnit> targets = _sortTargetOnGridService.SortTargets(_unitsService.GetUnitsUnderThisPosition(gameId, targetActorNr, targetW, targetH));
 
+                // Debug.WriteLine($"shot id = {unit.UnitId}, ownerNr = {unit.OwnerActorNr}, w = {targetW}, h = {targetH}, targets = {targets.Count}");
+
                 // LogChannel.Log($"ActionService :: DamageAction() ownerId = {unit.OwnerActorNr}, unitId = {unit.UnitId}, instanceId = {unit.InstanceId}, cellW = {targetW}, cellH = {targetH}");
 
                 if (targets.Count <= 0)

@@ -9,7 +9,7 @@ namespace Plugin.Runtime.Units
     /// <summary>
     /// Обычный юнит барриер. Контейнер із сміттям
     /// </summary>
-    public class UnitTrash : BaseUnit, IHealthComponent, IUnit, IIgnoreSyncComponent, IBarrier
+    public class UnitTrash : BaseUnit, IHealthComponent, IUnit, IIgnoreSyncComponent, IBarrierComponent
     {
         public const int UnitId = 7;
 
@@ -23,6 +23,7 @@ namespace Plugin.Runtime.Units
         public int HealthCapacity { get; set; }
         public int HealthCapacityMax { get; private set; }    // Количество жизней юнита на старте игры
 
+        public override bool IsHumanoid => false;
         public UnitTrash(UnitFactoryParameters parameters) : base(parameters)
         {
             // Set health

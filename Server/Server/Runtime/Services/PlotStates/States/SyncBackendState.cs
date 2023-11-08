@@ -49,6 +49,9 @@ namespace Plugin.Runtime.Services.PlotStates.States
 
             foreach (IActorScheme actor in actors)
             {
+                if (actor.IsAI)
+                    continue;
+
                 await _backendBroadcastService.SyncActorData(actor);
                 await _backendBroadcastService.SyncLevelByDeck(actor);
             }

@@ -21,7 +21,7 @@ namespace Plugin.Runtime.Services.PlotMode.States.PVP
 
         private PlotModeService _plotModeService;
         private IPluginHost _host;
-        private PVPPlotModelScheme _model;
+        private PvpPlotModelScheme _model;
         private ActorService _actorService;
         private UnitsService _unitsService;
         private Action _success;
@@ -34,7 +34,7 @@ namespace Plugin.Runtime.Services.PlotMode.States.PVP
 
         public FightWithVipMode(PlotModeService plotModeService, 
                                 IPluginHost host, 
-                                PVPPlotModelScheme model, 
+                                PvpPlotModelScheme model, 
                                 ActorService actorService,
                                 UnitsService unitsService)
         {
@@ -54,6 +54,21 @@ namespace Plugin.Runtime.Services.PlotMode.States.PVP
             _model.IsNeedToCheckOnCorrectPosition = true;
 
             _actors = _actorService.GetActorsInRoom(_host.GameId);
+
+            // Якщо гравець має тільки одного живого юніта,
+            // то в поточному моді робимо переміщення по всій ігровій сітці
+            foreach (IActorScheme actor in _actors)
+            {
+                if (_unitsService.GetAliveUnitsCount(actor.GameId, actor.ActorNr) == 1)
+                {
+                    List<IUnit> units = new List<IUnit>();
+                    _unitsService.GetAliveUnits(actor.GameId, actor.ActorNr, ref units);
+
+                    if (units[0] is IWalkableComponent){
+                        (units[0] as IWalkableComponent).IsGodModeMovement = true;
+                    }
+                }
+            }
 
             if (!_model.WasPreparedVipMode)
             {
@@ -180,12 +195,12 @@ namespace Plugin.Runtime.Services.PlotMode.States.PVP
     {
         private string _gameId;
         private int _actorNr;
-        private PVPPlotModelScheme _model;
+        private PvpPlotModelScheme _model;
         private UnitsService _unitsService;
 
         public IncreaseDamageLastUnit(string gameId, 
                                       int actorNr,  
-                                      PVPPlotModelScheme model,
+                                      PvpPlotModelScheme model,
                                       UnitsService unitsService)
         {
             _gameId = gameId;

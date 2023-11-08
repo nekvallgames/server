@@ -15,11 +15,13 @@ namespace Plugin.Runtime.Services.PlotStates.States
 
         private SignalBus _signalBus;
         private OpStockService _opStockService;
+        private PlotsModelService _plotsModelService;
 
         /// <summary>
         /// Кількість гравців, котрі потрібні для старту ігрової кімнати
         /// </summary>
         private int _countActors;
+        private bool _isGameWithAI;
 
         public WaitStepResultState(PlotStatesService plotStatesService,
                                    IPluginHost host, 
@@ -32,11 +34,14 @@ namespace Plugin.Runtime.Services.PlotStates.States
 
             _signalBus = gameInstaller.signalBus;
             _opStockService = gameInstaller.opStockService;
+            _plotsModelService = gameInstaller.plotsModelService;
         }
 
         public override void EnterState()
         {
             LogChannel.Log("PlotService :: WaitStepResult :: EnterState()", LogChannel.Type.Plot);
+
+            _isGameWithAI = _plotsModelService.Get(host.GameId).IsGameWithAI;
 
             // Слушаем сигнал о том, что клиент прислал операцию на GameServer
             _signalBus.Subscrible<OpStockPrivateModelSignal>(OpStockModelChanged);
@@ -49,9 +54,21 @@ namespace Plugin.Runtime.Services.PlotStates.States
         /// </summary>
         private void OpStockModelChanged(OpStockPrivateModelSignal signalData)
         {
+            if (signalData.GameId != host.GameId)
+                return;
+
+            // ToDo я чекаю на любу операцію syncStep, а мені потрібно чекати із певним syncStep
+
             int opStepCount = _opStockService.GetOpCount(host.GameId, OperationCode.syncStep);
 
-            if (opStepCount == _countActors)
+            bool result = opStepCount == _countActors;
+
+            if (_isGameWithAI)
+            {
+                result = opStepCount > 0;
+            }
+                
+            if (result)
             {
                 // Оба игрока прислали свой ход. Можно не ждать окончание таймера, 
                 // а перейти в следующее состояние
