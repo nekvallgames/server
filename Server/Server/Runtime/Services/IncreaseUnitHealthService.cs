@@ -3,6 +3,9 @@ using System.Linq;
 
 namespace Plugin.Runtime.Services
 {
+    /// <summary>
+    /// Сервіс, котрий збільшить кількість життів юніта при створенні, взалежності від level юніта
+    /// </summary>
     public class IncreaseUnitHealthService
     {
         private const string jsonName = "increase_unit_health";

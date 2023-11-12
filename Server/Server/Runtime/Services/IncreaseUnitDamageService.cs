@@ -3,6 +3,9 @@ using System.Linq;
 
 namespace Plugin.Runtime.Services
 {
+    /// <summary>
+    /// Сервіс, котрий збільшить урон від damage при створенні юніта, в залежності від level юніта
+    /// </summary>
     public class IncreaseUnitDamageService
     {
         private const string jsonName = "increase_unit_damage";

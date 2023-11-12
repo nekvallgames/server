@@ -25,6 +25,10 @@ namespace Plugin.Runtime.Services.AI
             _hitAreaService = hitAreaService;
         }
 
+        /// <summary>
+        /// Виконати для аказаного юніта по вказаному юніту всі єкшени
+        /// (Скоріше за все, це будуть всі єкшени атаки)
+        /// </summary>
         public void SimulateAllActions(IUnit unitHunter, IUnit unitTarget)
         {
             // кількість єкшенів юніта, котрий буде атакувати

@@ -5,6 +5,9 @@ using System.Collections.Generic;
 
 namespace Plugin.Runtime.Services.AI
 {
+    /// <summary>
+    /// Сервіс, за допомогою котрого будемо керувати роботою AI
+    /// </summary>
     public class AIService
     {
         private ActorService _actorService;

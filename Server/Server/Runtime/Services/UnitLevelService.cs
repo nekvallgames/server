@@ -5,6 +5,8 @@ namespace Plugin.Runtime.Services
 {
     /// <summary>
     /// Сервіс, за допомогою котрого будемо реалізовувати манімапуляції із level юнітом
+    /// cost - це ціна прокачки в софт валюті для прокачки юніта на вказаний level
+    /// capacity - це кількість карт, котрі гравець повинен потратити для прокачки юніта на вказаний level
     /// </summary>
     public class UnitLevelService
     {

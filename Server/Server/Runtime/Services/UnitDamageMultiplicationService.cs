@@ -3,6 +3,9 @@ using Plugin.Tools;
 
 namespace Plugin.Runtime.Services
 {
+    /// <summary>
+    /// Сервіс, за допомогою котрого буде збільшуватися або зменшуватися урон по тушкі юніта
+    /// </summary>
     public class UnitDamageMultiplicationService
     {
         private const string jsonName = "unit_damage_multiplication";

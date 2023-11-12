@@ -5,6 +5,9 @@ using System.Linq;
 
 namespace Plugin.Runtime.Services
 {
+    /// <summary>
+    /// Сервіс, котрий виконує маніпуляції над виконаним кроком (StepScheme) котрий присилає клієнт
+    /// </summary>
     public class ActorStepsService
     {
         private ActorStepsPrivateModel _model;

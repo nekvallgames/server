@@ -2,6 +2,9 @@
 
 namespace Plugin.Runtime.Services
 {
+    /// <summary>
+    /// Сервіс, за допомогою котрого можно отримати публічні данні юніта
+    /// </summary>
     public class UnitsPublicModelService
     {
         private const string jsonName = "units";

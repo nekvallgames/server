@@ -15,18 +15,18 @@ namespace Plugin.Runtime.Services.UnitsPath
     public class UnitsPathService
     {
         private NavigationMapPublicModel _navigationMapPublicModel;
-        private ActorUnitsPathPrivateModel _actorUnitsPathPrivateModel;
+        private UnitsPathPrivateModel _unitsPathPrivateModel;
         private GridService _gridService;
         private UnitsService _unitService;
         private FindPathWorker _findPathWorker;
 
         public UnitsPathService(NavigationMapPublicModel navigationMapPublicModel,
-                                ActorUnitsPathPrivateModel actorUnitsPathPrivateModel,
+                                UnitsPathPrivateModel unitsPathPrivateModel,
                                 GridService gridService,
                                 UnitsService unitService)
         {
             _navigationMapPublicModel = navigationMapPublicModel;
-            _actorUnitsPathPrivateModel = actorUnitsPathPrivateModel;
+            _unitsPathPrivateModel = unitsPathPrivateModel;
             _gridService = gridService;
             _unitService = unitService;
 
@@ -38,13 +38,13 @@ namespace Plugin.Runtime.Services.UnitsPath
 
         public void CreateScheme(string gameId, int actorNr)
         {
-            if (_actorUnitsPathPrivateModel.Has(gameId, actorNr))
+            if (_unitsPathPrivateModel.Has(gameId, actorNr))
             {
-                LogChannel.Log($"UnitsPathService :: CreateScheme() I can't create scheme for actorUnitsPathPrivateModel, because scheme already created for gameId = {gameId}, actorNr = {actorNr}.", LogChannel.Type.Error);
+                LogChannel.Log($"UnitsPathService :: CreateScheme() I can't create scheme for unitsPathPrivateModel, because scheme already created for gameId = {gameId}, actorNr = {actorNr}.", LogChannel.Type.Error);
                 return;
             }
 
-            _actorUnitsPathPrivateModel.Add(new ActorUnitsPathPrivateScheme(gameId, actorNr));
+            _unitsPathPrivateModel.Add(new UnitsPathPrivateScheme(gameId, actorNr));
         }
 
         /// <summary>
@@ -53,24 +53,24 @@ namespace Plugin.Runtime.Services.UnitsPath
         /// </summary>
         public void CalculateAndSavePathForUnits(string gameId, int actorId)
         {
-            if (!_actorUnitsPathPrivateModel.Has(gameId, actorId)){
-                LogChannel.Log($"UnitsPathService :: CalculateAndSavePathForUnits() I can't find scheme in actorUnitsPathPrivateModel for gameId = {gameId}, actorId = {actorId}.", LogChannel.Type.Error);
+            if (!_unitsPathPrivateModel.Has(gameId, actorId)){
+                LogChannel.Log($"UnitsPathService :: CalculateAndSavePathForUnits() I can't find scheme in unitsPathPrivateModel for gameId = {gameId}, actorId = {actorId}.", LogChannel.Type.Error);
                 return;
             }
 
-            ActorUnitsPathPrivateScheme actorUnitsPathPrivateScheme = _actorUnitsPathPrivateModel.Get(gameId, actorId);
+            UnitsPathPrivateScheme unitsPathPrivateScheme = _unitsPathPrivateModel.Get(gameId, actorId);
 
             // 1. Чистим старый список
-            actorUnitsPathPrivateScheme.unitsPath.Clear();
+            unitsPathPrivateScheme.unitsPath.Clear();
 
-            IGrid gridUnderUnit = _gridService.Get(gameId, actorId);
+            IGrid grid = _gridService.Get(gameId, actorId);
 
             // 2. Перебираем всех юнитов игрока, и высчитываем путь для каждого
             List<IUnit> units = _unitService.GetUnits(gameId, actorId);
             foreach (IUnit unit in units)
             {
                 if (!(unit is IWalkableComponent)) { 
-                    continue;
+                    continue;   // із неходячими не працюємо!
                 }
                     
                 if (unit.IsDead){
@@ -79,15 +79,14 @@ namespace Plugin.Runtime.Services.UnitsPath
 
                 Int2 positionOnGrid = unit.Position;
 
-                UnitPathPrivateScheme unitPathScheme = CalculatePath(unit,
-                                                                     positionOnGrid.x,
-                                                                     positionOnGrid.y,
-                                                                     gridUnderUnit);
-                actorUnitsPathPrivateScheme.unitsPath.Add(unitPathScheme);
+                unitsPathPrivateScheme.unitsPath.Add(CalculatePathForUnit(unit,
+                                                                          positionOnGrid.x,
+                                                                          positionOnGrid.y,
+                                                                          grid));
             }
         }
 
-        private UnitPathPrivateScheme CalculatePath(IUnit unit, int positionOnGridW, int positionOnGridH, IGrid grid)
+        private UnitPathPrivateScheme CalculatePathForUnit(IUnit unit, int positionOnGridW, int positionOnGridH, IGrid grid)
         {
             bool hasGodModeMovement = ((IWalkableComponent)unit).IsGodModeMovement;
 
@@ -155,6 +154,9 @@ namespace Plugin.Runtime.Services.UnitsPath
             return _findPathWorker.CalculatePath(unit, positionOnGridW, positionOnGridH, grid);
         }
 
+        /// <summary>
+        /// Видалити всі схеми, котрі належать вказаній кімнаті
+        /// </summary>
         public void RemoveAllIfExist(string gameId)
         {
             List<ActorUnitsPathPrivateScheme> schemes = _actorUnitsPathPrivateModel.Items.FindAll(x => x.GameId == gameId);

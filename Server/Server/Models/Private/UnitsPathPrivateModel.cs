@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace Plugin.Models.Private
 {
-    public class ActorUnitsPathPrivateModel : BaseModel<ActorUnitsPathPrivateScheme>, IPrivateModel
+    public class UnitsPathPrivateModel : BaseModel<UnitsPathPrivateScheme>, IPrivateModel
     {
         public bool Has(string gameId, int actorId)
         {

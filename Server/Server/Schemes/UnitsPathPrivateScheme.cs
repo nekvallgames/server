@@ -2,7 +2,7 @@
 
 namespace Plugin.Schemes
 {
-    public struct ActorUnitsPathPrivateScheme
+    public struct UnitsPathPrivateScheme
     {
         /// <summary>
         /// Вказати id ігрової кімнати, в котрій знаходиться актер
@@ -16,7 +16,7 @@ namespace Plugin.Schemes
 
         public List<UnitPathPrivateScheme> unitsPath;
 
-        public ActorUnitsPathPrivateScheme(string gameId, int ownerActorNr)
+        public UnitsPathPrivateScheme(string gameId, int ownerActorNr)
         {
             GameId = gameId;
             OwnerActorNr = ownerActorNr;
