@@ -1,0 +1,424 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{37B321FC-DDED-4BF9-AD43-324C8418E5E4}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>Plugin</RootNamespace>
+    <AssemblyName>Plugin</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <Deterministic>true</Deterministic>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\..\..\ServerSDK\deploy\Plugins\Plugin\bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Google.Api.CommonProtos, Version=2.7.0.0, Culture=neutral, PublicKeyToken=3ec5ea7f18953e47, processorArchitecture=MSIL">
+      <HintPath>..\packages\Google.Api.CommonProtos.2.7.0\lib\net461\Google.Api.CommonProtos.dll</HintPath>
+    </Reference>
+    <Reference Include="Google.Api.Gax, Version=4.3.1.0, Culture=neutral, PublicKeyToken=3ec5ea7f18953e47, processorArchitecture=MSIL">
+      <HintPath>..\packages\Google.Api.Gax.4.3.1\lib\net462\Google.Api.Gax.dll</HintPath>
+    </Reference>
+    <Reference Include="Google.Api.Gax.Grpc, Version=4.3.1.0, Culture=neutral, PublicKeyToken=3ec5ea7f18953e47, processorArchitecture=MSIL">
+      <HintPath>..\packages\Google.Api.Gax.Grpc.4.3.1\lib\net462\Google.Api.Gax.Grpc.dll</HintPath>
+    </Reference>
+    <Reference Include="Google.Apis, Version=1.58.0.0, Culture=neutral, PublicKeyToken=4b01fa6e34db77ab, processorArchitecture=MSIL">
+      <HintPath>..\packages\Google.Apis.1.58.0\lib\net45\Google.Apis.dll</HintPath>
+    </Reference>
+    <Reference Include="Google.Apis.Auth, Version=1.58.0.0, Culture=neutral, PublicKeyToken=4b01fa6e34db77ab, processorArchitecture=MSIL">
+      <HintPath>..\packages\Google.Apis.Auth.1.58.0\lib\net461\Google.Apis.Auth.dll</HintPath>
+    </Reference>
+    <Reference Include="Google.Apis.Auth.PlatformServices, Version=1.58.0.0, Culture=neutral, PublicKeyToken=4b01fa6e34db77ab, processorArchitecture=MSIL">
+      <HintPath>..\packages\Google.Apis.Auth.1.58.0\lib\net461\Google.Apis.Auth.PlatformServices.dll</HintPath>
+    </Reference>
+    <Reference Include="Google.Apis.Core, Version=1.58.0.0, Culture=neutral, PublicKeyToken=4b01fa6e34db77ab, processorArchitecture=MSIL">
+      <HintPath>..\packages\Google.Apis.Core.1.58.0\lib\net45\Google.Apis.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Google.Apis.PlatformServices, Version=1.58.0.0, Culture=neutral, PublicKeyToken=4b01fa6e34db77ab, processorArchitecture=MSIL">
+      <HintPath>..\packages\Google.Apis.1.58.0\lib\net45\Google.Apis.PlatformServices.dll</HintPath>
+    </Reference>
+    <Reference Include="Google.Cloud.Firestore, Version=3.3.0.0, Culture=neutral, PublicKeyToken=185c282632e132a0, processorArchitecture=MSIL">
+      <HintPath>..\packages\Google.Cloud.Firestore.3.3.0\lib\net462\Google.Cloud.Firestore.dll</HintPath>
+    </Reference>
+    <Reference Include="Google.Cloud.Firestore.V1, Version=3.3.0.0, Culture=neutral, PublicKeyToken=185c282632e132a0, processorArchitecture=MSIL">
+      <HintPath>..\packages\Google.Cloud.Firestore.V1.3.3.0\lib\net462\Google.Cloud.Firestore.V1.dll</HintPath>
+    </Reference>
+    <Reference Include="Google.Cloud.Location, Version=2.0.0.0, Culture=neutral, PublicKeyToken=185c282632e132a0, processorArchitecture=MSIL">
+      <HintPath>..\packages\Google.Cloud.Location.2.0.0\lib\net462\Google.Cloud.Location.dll</HintPath>
+    </Reference>
+    <Reference Include="Google.LongRunning, Version=3.0.0.0, Culture=neutral, PublicKeyToken=185c282632e132a0, processorArchitecture=MSIL">
+      <HintPath>..\packages\Google.LongRunning.3.0.0\lib\net462\Google.LongRunning.dll</HintPath>
+    </Reference>
+    <Reference Include="Google.Protobuf, Version=3.21.0.0, Culture=neutral, PublicKeyToken=a7d26565bac4d604, processorArchitecture=MSIL">
+      <HintPath>..\packages\Google.Protobuf.3.21.0\lib\net45\Google.Protobuf.dll</HintPath>
+    </Reference>
+    <Reference Include="Grpc.Auth, Version=2.0.0.0, Culture=neutral, PublicKeyToken=d754f35622e28bad, processorArchitecture=MSIL">
+      <HintPath>..\packages\Grpc.Auth.2.51.0\lib\net462\Grpc.Auth.dll</HintPath>
+    </Reference>
+    <Reference Include="Grpc.Core, Version=2.0.0.0, Culture=neutral, PublicKeyToken=d754f35622e28bad, processorArchitecture=MSIL">
+      <HintPath>..\packages\Grpc.Core.2.46.5\lib\net45\Grpc.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Grpc.Core.Api, Version=2.0.0.0, Culture=neutral, PublicKeyToken=d754f35622e28bad, processorArchitecture=MSIL">
+      <HintPath>..\packages\Grpc.Core.Api.2.51.0\lib\net462\Grpc.Core.Api.dll</HintPath>
+    </Reference>
+    <Reference Include="Grpc.Net.Client, Version=2.0.0.0, Culture=neutral, PublicKeyToken=d754f35622e28bad, processorArchitecture=MSIL">
+      <HintPath>..\packages\Grpc.Net.Client.2.51.0\lib\netstandard2.0\Grpc.Net.Client.dll</HintPath>
+    </Reference>
+    <Reference Include="Grpc.Net.Common, Version=2.0.0.0, Culture=neutral, PublicKeyToken=d754f35622e28bad, processorArchitecture=MSIL">
+      <HintPath>..\packages\Grpc.Net.Common.2.51.0\lib\netstandard2.0\Grpc.Net.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Bcl.AsyncInterfaces, Version=6.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Bcl.AsyncInterfaces.6.0.0\lib\net461\Microsoft.Bcl.AsyncInterfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.DependencyInjection.Abstractions, Version=6.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.DependencyInjection.Abstractions.6.0.0\lib\net461\Microsoft.Extensions.DependencyInjection.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Logging.Abstractions, Version=3.0.3.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.Logging.Abstractions.3.0.3\lib\netstandard2.0\Microsoft.Extensions.Logging.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.13.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="PhotonHivePlugin">
+      <HintPath>..\..\..\ServerSDK\src-server\Plugins\lib\net461\PhotonHivePlugin.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Buffers.4.5.1\lib\net461\System.Buffers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Collections.Immutable, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Collections.Immutable.6.0.0\lib\net461\System.Collections.Immutable.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Core" />
+    <Reference Include="System.Diagnostics.DiagnosticSource, Version=4.0.3.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Diagnostics.DiagnosticSource.4.5.1\lib\net46\System.Diagnostics.DiagnosticSource.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Linq.Async, Version=6.0.0.0, Culture=neutral, PublicKeyToken=94bc3704cddfc263, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Linq.Async.6.0.1\lib\net48\System.Linq.Async.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Memory, Version=4.0.1.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Memory.4.5.4\lib\net461\System.Memory.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Numerics.Vectors, Version=4.1.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Numerics.Vectors.4.5.0\lib\net46\System.Numerics.Vectors.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.6.0.0\lib\net461\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Threading.Tasks.Extensions, Version=4.2.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Threading.Tasks.Extensions.4.5.4\lib\net461\System.Threading.Tasks.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.ValueTuple.4.5.0\lib\net47\System.ValueTuple.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Builders\GridBuilder.cs" />
+    <Compile Include="Builders\GroupSyncBuilder.cs" />
+    <Compile Include="Builders\StepSchemeBuilder.cs" />
+    <Compile Include="Builders\SyncComponentsBuilder.cs" />
+    <Compile Include="Builders\SyncElementBuilder.cs" />
+    <Compile Include="Builders\UnitBuilder.cs" />
+    <Compile Include="Installers\GameInstaller.cs" />
+    <Compile Include="Interfaces\Actions\IDamageAction.cs" />
+    <Compile Include="Interfaces\Actions\IWaveDamageAction.cs" />
+    <Compile Include="Interfaces\IActionDecisionService.cs" />
+    <Compile Include="Interfaces\IDecision.cs" />
+    <Compile Include="Interfaces\IActorScheme.cs" />
+    <Compile Include="Interfaces\IBackendBroadcastProvider.cs" />
+    <Compile Include="Interfaces\IBarrierComponent.cs" />
+    <Compile Include="Interfaces\IDeserializeOperation.cs" />
+    <Compile Include="Interfaces\IExecuteAction.cs" />
+    <Compile Include="Interfaces\IExecuteOpGroup.cs" />
+    <Compile Include="Interfaces\IGrid.cs" />
+    <Compile Include="Interfaces\IGroupSyncComponents.cs" />
+    <Compile Include="Interfaces\IHealingAdditionalComponent.cs" />
+    <Compile Include="Interfaces\IHealthBuffComponent.cs" />
+    <Compile Include="Interfaces\IInput.cs" />
+    <Compile Include="Interfaces\IModel.cs" />
+    <Compile Include="Interfaces\IName.cs" />
+    <Compile Include="Interfaces\INavigationWayForDuelComponent.cs" />
+    <Compile Include="Interfaces\IOpScheme.cs" />
+    <Compile Include="Interfaces\IOpStockItem.cs" />
+    <Compile Include="Interfaces\IOutput.cs" />
+    <Compile Include="Interfaces\IPlotModel.cs" />
+    <Compile Include="Interfaces\IPlotModelScheme.cs" />
+    <Compile Include="Interfaces\IPlotState.cs" />
+    <Compile Include="Interfaces\IPoisonActionComponent.cs" />
+    <Compile Include="Interfaces\IPoisonActionDecisionService.cs" />
+    <Compile Include="Interfaces\IPoisonBuffComponent.cs" />
+    <Compile Include="Interfaces\IPrivateModel.cs" />
+    <Compile Include="Interfaces\IPublicModel.cs" />
+    <Compile Include="Interfaces\ISignal.cs" />
+    <Compile Include="Interfaces\ISorterOpScheme.cs" />
+    <Compile Include="Interfaces\IState.cs" />
+    <Compile Include="Interfaces\IStatesModel.cs" />
+    <Compile Include="Interfaces\ISyncComponent.cs" />
+    <Compile Include="Interfaces\ISyncGroupComponent.cs" />
+    <Compile Include="Interfaces\IMode.cs" />
+    <Compile Include="Interfaces\IAiTask.cs" />
+    <Compile Include="Interfaces\ISyncRoomService.cs" />
+    <Compile Include="Interfaces\ITemperatureWalkableTraceScheme.cs" />
+    <Compile Include="Interfaces\IUnit.cs" />
+    <Compile Include="Interfaces\IUnitDecision.cs" />
+    <Compile Include="Interfaces\IValueDecision.cs" />
+    <Compile Include="Interfaces\IWalkableComponent.cs" />
+    <Compile Include="Interfaces\IWeaponActionDecisionService.cs" />
+    <Compile Include="Interfaces\UnitComponents\IActionComponent.cs" />
+    <Compile Include="Interfaces\UnitComponents\IArmorComponent.cs" />
+    <Compile Include="Interfaces\UnitComponents\IHealthComponent.cs" />
+    <Compile Include="Interfaces\UnitComponents\IIgnoreSyncComponent.cs" />
+    <Compile Include="Interfaces\UnitComponents\IVipComponent.cs" />
+    <Compile Include="Models\Private\ActorsPrivateModel.cs" />
+    <Compile Include="Models\Private\CellTemperaturePrivateModel.cs" />
+    <Compile Include="Models\Private\CellWalkablePrivateModel.cs" />
+    <Compile Include="Models\Private\GridsPrivateModel.cs" />
+    <Compile Include="Models\Private\HostsPrivateModel.cs" />
+    <Compile Include="Models\Private\OpStockPrivateModel.cs" />
+    <Compile Include="Models\Private\PlotsPrivateModel.cs" />
+    <Compile Include="Models\Private\ActorStepsPrivateModel.cs" />
+    <Compile Include="Models\Private\SyncPrivateModel.cs" />
+    <Compile Include="Models\Private\TemperatureWalkableTracePrivateModel.cs" />
+    <Compile Include="Models\Private\UnitsPathPrivateModel.cs" />
+    <Compile Include="Models\Private\UnitsPrivateModel.cs" />
+    <Compile Include="Models\Public\LocationsPublicModel.cs" />
+    <Compile Include="Models\Public\NavigationMapPublicModel.cs" />
+    <Compile Include="OpComponents\ActionOpComponent.cs" />
+    <Compile Include="OpComponents\AdditionalByPosOpComponent.cs" />
+    <Compile Include="OpComponents\AdditionalByUnitOpComponent.cs" />
+    <Compile Include="OpComponents\PositionOnGridOpComponent.cs" />
+    <Compile Include="OpComponents\UnitIdOpComponent.cs" />
+    <Compile Include="OpComponents\VipOpComponent.cs" />
+    <Compile Include="OpComponents\_TargetActorIdOpComponent.cs" />
+    <Compile Include="Parameters\UnitFactoryParameters.cs" />
+    <Compile Include="PluginFactory.cs" />
+    <Compile Include="Plugins\PluginHook.cs" />
+    <Compile Include="Plugins\PVPPlugin.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Runtime\Providers\BackendBroadcastProvider.cs" />
+    <Compile Include="Runtime\Providers\PrivateModelProvider.cs" />
+    <Compile Include="Runtime\Providers\PublicModelProvider.cs" />
+    <Compile Include="Runtime\Services\ActorService.cs" />
+    <Compile Include="Runtime\Services\AI\AIService.cs" />
+    <Compile Include="Runtime\Services\AI\BaseDecision.cs" />
+    <Compile Include="Runtime\Services\AI\DestinationDecisionService.cs" />
+    <Compile Include="Runtime\Services\AI\HealingDecisionService.cs" />
+    <Compile Include="Runtime\Services\AI\Inputs\ArmorU1BiggerU2Input.cs" />
+    <Compile Include="Runtime\Services\AI\Inputs\BaseInput.cs" />
+    <Compile Include="Runtime\Services\AI\Inputs\DistanceToNearUnitInput.cs" />
+    <Compile Include="Runtime\Services\AI\Inputs\HasPoisonActionInput.cs" />
+    <Compile Include="Runtime\Services\AI\Inputs\HealthU1BiggerU2Input.cs" />
+    <Compile Include="Runtime\Services\AI\Inputs\IsHumanoidInput.cs" />
+    <Compile Include="Runtime\Services\AI\Inputs\IsVipInput.cs" />
+    <Compile Include="Runtime\Services\AI\Inputs\NeedToHealInput.cs" />
+    <Compile Include="Runtime\Services\AI\Inputs\NextWayAreaInput.cs" />
+    <Compile Include="Runtime\Services\AI\Inputs\SizeBodyInput.cs" />
+    <Compile Include="Runtime\Services\AI\Inputs\SizeBodyU1LowerU2Input.cs" />
+    <Compile Include="Runtime\Services\AI\Inputs\WasDamagedInput.cs" />
+    <Compile Include="Runtime\Services\AI\Inputs\WasPoisonedBuffInput.cs" />
+    <Compile Include="Runtime\Services\AI\Inputs\WayAreaInput.cs" />
+    <Compile Include="Runtime\Services\AI\Inputs\WayAreaU1BiggerU2Input.cs" />
+    <Compile Include="Runtime\Services\AI\Outputs\AllowOutput.cs" />
+    <Compile Include="Runtime\Services\AI\Outputs\BaseOutput.cs" />
+    <Compile Include="Runtime\Services\AI\Outputs\EmptyOutput.cs" />
+    <Compile Include="Runtime\Services\AI\Outputs\ForbidOutput.cs" />
+    <Compile Include="Runtime\Services\AI\PoisonActionDecisionService.cs" />
+    <Compile Include="Runtime\Services\AI\SimulateSyncActionService.cs" />
+    <Compile Include="Runtime\Services\AI\Tasks\AIActionTask.cs" />
+    <Compile Include="Runtime\Services\AI\Tasks\AIHealingTask.cs" />
+    <Compile Include="Runtime\Services\AI\Tasks\AIMoveTask.cs" />
+    <Compile Include="Runtime\Services\AI\Tasks\AIRandomMoveTask.cs" />
+    <Compile Include="Runtime\Services\AI\Tasks\AIPositionTask.cs" />
+    <Compile Include="Runtime\Services\AI\Tasks\AIVipTask.cs" />
+    <Compile Include="Runtime\Services\AI\VipDecisionService.cs" />
+    <Compile Include="Runtime\Services\AI\WeaponActionDecisionService.cs" />
+    <Compile Include="Runtime\Services\BackendBroadcastService.cs" />
+    <Compile Include="Runtime\Services\BodyDamageConverterService.cs" />
+    <Compile Include="Runtime\Services\CellWalkableService.cs" />
+    <Compile Include="Runtime\Services\ConvertService.cs" />
+    <Compile Include="Runtime\Services\DeserializeStepService.cs" />
+    <Compile Include="Runtime\Services\ExecuteAction\Action\ActionService.cs" />
+    <Compile Include="Runtime\Services\ExecuteAction\Action\Executors\DamageAction.cs" />
+    <Compile Include="Runtime\Services\ExecuteAction\Action\Executors\WaveDamageAction.cs" />
+    <Compile Include="Runtime\Services\ExecuteAction\Additional\AdditionalService.cs" />
+    <Compile Include="Runtime\Services\ExecuteAction\Additional\Executors\Healing.cs" />
+    <Compile Include="Runtime\Services\ExecuteAction\MoveService.cs" />
+    <Compile Include="Runtime\Services\ExecuteAction\VipService.cs" />
+    <Compile Include="Runtime\Services\ExecuteOp\ExecuteOpGroupService.cs" />
+    <Compile Include="Runtime\Services\ExecuteOp\ExecuteOpStepSchemeService.cs" />
+    <Compile Include="Runtime\Services\ExecuteOp\Executors\ExecuteOpGroupAction.cs" />
+    <Compile Include="Runtime\Services\ExecuteOp\Executors\ExecuteOpGroupAdditionalByPos.cs" />
+    <Compile Include="Runtime\Services\ExecuteOp\Executors\ExecuteOpGroupPositionOnGrid.cs" />
+    <Compile Include="Runtime\Services\ExecuteOp\Executors\ExecuteOpVip.cs" />
+    <Compile Include="Runtime\Services\GameService.cs" />
+    <Compile Include="Runtime\Services\GridService.cs" />
+    <Compile Include="Runtime\Services\HitAreaService.cs" />
+    <Compile Include="Runtime\Services\HostsService.cs" />
+    <Compile Include="Runtime\Services\IncreaseUnitDamageService.cs" />
+    <Compile Include="Runtime\Services\IncreaseUnitHealthService.cs" />
+    <Compile Include="Runtime\Services\JsonReaderService.cs" />
+    <Compile Include="Runtime\Services\NotificationChangeVipService.cs" />
+    <Compile Include="Runtime\Services\OpStockService.cs" />
+    <Compile Include="Runtime\Services\PathService.cs" />
+    <Compile Include="Runtime\Services\PlotMode\PlotModeService.cs" />
+    <Compile Include="Runtime\Services\PlotMode\States\PVP\DuelMode.cs" />
+    <Compile Include="Runtime\Services\PlotMode\States\PVP\FightToFirstDeadMode.cs" />
+    <Compile Include="Runtime\Services\PlotMode\States\PVP\FightWithVipMode.cs" />
+    <Compile Include="Runtime\Services\PlotMode\States\PVP\ResultMode.cs" />
+    <Compile Include="Runtime\Services\PlotPublicService.cs" />
+    <Compile Include="Runtime\Services\PlotsModelService.cs" />
+    <Compile Include="Runtime\Services\PlotStates\PlotStatesService.cs" />
+    <Compile Include="Runtime\Services\PlotStates\States\AccumulateState.cs" />
+    <Compile Include="Runtime\Services\PlotStates\States\BasePlotState.cs" />
+    <Compile Include="Runtime\Services\PlotStates\States\SyncProgressState.cs" />
+    <Compile Include="Runtime\Services\PlotStates\States\PrepareRoomState.cs" />
+    <Compile Include="Runtime\Services\PlotStates\States\PvpResultState.cs" />
+    <Compile Include="Runtime\Services\PlotStates\States\StartGameState.cs" />
+    <Compile Include="Runtime\Services\PlotStates\States\StopRoomState.cs" />
+    <Compile Include="Runtime\Services\PlotStates\States\SyncBackendState.cs" />
+    <Compile Include="Runtime\Services\PlotStates\States\PvpExecuteStepsState.cs" />
+    <Compile Include="Runtime\Services\PlotStates\States\SyncStepsState.cs" />
+    <Compile Include="Runtime\Services\PlotStates\States\WaitStepResultState.cs" />
+    <Compile Include="Runtime\Services\ResultService.cs" />
+    <Compile Include="Runtime\Services\SimulateNotificationChangeVipService.cs" />
+    <Compile Include="Runtime\Services\ActorStepsService.cs" />
+    <Compile Include="Runtime\Services\SyncProgressService.cs" />
+    <Compile Include="Runtime\Services\SignalBus.cs" />
+    <Compile Include="Runtime\Services\SortHitOnGridService.cs" />
+    <Compile Include="Runtime\Services\SyncRoomService.cs" />
+    <Compile Include="Runtime\Services\SyncStepService.cs" />
+    <Compile Include="Runtime\Services\Sync\Groups\SyncActionGroup.cs" />
+    <Compile Include="Runtime\Services\Sync\Groups\SyncAdditionalGroup.cs" />
+    <Compile Include="Runtime\Services\Sync\Groups\SyncPositionOnGridGroup.cs" />
+    <Compile Include="Runtime\Services\Sync\Groups\SyncVipGroup.cs" />
+    <Compile Include="Runtime\Services\Sync\SyncService.cs" />
+    <Compile Include="Runtime\Services\CellTemperatureTraceService.cs" />
+    <Compile Include="Runtime\Services\UnitInstanceService.cs" />
+    <Compile Include="Runtime\Services\UnitLevelService.cs" />
+    <Compile Include="Runtime\Services\UnitDamageMultiplicationService.cs" />
+    <Compile Include="Runtime\Services\UnitsPath\FindPathWorker.cs" />
+    <Compile Include="Runtime\Services\UnitsPath\UnitsPathService.cs" />
+    <Compile Include="Runtime\Services\UnitsPublicModelService.cs" />
+    <Compile Include="Runtime\Services\UnitsService.cs" />
+    <Compile Include="Runtime\Spawners\LocationUnitsSpawner.cs" />
+    <Compile Include="Runtime\Units\BaseActionUnit.cs" />
+    <Compile Include="Runtime\Units\BaseUnit.cs" />
+    <Compile Include="Runtime\Units\UnitBagBarrier.cs" />
+    <Compile Include="Runtime\Units\UnitBarrel.cs" />
+    <Compile Include="Runtime\Units\UnitIronFenceBarrier.cs" />
+    <Compile Include="Runtime\Units\UnitLuke.cs" />
+    <Compile Include="Runtime\Units\UnitPistol.cs" />
+    <Compile Include="Runtime\Units\UnitPoison.cs" />
+    <Compile Include="Runtime\Units\UnitRoadBlock.cs" />
+    <Compile Include="Runtime\Units\UnitShotGun.cs" />
+    <Compile Include="Runtime\Units\UnitSniper.cs" />
+    <Compile Include="Runtime\Units\UnitTrash.cs" />
+    <Compile Include="Runtime\Units\UnitUmp45.cs" />
+    <Compile Include="Schemes\AbortScheme.cs" />
+    <Compile Include="Schemes\ActorScheme.cs" />
+    <Compile Include="Schemes\ActorStepScheme.cs" />
+    <Compile Include="Schemes\Cell.cs" />
+    <Compile Include="Schemes\CellWalkablePrivateScheme.cs" />
+    <Compile Include="Schemes\CellTemperatureScheme.cs" />
+    <Compile Include="Schemes\PartBodyScheme.cs" />
+    <Compile Include="Schemes\PathCellPrivateScheme.cs" />
+    <Compile Include="Schemes\Public\IncreaseUnitDamagePublicScheme.cs" />
+    <Compile Include="Schemes\Public\IncreaseUnitHealthPublicScheme.cs" />
+    <Compile Include="Schemes\Public\NavigationMapPublicScheme.cs" />
+    <Compile Include="Schemes\Public\PlotPublicScheme.cs" />
+    <Compile Include="Schemes\Public\UnitMultiplicationPublicScheme.cs" />
+    <Compile Include="Schemes\Public\UnitsPublicScheme.cs" />
+    <Compile Include="Schemes\StartGameScheme.cs" />
+    <Compile Include="Schemes\GridScheme.cs" />
+    <Compile Include="Schemes\LocationScheme.cs" />
+    <Compile Include="Schemes\OpStockItem.cs" />
+    <Compile Include="Schemes\PvpPlotModelScheme.cs" />
+    <Compile Include="Schemes\StepResultScheme.cs" />
+    <Compile Include="Schemes\StepScheme.cs" />
+    <Compile Include="Schemes\SyncScheme.cs" />
+    <Compile Include="Schemes\Public\UpgradeUnitLevelCostPublicScheme.cs" />
+    <Compile Include="Schemes\CellTemperatureTracesScheme.cs" />
+    <Compile Include="Schemes\UnitDecisionScheme.cs" />
+    <Compile Include="Schemes\UnitPathPrivateScheme.cs" />
+    <Compile Include="Schemes\UnitsPathPrivateScheme.cs" />
+    <Compile Include="Schemes\ValueDecisionScheme.cs" />
+    <Compile Include="Signals\ActorLeftSignal.cs" />
+    <Compile Include="Signals\GridsPrivateModelSignal.cs" />
+    <Compile Include="Signals\HostsPrivateModelSignal.cs" />
+    <Compile Include="Signals\ModelChangeSignal.cs" />
+    <Compile Include="Signals\OpStockPrivateModelSignal.cs" />
+    <Compile Include="Templates\BaseModel.cs" />
+    <Compile Include="Templates\BaseStateMachine.cs" />
+    <Compile Include="Templates\BaseStatesModel.cs" />
+    <Compile Include="Tools\Enums.cs" />
+    <Compile Include="Tools\Int2.cs" />
+    <Compile Include="Tools\LogChannel.cs" />
+    <Compile Include="Tools\OperationCode.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+    <None Include="packages.config" />
+    <Content Include="Resources\Jsons\upgrade_unit_level_cost.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Jsons\increase_unit_damage.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Jsons\increase_unit_health.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Jsons\plot_pvp.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Jsons\units.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Jsons\unit_damage_multiplication.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="..\packages\Grpc.Core.2.46.5\build\net45\Grpc.Core.targets" Condition="Exists('..\packages\Grpc.Core.2.46.5\build\net45\Grpc.Core.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\Grpc.Core.2.46.5\build\net45\Grpc.Core.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Grpc.Core.2.46.5\build\net45\Grpc.Core.targets'))" />
+  </Target>
+  <PropertyGroup>
+    <PostBuildEvent>xcopy /Y /Q "$(TargetDir)*.*" "$(SolutionDir)..\..\..\deploy\Plugins\MyFirstPlugin\bin\"</PostBuildEvent>
+  </PropertyGroup>
+</Project>
