@@ -140,7 +140,6 @@ namespace Plugin.Installers
             stepSchemeBuilder = new StepSchemeBuilder(syncService);
             syncStepService = new SyncStepService(stepSchemeBuilder, 
                                                   convertService, 
-                                                  hostsService, 
                                                   plotsModelService, 
                                                   actorService);
             moveService = new MoveService(syncService);

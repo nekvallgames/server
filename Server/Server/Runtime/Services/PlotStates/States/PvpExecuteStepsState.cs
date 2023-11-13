@@ -25,8 +25,6 @@ namespace Plugin.Runtime.Services.PlotStates.States
         public override string Name => NAME;
 
         private UnitsService _unitsService;
-        private ConvertService _convertService;
-        private OpStockService _opStockService;
         private ExecuteOpStepSchemeService _executeOpStepService;
         private PlotsModelService _plotsModelService;
         private PathService _pathService;
@@ -42,8 +40,6 @@ namespace Plugin.Runtime.Services.PlotStates.States
             var gameInstaller = GameInstaller.GetInstance();
 
             _unitsService = gameInstaller.unitsService;
-            _convertService = gameInstaller.convertService;
-            _opStockService = gameInstaller.opStockService;
             _executeOpStepService = gameInstaller.executeOpStepService;
             _plotsModelService = gameInstaller.plotsModelService;
             _pathService = gameInstaller.pathService;

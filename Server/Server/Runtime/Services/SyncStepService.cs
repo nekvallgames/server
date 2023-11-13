@@ -17,19 +17,16 @@ namespace Plugin.Runtime.Services
     {
         private StepSchemeBuilder _stepSchemeBuilder;
         private ConvertService _convertService;
-        private HostsService _hostsService;
         private PlotsModelService _plotsModelService;
         private ActorService _actorService;
 
         public SyncStepService(StepSchemeBuilder stepSchemeBuilder,
                                ConvertService convertService,
-                               HostsService hostsService,
                                PlotsModelService plotsModelService,
                                ActorService actorService)
         {
             _stepSchemeBuilder = stepSchemeBuilder;
             _convertService = convertService;
-            _hostsService = hostsService;
             _actorService = actorService;
 
             _plotsModelService = plotsModelService;
