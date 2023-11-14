@@ -30,12 +30,9 @@ namespace Plugin.Runtime.Services.UnitsPath
         /// Найти на игровой сетке все свободные селлы,
         /// по которым юнит может перемещатся 
         /// </summary>
-        public List<PathCellPrivateScheme> GetAllMovementCells(IUnit unit,
-                                                               int positionOnGridW,
-                                                               int positionOnGridH,
-                                                               IGrid grid)
+        public List<(int, int)> GetAllMovementCells(IUnit unit, IGrid grid)
         {
-            var unitPath = new List<PathCellPrivateScheme>();
+            var result = new List<(int, int)>();
 
             IWalkableComponent moveTypeData = (IWalkableComponent)unit;
 
@@ -52,11 +49,11 @@ namespace Plugin.Runtime.Services.UnitsPath
                         positionW = (int)cell.wIndex,
                         positionH = (int)cell.hIndex
                     };
-                    unitPath.Add(wayPoint);
+                    result.Add((wayPoint.positionW, wayPoint.positionH));
                 }
             }
 
-            return unitPath;
+            return result;
         }
 
         /// <summary>
@@ -69,25 +66,24 @@ namespace Plugin.Runtime.Services.UnitsPath
         /// Передать проверяемую позицию, что бы можно было высчитать не только текущею его позицию,
         /// где позиционируется юнит, а и любую рандомнуюю позицию. 
         /// </summary>
-        public List<PathCellPrivateScheme> CalculatePath(IUnit unit, int positionOnGridW, int positionOnGridH, IGrid grid)
+        public List<(int, int)> CalculatePath(IUnit unit, int positionOnGridW, int positionOnGridH, IGrid grid)
         {
-            List<PathCellPrivateScheme> unitPath;
-
             // Получить просто список ячеек, которые свободны, и юнит может стать на них
             // Пока без каких либо проверок, может юнит дойти или не может
             // 
             // Берем матрицу перемещения юнита, получаем селлы, куда он может встать
             // Максимум выбрасываем селлы, в которые игрок выстрелил
-            unitPath = GetStepCells(unit, positionOnGridW, positionOnGridH, grid);
+            // unitPath = GetStepCells(unit, positionOnGridW, positionOnGridH, grid);
 
             // Теперь нужно от стартовой ячейки позиции юнита, перебрать все ячейки path, и 
             // найти путь, куда может дойти юнит
             //
             // Существующие ячейки, от стартовой позиции юнита, прогоняем алгоритмом поиска пути
             // Что бы в итоге получить только те селлы, к которым юнит может дойти
-            unitPath = FindWay(unit, positionOnGridW, positionOnGridH, unitPath);
-
-            return unitPath;
+            return FindWay(unit, 
+                           positionOnGridW, 
+                           positionOnGridH, 
+                           GetStepCells(unit, positionOnGridW, positionOnGridH, grid));
         }
 
         /// <summary>
@@ -220,18 +216,18 @@ namespace Plugin.Runtime.Services.UnitsPath
         /// positionOnGridW - позиция юнита на игровой сетке по ширине
         /// positionOnGridH - позиция юнита на игровой сетке по высоте
         /// </summary>
-        private List<PathCellPrivateScheme> FindWay(IUnit unit, int positionOnGridW, int positionOnGridH, List<PathCellPrivateScheme> pathSteps)
+        private List<(int, int)> FindWay(IUnit unit, int positionOnGridW, int positionOnGridH, List<PathCellPrivateScheme> pathSteps)
         {
-            var wayPath = new List<PathCellPrivateScheme>();
+            var result = new List<(int, int)>();
 
             _currPathIndex = 0; // текущая проверяемая ячейка
             _nextPathIndex = 0; // следующая ячейка, которую будем проверять
 
             // 1. В списке точек, куда может стать юнит, найти селл, в котором сейчас находится юнит
             // С этого селла и запустим алгоритм поиска пути
-            PathCellPrivateScheme startCell = GetCellByPosition((int)positionOnGridW,
-                                                    (int)positionOnGridH,
-                                                    pathSteps);
+            PathCellPrivateScheme startCell = GetCellByPosition(positionOnGridW,
+                                                                positionOnGridH,
+                                                                pathSteps);
             startCell.pathIndex = _currPathIndex; // указать индекс пути для стартового селла. С которого начнем поиск пути
             _nextPathIndex = 1; // указать индекс, который пулучит следующий селл в прокладываемом пути
 
@@ -255,25 +251,25 @@ namespace Plugin.Runtime.Services.UnitsPath
             {
                 if (pathCell.IsDirty)
                 {
-                    wayPath.Add(pathCell);
+                    result.Add((pathCell.positionW, pathCell.positionH));
                 }
             }
 
             // 4. Если wayPath пустой, значит путь не был найден.
             // Вернуть ходя бы ячейки, которые юнит занимает по ширине
-            if (wayPath.Count <= 0)
+            if (result.Count <= 0)
             {
                 foreach (PathCellPrivateScheme pathCell in pathSteps)
                 {
                     if (pathCell.positionW == positionOnGridW && pathCell.positionH == positionOnGridH)
                     {
-                        wayPath.Add(pathCell);
+                        result.Add((pathCell.positionW, pathCell.positionH));
                         break;
                     }
                 }
             }
 
-            return wayPath;
+            return result;
         }
 
         /// <summary>

@@ -49,7 +49,7 @@ namespace Plugin.Runtime.Services.AI.Tasks
             // Высчитать путь, куда может переместится каждый юнит AI игрока
             _pathService.Calculate(gameId, aiActorNr);
 
-            _cellWalkableService.ClearIgnoreList(gameId, aiActorNr);
+            _cellWalkableService.ClearIgnoreList(gameId, aiActorNr);    // ???
 
             // перебираємо кожного юніта, та вираховуємо куди він переміститься
             foreach (IUnit unit in candidates)

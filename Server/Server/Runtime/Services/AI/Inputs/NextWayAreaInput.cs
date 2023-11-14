@@ -32,11 +32,11 @@ namespace Plugin.Runtime.Services.AI.Inputs
             {
                 IGrid grid = _gridService.Get(_unit.GameId, _unit.OwnerActorNr);
 
-                List<PathCellPrivateScheme> wayList = _unitsPathService.CalculateAndGetPathUnit(_unit, _destination.x, _destination.y, grid);
+                List<(int, int)> wayList = _unitsPathService.CalculateAndGetPathUnit(_unit, _destination.x, _destination.y, grid);
                 int capacity = 0;
-                foreach (PathCellPrivateScheme pathCell in wayList)
+                foreach ((int, int) pathCell in wayList)
                 {
-                    Cell entity = _gridService.GetCell(grid, pathCell.positionW, pathCell.positionH);
+                    Cell entity = _gridService.GetCell(grid, pathCell.Item1, pathCell.Item2);
                     if (entity != null)
                     {
                         capacity += entity.binaryMask == Enums.CellMask.cellWalkLock ? 1 : 0;

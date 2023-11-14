@@ -90,16 +90,13 @@ namespace Plugin.Runtime.Services.UnitsPath
         {
             bool hasGodModeMovement = ((IWalkableComponent)unit).IsGodModeMovement;
 
-            var path = new List<PathCellPrivateScheme>();
+            var path = new List<(int, int)>();
 
             if (hasGodModeMovement)
             {
                 // У юнита свободное перемещение.
                 // Найти на игровой сетке все свободные селлы, по которым юнит может перемещатся  
-                path = _findPathWorker.GetAllMovementCells(unit,
-                                                           positionOnGridW,
-                                                           positionOnGridH,
-                                                           grid);
+                path = _findPathWorker.GetAllMovementCells(unit, grid);
             }
             else
             {
@@ -112,17 +109,16 @@ namespace Plugin.Runtime.Services.UnitsPath
 
             // Витянути із ігрової сітки селли, по котрим юніт зможе переміщатися
             var cells = new List<Cell>();
-            foreach (PathCellPrivateScheme pathCell in path)
+            foreach ((int, int) pathCell in path)
             {
-                cells.Add(_gridService.GetCell(grid, pathCell.positionW, pathCell.positionH));
+                cells.Add(_gridService.GetCell(grid, pathCell.Item1, pathCell.Item2));
             }
 
             // Создать данные с путем для юнита
             var pathSchemeUnit = new UnitPathPrivateScheme(unit.OwnerActorNr,
-                                                            unit.UnitId,
-                                                            unit.InstanceId,
-                                                            path,
-                                                            cells);
+                                                           unit.UnitId,
+                                                           unit.InstanceId,
+                                                           path);
 
             return pathSchemeUnit;
         }
@@ -148,7 +144,7 @@ namespace Plugin.Runtime.Services.UnitsPath
         /// Это нужно, что бы показать игроку, где он будет находится,
         /// например в следующем игровом шаге
         /// </summary>
-        public List<PathCellPrivateScheme> CalculateAndGetPathUnit(IUnit unit, int positionOnGridW, int positionOnGridH, IGrid grid)
+        public List<(int, int)> CalculateAndGetPathUnit(IUnit unit, int positionOnGridW, int positionOnGridH, IGrid grid)
         {
             // Получить зону перемещения, куда может переместиться текущий юнит
             return _findPathWorker.CalculatePath(unit, positionOnGridW, positionOnGridH, grid);
