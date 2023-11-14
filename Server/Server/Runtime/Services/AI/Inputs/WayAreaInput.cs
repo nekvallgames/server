@@ -26,7 +26,7 @@ namespace Plugin.Runtime.Services.AI.Inputs
         /// </summary>
         private float GetWayArea(IUnit unit)
         {
-            return _unitsPathService.GetPathUnit(unit.GameId, unit.OwnerActorNr, unit.UnitId, unit.InstanceId).Cells.Count;
+            return _unitsPathService.GetPathUnit(unit.GameId, unit.OwnerActorNr, unit.UnitId, unit.InstanceId).Path.Count;
         }
     }
 }

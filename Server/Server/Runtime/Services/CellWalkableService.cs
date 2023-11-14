@@ -119,9 +119,9 @@ namespace Plugin.Runtime.Services
 
         private void EnableWalkableByPath(IGrid grid, UnitPathPrivateScheme pathSchemeUnit, List<(int, int)> ignoreList, ref List<Cell> cellsUnderPath)
         {
-            foreach (PathCellPrivateScheme pathCell in pathSchemeUnit.Path)
+            foreach ((int, int) pathCell in pathSchemeUnit.Path)
             {
-                EnableWalkableByPosition(grid, true, pathCell.positionW, pathCell.positionH, ignoreList, ref cellsUnderPath);
+                EnableWalkableByPosition(grid, true, pathCell.Item1, pathCell.Item2, ignoreList, ref cellsUnderPath);
             }
         }
 

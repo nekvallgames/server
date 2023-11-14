@@ -30,7 +30,7 @@ namespace Plugin.Runtime.Providers
 
         string filepath = "";
         public FirestoreDb Database { get; private set; }
-
+        
         public void Connect()
         {
             filepath = Path.Combine(Path.GetTempPath(), Path.GetFileNameWithoutExtension(Path.GetRandomFileName())) + ".json";
