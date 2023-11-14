@@ -128,7 +128,7 @@ namespace Plugin.Runtime.Services.UnitsPath
         /// </summary>
         public UnitPathPrivateScheme GetPathUnit(string gameId, int actorId, int unitId, int instanceId)
         {
-            List<UnitPathPrivateScheme> paths = _unitsPathPrivateModel.Get(gameId, actorId).unitsPath;
+            List<UnitPathPrivateScheme> paths = _actorUnitsPathPrivateModel.Get(gameId, actorId).unitsPath;
 
             if (!paths.Any()){
                 LogChannel.Log($"UnitsPathService :: GetPathUnit() paths don't has any path. ActorId = {actorId}, unitId = {unitId}, instanceId = {instanceId}", LogChannel.Type.Plot);
@@ -155,10 +155,10 @@ namespace Plugin.Runtime.Services.UnitsPath
         /// </summary>
         public void RemoveAllIfExist(string gameId)
         {
-            List<UnitsPathPrivateScheme> schemes = _unitsPathPrivateModel.Items.FindAll(x => x.GameId == gameId);
-            foreach (UnitsPathPrivateScheme scheme in schemes)
+            List<ActorUnitsPathPrivateScheme> schemes = _actorUnitsPathPrivateModel.Items.FindAll(x => x.GameId == gameId);
+            foreach (ActorUnitsPathPrivateScheme scheme in schemes)
             {
-                _unitsPathPrivateModel.Items.Remove(scheme);
+                _actorUnitsPathPrivateModel.Items.Remove(scheme);
             }
         }
     }

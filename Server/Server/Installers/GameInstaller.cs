@@ -116,7 +116,7 @@ namespace Plugin.Installers
                 new ActorsPrivateModel(),
                 new TemperatureWalkableTracePrivateModel(),
                 new CellWalkablePrivateModel(),
-                new UnitsPathPrivateModel(),
+                new ActorUnitsPathPrivateModel(),
                 new ActorStepsPrivateModel(),
                 new CellTemperaturePrivateModel()
             });
@@ -162,7 +162,7 @@ namespace Plugin.Installers
             additionalService = new AdditionalService(syncService, 
                                                       unitsService);
             unitsPathService = new UnitsPathService(publicModelProvider.Get<NavigationMapPublicModel>(), 
-                                                    privateModelProvider.Get<UnitsPathPrivateModel>(), 
+                                                    privateModelProvider.Get<ActorUnitsPathPrivateModel>(), 
                                                     gridService, 
                                                     unitsService);
             notificationChangeVipService = new NotificationChangeVipService(hostsService, 

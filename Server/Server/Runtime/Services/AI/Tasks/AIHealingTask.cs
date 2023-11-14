@@ -26,25 +26,22 @@ namespace Plugin.Runtime.Services.AI.Tasks
         private UnitsService _unitsService;
         private HealingDecisionService _healingDecisionService;
         private ActorService _actorService;
-        private SyncRoomService _syncRoomService;
 
         public AIHealingTask(UnitsService unitsService,
                              HealingDecisionService healingDecisionService,
-                             ActorService actorService,
-                             SyncRoomService syncRoomService)
+                             ActorService actorService)
         {
             _unitsService = unitsService;
             _healingDecisionService = healingDecisionService;
             _actorService = actorService;
-            _syncRoomService = syncRoomService;
         }
 
         public void ExecuteTask(string gameId)
         {
-            int aiActorNr = _actorService.GetAiActor(gameId).ActorNr;
+            int aiActorId = _actorService.GetAiActor(gameId).ActorNr;
 
             var patients = new List<IUnit>();
-            _unitsService.GetAliveUnits(gameId, aiActorNr, ref patients);
+            _unitsService.GetAliveUnits(gameId, aiActorId, ref patients);
 
             if (patients.Count <= 0){
                 return;    // в гравця не має взагалі юнітів, котрих можно вилікувати хілками
@@ -74,7 +71,7 @@ namespace Plugin.Runtime.Services.AI.Tasks
 
             // Список із юнітів, котрі мають хілки
             var medpacUnits = new List<UnitAdditionalData>();
-            GetMedpacUnits(gameId, aiActorNr, ref medpacUnits);
+            GetMedpacUnits(gameId, aiActorId, ref medpacUnits);
 
             if (medpacUnits.Count <= 0){
                 return;    // гравець не має юнітів із хілками
@@ -95,24 +92,18 @@ namespace Plugin.Runtime.Services.AI.Tasks
                 // var healingTypeComponent = _entityManager.GetComponentData<HealingTypeComponent>(unitMedPack.UnitEntity);
 
                 // імітуємо лікуваннія поточного юніта
-                // pacient.CurrHealth += (unitMedPack as IHealingAdditionalComponent).GetHealthPower();
-                IHealthComponent healthComponent = (pacient.Unit as IHealthComponent);
-                healthComponent.HealthCapacity += (unitMedPack as IHealingAdditionalComponent).GetHealthPower();
-                if (healthComponent.HealthCapacity > healthComponent.HealthCapacityMax){
-                    healthComponent.HealthCapacity = healthComponent.HealthCapacityMax;
-                }
+                pacient.CurrHealth += (unitMedPack as IHealingAdditionalComponent).GetHealthPower();
 
                 // потратить хілку у медика
                 ReduceAdditionalCapacity(unitMedPack, ref medpacUnits);
 
                 // створити синхронізацію лікування юніта
-                _syncRoomService.SyncAdditionalByUnit(gameId,
-                                                      aiActorNr,
-                                                      unitMedPack.UnitId,
-                                                      unitMedPack.InstanceId,
-                                                      pacient.Unit.OwnerActorNr,
-                                                      pacient.Unit.UnitId,
-                                                      pacient.Unit.InstanceId);
+                /*_syncRoomService.SyncAdditionalByUnit(aiActorId,
+                                                  unitMedPack.UnitId,
+                                                  unitMedPack.InstanceId,
+                                                  pacient.Unit.OwnerActorId,
+                                                  pacient.Unit.UnitId,
+                                                  pacient.Unit.InstanceId);*/
 
                 // Перевіряємо, чи потрібно тратити хілку на поточного юніта
                 if (NeedToHealing(pacient))
@@ -127,9 +118,7 @@ namespace Plugin.Runtime.Services.AI.Tasks
         /// </summary>
         private bool NeedToHealing(UnitPatientData pacient)
         {
-            IHealthComponent healthComponent = pacient.Unit as IHealthComponent;
-
-            int healthInPercent = (healthComponent.HealthCapacity / healthComponent.HealthCapacityMax) * 100;
+            int healthInPercent = (pacient.CurrHealth / pacient.MaxHealth) * 100;
             return healthInPercent < HEALING_LINE;
         }
 

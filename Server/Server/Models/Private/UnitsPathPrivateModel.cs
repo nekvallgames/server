@@ -12,7 +12,7 @@ namespace Plugin.Models.Private
             return Items.Any(x => x.GameId == gameId && x.OwnerActorNr == actorId);
         }
 
-        public UnitsPathPrivateScheme Get(string gameId, int actorId)
+        public ActorUnitsPathPrivateScheme Get(string gameId, int actorId)
         {
             return Items.Find(x => x.GameId == gameId && x.OwnerActorNr == actorId);
         }
