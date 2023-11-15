@@ -133,20 +133,20 @@ namespace Plugin.Runtime.Services
         /// <param name="ownerActorId">актор, володарь дії</param>
         /// <param name="unitId">юніт, котрий виконує дію</param>
         /// <param name="unitInstanceId">інстанс юніта</param>
-        /// <param name="targetActorId">ід актора, із сіткой котрого ми взаємодіємо</param>
+        /// <param name="targetActorNr">ід актора, із сіткой котрого ми взаємодіємо</param>
         /// <param name="targetPosW">позіція тача на ігровій сітці</param>
         /// <param name="targetPosH">позіція тача на ігровій сітці</param>
         public void SyncAdditionalByPos(string gameId,
                                         int actorNr,
                                         int unitId,
                                         int unitInstanceId,
-                                        int targetActorId,
+                                        int targetActorNr,
                                         int targetPosW,
                                         int targetPosH)
         {
             IGroupSyncComponents groupSync = new GroupSyncBuilder().CreateAdditionalByPos(unitId,
                                                                                           unitInstanceId,
-                                                                                          targetActorId,
+                                                                                          targetActorNr,
                                                                                           targetPosW,
                                                                                           targetPosH);
 
