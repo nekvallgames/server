@@ -19,6 +19,7 @@ namespace Plugin.Builders
 
         /// <summary>
         /// Створити StepScheme для вказаних кроків синхронізації
+        /// syncSteps - номери ігрових кроків, наприклад [0, 1], [2, 3] і т.д.
         /// </summary>
         public StepScheme Create(string gameId, int actorId, int[] syncSteps)
         {
