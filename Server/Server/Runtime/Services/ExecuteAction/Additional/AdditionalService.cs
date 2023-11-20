@@ -24,10 +24,10 @@ namespace Plugin.Runtime.Services.ExecuteAction.Additional
         /// Например: если юнит хиллер, то юнит должен вылечить какого то юнита
         /// </summary>
         /// <param name="unit"> Указать юнит, который будет выполнять действие </param>
-        /// <param name="targetActorID"> Указать ID игрока, на сетке которого нужно выполнить действие </param>
+        /// <param name="targetActorNr"> Указать ID игрока, на сетке которого нужно выполнить действие </param>
         /// <param name="posW"> Позиция на игровой сетке </param>
         /// <param name="posH"> Позиция на игровой сетке </param>
-        public void ExecuteAdditional(IUnit unit, string gameId, int targetActorID, int posW, int posH)
+        public void ExecuteAdditional(IUnit unit, string gameId, int targetActorNr, int posW, int posH)
         {
             foreach (IExecuteAction executer in _executorsActions)
             {
@@ -39,7 +39,7 @@ namespace Plugin.Runtime.Services.ExecuteAction.Additional
                 }
 
                 // Текущим исполнителем выполнить действие для текущего юнита
-                executer.Execute(unit, gameId, targetActorID, posW, posH);
+                executer.Execute(unit, gameId, targetActorNr, posW, posH);
                 break;
             }
         }
