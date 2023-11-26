@@ -1,4 +1,5 @@
 ﻿using Plugin.Interfaces;
+using System.Collections.Generic;
 
 namespace Plugin.Runtime.Services.AI.Tasks
 {
@@ -12,26 +13,22 @@ namespace Plugin.Runtime.Services.AI.Tasks
         public string Name => TASK_NAME;
 
         private UnitsService _unitsService;
-        private ActorService _actorService;
         private SyncRoomService _syncRoomService;
 
         public AIPositionTask(UnitsService unitsService, 
-                              ActorService actorService, 
                               SyncRoomService syncRoomService)
         {
             _unitsService = unitsService;
-            _actorService = actorService;
             _syncRoomService = syncRoomService;
         }
 
-        public void ExecuteTask(string gameId)
+        public void ExecuteTask(string gameId, int actorNr, int stepNumber)
         {
-            int aiActorNr = _actorService.GetAiActor(gameId).ActorNr;
+            List<IUnit> units = _unitsService.GetUnits(gameId, actorNr);
 
-            foreach (IUnit unit in _unitsService.GetUnits(gameId, aiActorNr))
+            foreach (IUnit unit in units)
             {
-                if (unit is IBarrierComponent)
-                {
+                if (unit is IBarrierComponent){
                     // TODO поточний юніт являється преградою, його не потрібно переміщати
                     continue;
                 }

@@ -55,13 +55,13 @@ namespace Plugin.Runtime.Services.ExecuteAction.Action.Executors
         /// <summary>
         /// Выполнить действие
         /// </summary>
-        public void Execute(IUnit unit, string gameId, int targetActorNr, int posW, int posH)
+        public void ExecuteByPos(IUnit unit, string gameId, int targetActorNr, int posW, int posH)
         {
             // Проверяем, может ли юнит вытсрелить?
             var damageAction = (IDamageAction)unit;
 
             if (!damageAction.CanExecuteAction()){
-                Debug.Fail($"ExecuteActionService :: WeaponShot :: Execute() ownerID = {unit.OwnerActorNr}, unitID = {unit.UnitId}, instanceID = {unit.InstanceId}, targetActorNr = {targetActorNr}, posW = {posW}, posH = {posH}, I can't make damage action. Maybe I don't have ammunition.");
+                Debug.Fail($"ExecuteActionService :: WeaponShot :: Execute() ownerId = {unit.OwnerActorNr}, unitId = {unit.UnitId}, instanceId = {unit.InstanceId}, targetActorNr = {targetActorNr}, posW = {posW}, posH = {posH}, I can't make damage action. Maybe I don't have ammunition.");
             }
 
             damageAction.SpendAction();     // делаем выстрел. Юнит тратит 1 патрон
@@ -107,6 +107,11 @@ namespace Plugin.Runtime.Services.ExecuteAction.Action.Executors
 
                 _unitsService.SetDamage(unitTarget, damageByBody);
             }
+        }
+
+        public void ExecuteByUnit(IUnit unit, string gameId, int targetActorId, int unitId, int unitInstanceId)
+        {
+            throw new NotImplementedException();
         }
     }
 }

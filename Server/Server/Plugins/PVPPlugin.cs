@@ -31,14 +31,15 @@ namespace Plugin.Plugins.PVP
                                             new AccumulateState(plotService, host, 2, SyncBackendState.NAME),
                                             new SyncBackendState(plotService, host, PrepareRoomState.NAME),
                                             new PrepareRoomState(plotService, host, 2, StartGameState.NAME),
-                                            new StartGameState(plotService, host, WaitStepResultState.NAME),
-                                                            
+                                            new StartGameState(plotService, host, AiDoStepState.NAME),
+                                                  
+                                            new AiDoStepState(plotService, host, WaitStepResultState.NAME),
                                             new WaitStepResultState(plotService, host, 2, PvpExecuteStepsState.NAME),
                                             new PvpExecuteStepsState(plotService, host, PvpResultState.NAME),
                                             new PvpResultState(plotService, host, SyncProgressState.NAME),
                                             new SyncProgressState(plotService, host, SyncStepsState.NAME),
                                             new SyncStepsState(plotService, host, StopRoomState.NAME),
-                                            new StopRoomState(plotService, host, WaitStepResultState.NAME)
+                                            new StopRoomState(plotService, host, AiDoStepState.NAME)
                                           });
         }
 

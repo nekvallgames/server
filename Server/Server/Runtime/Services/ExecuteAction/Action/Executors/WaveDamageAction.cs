@@ -46,7 +46,7 @@ namespace Plugin.Runtime.Services.ExecuteAction.Action.Executors
         /// <summary>
         /// Выполнить действие
         /// </summary>
-        public void Execute(IUnit unit, string gameId, int targetActorId, int posW, int posH)
+        public void ExecuteByPos(IUnit unit, string gameId, int targetActorId, int posW, int posH)
         {
             // Проверяем, может ли юнит выстрелить?
             var waveDamageAction = (IWaveDamageAction)unit;
@@ -93,6 +93,11 @@ namespace Plugin.Runtime.Services.ExecuteAction.Action.Executors
 
                 _unitsService.SetDamage(enemyTargets[0], damage);
             }
+        }
+
+        public void ExecuteByUnit(IUnit unit, string gameId, int targetActorId, int unitId, int unitInstanceId)
+        {
+            throw new NotImplementedException();
         }
 
         /// <summary>

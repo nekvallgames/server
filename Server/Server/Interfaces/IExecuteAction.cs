@@ -10,6 +10,7 @@
         /// <summary>
         /// Выполнить действие
         /// </summary>
-        void Execute(IUnit unit, string gameId, int targetActorId, int posW, int posH);
+        void ExecuteByPos(IUnit unit, string gameId, int targetActorId, int targetPosW, int targetPosH);
+        void ExecuteByUnit(IUnit unit, string gameId, int targetActorId, int targetUnitId, int targetInstanceId);
     }
 }

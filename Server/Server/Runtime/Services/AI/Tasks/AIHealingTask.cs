@@ -25,26 +25,21 @@ namespace Plugin.Runtime.Services.AI.Tasks
 
         private UnitsService _unitsService;
         private HealingDecisionService _healingDecisionService;
-        private ActorService _actorService;
         private SyncRoomService _syncRoomService;
 
         public AIHealingTask(UnitsService unitsService,
                              HealingDecisionService healingDecisionService,
-                             ActorService actorService,
                              SyncRoomService syncRoomService)
         {
             _unitsService = unitsService;
             _healingDecisionService = healingDecisionService;
-            _actorService = actorService;
             _syncRoomService = syncRoomService;
         }
 
-        public void ExecuteTask(string gameId)
+        public void ExecuteTask(string gameId, int actorNr, int stepNumber)
         {
-            int aiActorNr = _actorService.GetAiActor(gameId).ActorNr;
-
             var patients = new List<IUnit>();
-            _unitsService.GetAliveUnits(gameId, aiActorNr, ref patients);
+            _unitsService.GetAliveUnits(gameId, actorNr, ref patients);
 
             if (patients.Count <= 0){
                 return;    // в гравця не має взагалі юнітів, котрих можно вилікувати хілками
@@ -74,7 +69,7 @@ namespace Plugin.Runtime.Services.AI.Tasks
 
             // Список із юнітів, котрі мають хілки
             var medpacUnits = new List<UnitAdditionalData>();
-            GetMedpacUnits(gameId, aiActorNr, ref medpacUnits);
+            GetMedpacUnits(gameId, actorNr, ref medpacUnits);
 
             if (medpacUnits.Count <= 0){
                 return;    // гравець не має юнітів із хілками
@@ -86,32 +81,31 @@ namespace Plugin.Runtime.Services.AI.Tasks
                     continue;    // гравець не має юнітів, котрі мають хілку
 
                 UnitPatientData pacient = patientUnits[i];
-                IHealthComponent pacientHealthComponent = pacient.Unit as IHealthComponent;
 
                 // Перевіряємо, чи потрібно тратити хілку на поточного юніта
-                if (!NeedToHealing(pacientHealthComponent.HealthCapacity, pacientHealthComponent.HealthCapacityMax))
+                if (!NeedToHealing(pacient.CurrHealth, pacient.MaxHealth))
                     continue;
 
                 IUnit unitMedPack = GetUnitWithMedPack(medpacUnits);
-                
-                pacientHealthComponent.HealthCapacity += (unitMedPack as IHealingAdditionalComponent).GetHealthPower();
-                if (pacientHealthComponent.HealthCapacity > pacientHealthComponent.HealthCapacityMax){
-                    pacientHealthComponent.HealthCapacity = pacientHealthComponent.HealthCapacityMax;
+
+                pacient.CurrHealth += (unitMedPack as IHealingAdditionalComponent).GetHealthPower();
+                if (pacient.CurrHealth > pacient.MaxHealth){
+                    pacient.CurrHealth = pacient.MaxHealth;
                 }
 
                 // потратить хілку у медика
                 ReduceAdditionalCapacity(unitMedPack, ref medpacUnits);
 
-                _syncRoomService.SyncAdditionalByPos(gameId,
-                                                      aiActorNr,
+                _syncRoomService.SyncAdditionalByUnit(gameId,
+                                                      actorNr,
                                                       unitMedPack.UnitId,
                                                       unitMedPack.InstanceId,
                                                       pacient.Unit.OwnerActorNr,
-                                                      pacient.Unit.Position.x + (pacient.Unit.BodySize.x - 1),
-                                                      pacient.Unit.Position.y + (pacient.Unit.BodySize.y - 1));
+                                                      pacient.Unit.UnitId,
+                                                      pacient.Unit.InstanceId);
 
                 // Перевіряємо, чи потрібно тратити хілку на поточного юніта
-                if (NeedToHealing(pacientHealthComponent.HealthCapacity, pacientHealthComponent.HealthCapacityMax))
+                if (NeedToHealing(pacient.CurrHealth, pacient.MaxHealth))
                 {
                     i--;    // відкатуємо ітератор назад, що би знову спробувати вилікувати поточного юніта
                 }

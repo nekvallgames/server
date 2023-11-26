@@ -11,7 +11,6 @@ namespace Plugin.Runtime.Services.AI
     public class AIService
     {
         private ActorService _actorService;
-        private ActorStepsService _actorStepsService;
 
         private Dictionary<string, IAiTask> _aiTasks;
 
@@ -26,11 +25,9 @@ namespace Plugin.Runtime.Services.AI
                          VipDecisionService vipDecisionService,
                          SimulateNotificationChangeVipService simulateNotificationChangeVipService,
                          SyncRoomService syncRoomService,
-                         ActorStepsService actorStepsService,
                          SimulateSyncActionService simulateSyncActionService)
         {
             _actorService = actorService;
-            _actorStepsService = actorStepsService;
 
             _aiTasks = new Dictionary<string, IAiTask> {
                 {AIActionTask.TASK_NAME, new AIActionTask(unitsService, 
@@ -41,13 +38,11 @@ namespace Plugin.Runtime.Services.AI
                                                           simulateSyncActionService)},
                 {AIHealingTask.TASK_NAME, new AIHealingTask(unitsService, 
                                                             healingDecisionService, 
-                                                            actorService,
                                                             syncRoomService)},
                 {AIMoveTask.TASK_NAME, new AIMoveTask(unitsService, 
                                                       cellWalkableService, 
                                                       pathService, 
                                                       destinationDecisionService, 
-                                                      actorService, 
                                                       syncRoomService)},
                 {AIRandomMoveTask.TASK_NAME, new AIRandomMoveTask(unitsService, 
                                                                   cellWalkableService, 
@@ -55,13 +50,13 @@ namespace Plugin.Runtime.Services.AI
                                                                   destinationDecisionService, 
                                                                   actorService,
                                                                   syncRoomService)},
-                {AIPositionTask.TASK_NAME, new AIPositionTask(unitsService, 
-                                                              actorService, 
+                {AIPositionTask.TASK_NAME, new AIPositionTask(unitsService,  
                                                               syncRoomService)},
                 {AIVipTask.TASK_NAME, new AIVipTask(vipDecisionService, 
                                                     unitsService, 
                                                     simulateNotificationChangeVipService, 
-                                                    actorService)}
+                                                    actorService,
+                                                    syncRoomService)}
             };
         }
 
@@ -73,26 +68,22 @@ namespace Plugin.Runtime.Services.AI
             return _actorService.CreateActor(gameId, actors[0].ActorNr + 1, string.Empty, true);
         }
 
-        public void ExecuteTask(string gameId, int actorNr, string taskName)
+        public void ExecuteTask(string gameId, int actorNr, int stepNumber, string taskName)
         {
-            _actorStepsService.AddStepScheme(gameId, actorNr, new StepScheme());
-
-            ExecuteTask(taskName, gameId);
+            ExecuteTask(taskName, gameId, actorNr, stepNumber);
         }
 
-        public void ExecuteTasks(string gameId, int actorNr, List<string> taskNames)
+        public void ExecuteTasks(string gameId, int actorNr, int stepNumber, List<string> taskNames)
         {
-            _actorStepsService.AddStepScheme(gameId, actorNr, new StepScheme());
-
             foreach (string taskName in taskNames)
             {
-                ExecuteTask(taskName, gameId);
+                ExecuteTask(taskName, gameId, actorNr, stepNumber);
             }
         }
 
-        private void ExecuteTask(string taskName, string gameId)
+        private void ExecuteTask(string taskName, string gameId, int actorNr, int stepNumber)
         {
-            _aiTasks[taskName].ExecuteTask(gameId);
+            _aiTasks[taskName].ExecuteTask(gameId, actorNr, stepNumber);
         }
     }
 }

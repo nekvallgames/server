@@ -5,22 +5,23 @@ using System.Collections.Generic;
 namespace Plugin.Runtime.Services.Sync.Groups
 {
     /// <summary>
-    /// Игрок на стороне сервера применил действие юнита
+    /// Игрок на стороне сервера применил дополнительное (пассивное) действие юнита
     /// Создать группу из компонентов, которые нужны, что бы синхронизировать выполненное действие между клиентами
     /// </summary>
-    public class SyncActionGroup : ISyncGroupComponent
+    public class SyncAdditionalByUnitGroup : ISyncGroupComponent
     {
         public List<ISyncComponent> SyncElements { get; }
 
-        public SyncActionGroup(IUnit unit, int targetActorId, int positionOnGridW, int positionOnGridH)
+        public SyncAdditionalByUnitGroup(IUnit unit, int targetActorId, int targetUnitId, int targetInstanceId)
         {
             SyncElements = new List<ISyncComponent>();
 
             var syncElements = SyncElementBuilder
                .Build(this)
                .SyncUnitId(unit.UnitId, unit.InstanceId)
-               .SyncAction(targetActorId, positionOnGridW, positionOnGridH);
-               //.SyncTargetActorID(targetActorID);
+               .SyncAdditionalByUnit(targetActorId, targetUnitId, targetInstanceId);
         }
+
+
     }
 }

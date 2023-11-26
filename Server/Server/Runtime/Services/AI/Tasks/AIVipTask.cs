@@ -20,28 +20,26 @@ namespace Plugin.Runtime.Services.AI.Tasks
         private VipDecisionService _vipDecisionService;
         private UnitsService _unitsService;
         private SimulateNotificationChangeVipService _simulateNotificationChangeVipService;
-        private ActorService _actorService;
-
+        private SyncRoomService _syncRoomService;
         public AIVipTask(VipDecisionService vipDecisionService,
                          UnitsService unitsService,
                          SimulateNotificationChangeVipService simulateNotificationChangeVipService,
-                         ActorService actorService)
+                         ActorService actorService,
+                         SyncRoomService syncRoomService)
         {
             _vipDecisionService = vipDecisionService;
             _unitsService = unitsService;
             _simulateNotificationChangeVipService = simulateNotificationChangeVipService;
-            _actorService = actorService;
+            _syncRoomService = syncRoomService;
         }
 
-        public void ExecuteTask(string gameId)
+        public void ExecuteTask(string gameId, int actorNr, int stepNumber)
         {
-            int aiActorNr = _actorService.GetAiActor(gameId).ActorNr;
-
-            IUnit unitVip = _unitsService.GetVipUnit(gameId, aiActorNr);
+            IUnit unitVip = _unitsService.GetVipUnit(gameId, actorNr);
 
             // Отримати список кандидатів, котрі можуть стати VIP-ами
             var candidates = new List<IUnit>();
-            _unitsService.GetAliveUnitsForVip(gameId, aiActorNr, ref candidates);
+            _unitsService.GetAliveUnitsForVip(gameId, actorNr, ref candidates);
 
             if (candidates.Count <= 0 || unitVip == null)
             {
@@ -72,8 +70,8 @@ namespace Plugin.Runtime.Services.AI.Tasks
             allowOutputs.Reverse();
 
             // Зробити VIP із найбільшою сумою output
-            //_syncRoomService.SimulateSyncVip(aiActorNr, allowOutputs[0].Units[0], true);
-            //_simulateNotificationChangeVipService.Execute();
+            _syncRoomService.SimulateSyncVip(gameId, actorNr, allowOutputs[0].Units[0], true);
+            _simulateNotificationChangeVipService.Execute();
         }
 
         public void ExitTask()

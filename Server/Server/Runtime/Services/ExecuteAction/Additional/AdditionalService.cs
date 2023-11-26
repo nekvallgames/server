@@ -27,19 +27,33 @@ namespace Plugin.Runtime.Services.ExecuteAction.Additional
         /// <param name="targetActorNr"> Указать ID игрока, на сетке которого нужно выполнить действие </param>
         /// <param name="posW"> Позиция на игровой сетке </param>
         /// <param name="posH"> Позиция на игровой сетке </param>
-        public void ExecuteAdditional(IUnit unit, string gameId, int targetActorNr, int posW, int posH)
+        public void ExecuteAdditionalByPos(IUnit unit, string gameId, int targetActorNr, int posW, int posH)
         {
             foreach (IExecuteAction executer in _executorsActions)
             {
                 // Перебираем всех исполнителей действий, и проверяем, может 
                 // ли какой то исполнитель выполнить действие для текущего юнита
-                if (!executer.CanExecute(unit))
-                {
+                if (!executer.CanExecute(unit)){
+                    continue;
+                }
+                
+                // Текущим исполнителем выполнить действие для текущего юнита
+                executer.ExecuteByPos(unit, gameId, targetActorNr, posW, posH);
+                break;
+            }
+        }
+        public void ExecuteAdditionalByUnit(IUnit unit, string gameId, int targetActorNr, int targetUnitId, int targetInstanceId)
+        {
+            foreach (IExecuteAction executer in _executorsActions)
+            {
+                // Перебираем всех исполнителей действий, и проверяем, может 
+                // ли какой то исполнитель выполнить действие для текущего юнита
+                if (!executer.CanExecute(unit)){
                     continue;
                 }
 
                 // Текущим исполнителем выполнить действие для текущего юнита
-                executer.Execute(unit, gameId, targetActorNr, posW, posH);
+                executer.ExecuteByUnit(unit, gameId, targetActorNr, targetUnitId, targetInstanceId);
                 break;
             }
         }

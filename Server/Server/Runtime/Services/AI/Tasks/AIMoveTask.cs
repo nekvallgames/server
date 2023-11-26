@@ -16,30 +16,25 @@ namespace Plugin.Runtime.Services.AI.Tasks
         private CellWalkableService _cellWalkableService;
         private PathService _pathService;
         private DestinationDecisionService _destinationDecisionService;
-        private ActorService _actorService;
         private SyncRoomService _syncRoomService;
 
         public AIMoveTask(UnitsService unitsService,
                           CellWalkableService cellWalkableService,
                           PathService pathService,
                           DestinationDecisionService destinationDecisionService,
-                          ActorService actorService,
                           SyncRoomService syncRoomService)
         {
             _unitsService = unitsService;
             _cellWalkableService = cellWalkableService;
             _pathService = pathService;
             _destinationDecisionService = destinationDecisionService;
-            _actorService = actorService;
             _syncRoomService = syncRoomService;
         }
 
-        public void ExecuteTask(string gameId)
+        public void ExecuteTask(string gameId, int actorNr, int stepNumber)
         {
-            int aiActorNr = _actorService.GetAiActor(gameId).ActorNr;
-
             var candidates = new List<IUnit>();
-            _unitsService.GetAliveUnits(gameId, aiActorNr, ref candidates);
+            _unitsService.GetAliveUnits(gameId, actorNr, ref candidates);
 
             if (candidates.Count <= 0)
             {
@@ -47,9 +42,9 @@ namespace Plugin.Runtime.Services.AI.Tasks
             }
 
             // Высчитать путь, куда может переместится каждый юнит AI игрока
-            _pathService.Calculate(gameId, aiActorNr);
+            _pathService.Calculate(gameId, actorNr);
 
-            _cellWalkableService.ClearIgnoreList(gameId, aiActorNr);    // ???
+            _cellWalkableService.ClearIgnoreList(gameId, actorNr);    // ???
 
             // перебираємо кожного юніта, та вираховуємо куди він переміститься
             foreach (IUnit unit in candidates)
@@ -57,7 +52,7 @@ namespace Plugin.Runtime.Services.AI.Tasks
                 // за допомогою сервісу CellWalkableService вираховуємо, куди може переміститься юніт
                 _cellWalkableService.Calculate(unit);
 
-                IValueDecision decision = _destinationDecisionService.Decision<ValueDecisionScheme>(unit, _cellWalkableService.Get(gameId, aiActorNr).CellsSettleArea);
+                IValueDecision decision = _destinationDecisionService.Decision<ValueDecisionScheme>(unit, _cellWalkableService.Get(gameId, actorNr).CellsSettleArea);
                 int posW = decision.Values[0];
                 int posH = decision.Values[1];
 
@@ -66,13 +61,13 @@ namespace Plugin.Runtime.Services.AI.Tasks
                 int bodyWidth = unit.BodySize.x;
                 for (int i = 0; i < bodyWidth; i++)
                 {
-                    _cellWalkableService.AddPositionToIgnoreList(gameId, aiActorNr, (posW + i, posH));
+                    _cellWalkableService.AddPositionToIgnoreList(gameId, actorNr, (posW + i, posH));
                 }
 
                 _syncRoomService.SyncPositionOnGrid(unit, posW, posH);
             }
 
-            _cellWalkableService.ClearIgnoreList(gameId, aiActorNr);
+            _cellWalkableService.ClearIgnoreList(gameId, actorNr);
         }
     }
 }

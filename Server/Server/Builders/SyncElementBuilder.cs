@@ -24,12 +24,12 @@ namespace Plugin.Builders
         /// <summary>
         /// Синхронизировать уникальный идентификатор юнита
         /// </summary>
-        public SyncElementBuilder SyncUnitID(int unitID, int instanceID)
+        public SyncElementBuilder SyncUnitId(int unitId, int instanceId)
         {
             var syncElementUnitId = new UnitIdOpComponent()
             {
-                uid = unitID,
-                i = instanceID
+                uid = unitId,
+                i = instanceId
             };
 
             Sync.SyncElements.Add(syncElementUnitId);
@@ -77,6 +77,22 @@ namespace Plugin.Builders
                 tai = targetActorId,
                 w = cellW,
                 h = cellH
+            };
+
+            Sync.SyncElements.Add(syncElementAdditional);
+            return this;
+        }
+
+        /// <summary>
+        /// Синхронизировать юнита, с которим AI выполнил свой дополнительный (пассивный) экшен
+        /// </summary>
+        public SyncElementBuilder SyncAdditionalByUnit(int targetActorNr, int targetUnitId, int targetInstanceId)
+        {
+            var syncElementAdditional = new AdditionalByUnitOpComponent
+            {
+                tai = targetActorNr,
+                uid = targetUnitId,
+                iid = targetInstanceId
             };
 
             Sync.SyncElements.Add(syncElementAdditional);

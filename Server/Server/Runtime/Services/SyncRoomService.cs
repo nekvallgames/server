@@ -26,9 +26,9 @@ namespace Plugin.Runtime.Services
         /// <summary>
         /// Покласти на склад збережену дію гравця для подальшої синхронізації із Game Server
         /// </summary>
-        public void AddSync(string gameId, int actorNr, IGroupSyncComponents components)
+        public void AddSync(string gameId, int actorNr, int stepNumber, IGroupSyncComponents components)
         {
-            IPlotModelScheme plotModelScheme = _plotsModelService.Get(gameId);
+            //IPlotModelScheme plotModelScheme = _plotsModelService.Get(gameId);
 
             // Перед тим, як покласти группу із компонентів на склад для подальшої синхронізації
             // проставляємо кожному компоненту GroupIndex та SyncStep
@@ -37,11 +37,11 @@ namespace Plugin.Runtime.Services
             // ActorSyncScheme actorSyncScheme = _syncPrivateModel.Items.Find(x => x.ActorId == actorId);
             //int syncCount = actorSyncScheme.GetSyncByStep(_plotPrivateModelProvider.Model<PlotPVPPrivateModel>().SyncStep).Count;
 
-            int groupIndex = actorStepScheme.GetNextGroupIndex();
+            int groupIndex = actorStepScheme.GetNextGroupIndex(stepNumber);
 
             foreach (ISyncComponent component in components.SyncComponents)
             {
-                component.SyncStep = plotModelScheme.SyncStep;
+                component.SyncStep = stepNumber;
                 component.GroupIndex = groupIndex;
 
                 actorStepScheme.stepScheme.Add(component);

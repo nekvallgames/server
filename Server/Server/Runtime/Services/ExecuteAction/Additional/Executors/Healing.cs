@@ -42,24 +42,22 @@ namespace Plugin.Runtime.Services.ExecuteAction.Additional.Executors
         /// <summary>
         /// Выполнить действие
         /// </summary>
-        public void Execute(IUnit unit, string gameId, int targetActorId, int posW, int posH)
+        public void ExecuteByPos(IUnit unit, string gameId, int targetActorId, int posW, int posH)
         {
-            // Проверяем, может ли юнит вылечить?
-            IHealingAdditionalComponent unitMedic = (IHealingAdditionalComponent)unit;
-
-            if (!unitMedic.CanExecuteAdditional()){
-                Debug.Fail($"ExecuteAdditionalService :: Healing :: Execute() ownerId = {unit.OwnerActorNr}, unitId = {unit.UnitId}, instanceId = {unit.InstanceId}, targetActorId = {targetActorId}, posH = {posH}, I can't healing, maybe I don't have ammunition.");
+            IHealingAdditionalComponent unitMedic = GetHealingComponent(unit);
+            if (unitMedic == null){
+                Debug.Fail($"ExecuteAdditionalService :: Healing :: Execute() ownerActorNr = {unit.OwnerActorNr}, unitId = {unit.UnitId}, instanceId = {unit.InstanceId}, targetActorId = {targetActorId}, posH = {posH}, I can't healing, maybe I don't have ammunition.");
+                return;
             }
 
             unitMedic.SpendAdditional();     // юнит вылечил когото. Забрать 1 аптечку
 
             // Синхронизировать выполненное действие юнита на игровой сетке
-            ISyncGroupComponent syncOnGrid = new SyncAdditionalGroup(unit,
-                                                                     targetActorId,
-                                                                     posW,
-                                                                     posH);
-            _syncService.Add(gameId, unit.OwnerActorNr, syncOnGrid);
-
+            ISyncGroupComponent syncAdditional = new SyncAdditionalByPosGroup(unit,
+                                                                          targetActorId,
+                                                                          posW,
+                                                                          posH);
+            _syncService.Add(gameId, unit.OwnerActorNr, syncAdditional);
 
             Int2[] additionalArea = unitMedic.GetAdditionalArea();
 
@@ -90,6 +88,40 @@ namespace Plugin.Runtime.Services.ExecuteAction.Additional.Executors
                 // Вылечить юнита
                 _unitsService.Healing(units[0], healthPower);
             }
+        }
+
+        public void ExecuteByUnit(IUnit unit, string gameId, int targetActorId, int targetUnitId, int targetInstanceId)
+        {
+            IHealingAdditionalComponent unitMedic = GetHealingComponent(unit);
+            if (unitMedic == null){
+                Debug.Fail($"ExecuteAdditionalService :: Healing :: Execute() ownerActorNr = {unit.OwnerActorNr}, unitId = {unit.UnitId}, instanceId = {unit.InstanceId}, targetActorId = {targetActorId}, targetUnitId = {targetUnitId}, targteInstanceId = {targetInstanceId}. I can't healing, maybe I don't have ammunition.");
+                return;
+            }
+
+            unitMedic.SpendAdditional();     // юнит вылечил когото. Забрать 1 аптечку
+
+            // Синхронизировать выполненное действие юнита на игровой сетке
+            ISyncGroupComponent syncAdditional = new SyncAdditionalByUnitGroup(unit,
+                                                                               targetActorId,
+                                                                               targetUnitId,
+                                                                               targetInstanceId);
+            _syncService.Add(gameId, unit.OwnerActorNr, syncAdditional);
+
+            IUnit targetUnit = _unitsService.GetUnit(gameId, targetActorId, targetUnitId, targetInstanceId);
+            if (targetUnit == null)
+                return;
+
+            int healthPower = unitMedic.GetHealthPower(); // сила лечения
+
+            // Вылечить юнита
+            _unitsService.Healing(targetUnit, healthPower);
+        }
+
+        private IHealingAdditionalComponent GetHealingComponent(IUnit unit)
+        {
+            // Проверяем, может ли юнит вылечить?
+            IHealingAdditionalComponent unitMedic = (IHealingAdditionalComponent)unit;
+            return unitMedic.CanExecuteAdditional() ? unitMedic : null;
         }
     }
 }

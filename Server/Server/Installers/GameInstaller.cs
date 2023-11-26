@@ -225,7 +225,6 @@ namespace Plugin.Installers
                                       vipDecisionService,
                                       simulateNotificationChangeVipService,
                                       syncRoomService,
-                                      actorStepsService,
                                       simulateSyncActionService);
         }
     }

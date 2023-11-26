@@ -18,8 +18,6 @@ namespace Plugin.Runtime.Services.AI.Tasks
 
         private IActionDecisionService[] _decisionServices;
 
-        private int _targetActorNr;
-        private int _aiActorNr;
         private ActorService _actorService;
         private SimulateSyncActionService _simulateSyncActionService;
 
@@ -42,25 +40,24 @@ namespace Plugin.Runtime.Services.AI.Tasks
             };
         }
 
-        public void ExecuteTask(string gameId)
+        public void ExecuteTask(string gameId, int actorNr, int stepNumber)
         {
-            _targetActorNr = _actorService.GetRealActor(gameId).ActorNr;
-            _aiActorNr = _actorService.GetAiActor(gameId).ActorNr;
+            int targetActorNr = _actorService.GetRealActor(gameId).ActorNr;
 
             // Список юнітів, котрі будуть атакувати 
             var hunterUnits = new List<IUnit>();
-            _unitsService.GetAliveUnits(gameId, _aiActorNr, ref hunterUnits);
+            _unitsService.GetAliveUnits(gameId, actorNr, ref hunterUnits);
 
             // Список юнітів, котрих будуть атакувати
             var targetUnits = new List<IUnit>();
-            _unitsService.GetAliveUnits(gameId, _targetActorNr, ref targetUnits);
+            _unitsService.GetAliveUnits(gameId, targetActorNr, ref targetUnits);
 
             if (hunterUnits.Count <= 0 || targetUnits.Count <= 0){
                 return;    // не має юнітів, котрі можуть атакувати, або нікого атакувати
             }
 
             // Высчитать путь, куда могут переместится юнити игрока, которого будем атаковать
-            _pathService.Calculate(gameId, _targetActorNr);
+            _pathService.Calculate(gameId, targetActorNr);
 
             // Перебираємо кожного юніта, котрий буде атакувати і знайти рішення, кого саме юніт буде атакувати
             var decisions = new List<IUnitDecision>();
@@ -70,7 +67,7 @@ namespace Plugin.Runtime.Services.AI.Tasks
                 {
                     if (decision.CanDecision(hunterUnit))
                     {
-                        decisions.Add(decision.Decision<UnitDecisionScheme>(hunterUnit, gameId, _targetActorNr));
+                        decisions.Add(decision.Decision<UnitDecisionScheme>(hunterUnit, gameId, targetActorNr));
                         break;
                     }
                 }

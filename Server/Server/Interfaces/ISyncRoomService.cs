@@ -7,7 +7,7 @@ namespace Plugin.Interfaces
         /// <summary>
         /// Покласти на склад збережену дію гравця для подальшої синхронізації із Game Server
         /// </summary>
-        void AddSync(string gameId, int actorNr, IGroupSyncComponents components);
+        void AddSync(string gameId, int actorNr, int stepNumber, IGroupSyncComponents components);
 
         /// <summary>
         /// Зберегти позиції всіх юнітів актора
@@ -18,14 +18,6 @@ namespace Plugin.Interfaces
         /// Зберегти позицію вказаного юніта актора 
         /// </summary>
         void SyncPositionOnGrid(string gameId, int actorNr, int unitId, int unitInstanceId);
-
-        /// <summary>
-        /// Получить историю с экшенами, действия игрока в комнате
-        /// </summary>
-        // public List<IGroupSyncComponents> GetSyncByStep(string gameId, int actorNr, int syncStep)
-        // {
-        //     return _actorStepsService.Get(gameId, actorNr).stepScheme.GetSyncByStep(syncStep);
-        // }
 
         /// <summary>
         /// Зберегти зміну віпа вказаного юніта
@@ -52,12 +44,12 @@ namespace Plugin.Interfaces
         /// <param name="targetPosW">позіція тача на ігровій сітці</param>
         /// <param name="targetPosH">позіція тача на ігровій сітці</param>
         void SyncAction(string gameId,
-                               int actorNr,
-                               int unitId,
-                               int unitInstanceId,
-                               int targetActorId,
-                               int targetPosW,
-                               int targetPosH);
+                        int actorNr,
+                        int unitId,
+                        int unitInstanceId,
+                        int targetActorId,
+                        int targetPosW,
+                        int targetPosH);
 
         /// <summary>
         /// Зберегти додаткову дію актора по координатам для подальшої синхронізації із сервером
@@ -69,12 +61,12 @@ namespace Plugin.Interfaces
         /// <param name="targetPosW">позіція тача на ігровій сітці</param>
         /// <param name="targetPosH">позіція тача на ігровій сітці</param>
         void SyncAdditionalByPos(string gameId,
-                                        int actorNr,
-                                        int unitId,
-                                        int unitInstanceId,
-                                        int targetActorId,
-                                        int targetPosW,
-                                        int targetPosH);
+                                 int actorNr,
+                                 int unitId,
+                                 int unitInstanceId,
+                                 int targetActorId,
+                                 int targetPosW,
+                                 int targetPosH);
 
         /// <summary>
         /// Зберегти додаткову дію актора для вказаного юніта для подальшої синхронізації із сервером
@@ -86,12 +78,12 @@ namespace Plugin.Interfaces
         /// <param name="targetUnitId">вказати юніт Id, до котрого буде примінена додаткова дія</param>
         /// <param name="targetUnitInstanceId">вказати юніт інстанс Id, до котрого буде примінена додаткова дія</param>
         void SyncAdditionalByUnit(string gameId,
-                                         int actorNr,
-                                         int unitId,
-                                         int unitInstanceId,
-                                         int targetActorId,
-                                         int targetUnitId,
-                                         int targetUnitInstanceId);
+                                  int actorNr,
+                                  int unitId,
+                                  int unitInstanceId,
+                                  int targetActorId,
+                                  int targetUnitId,
+                                  int targetUnitInstanceId);
 
         /// <summary>
         /// Зберегти позіцію юніта для подальшої синхронізації із сервером

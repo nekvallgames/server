@@ -149,14 +149,14 @@ namespace Plugin.Builders
         /// <summary>
         /// Створити группу із компонентів для синхронізації лікування юніта
         /// </summary>
-        public IGroupSyncComponents CreateSimulateHealing(IUnit unitMedic, IUnit unitPatient)
-        {
-            SyncComponentsBuilder
-                .Build(this)
-                .SyncUnitId(unitMedic.UnitId, unitMedic.InstanceId)     // юніт, котрий буде лікувати
-                .SyncAdditionalByUnit(unitMedic.OwnerActorNr, unitPatient.UnitId, unitPatient.InstanceId);    // юніт, котрого потрібно лікувати
-
-            return this;
-        }
+        // public IGroupSyncComponents CreateSimulateHealing(IUnit unitMedic, IUnit unitPatient)
+        // {
+        //     SyncComponentsBuilder
+        //         .Build(this)
+        //         .SyncUnitId(unitMedic.UnitId, unitMedic.InstanceId)     // юніт, котрий буде лікувати
+        //         .SyncAdditionalByUnit(unitMedic.OwnerActorNr, unitPatient.UnitId, unitPatient.InstanceId);    // юніт, котрого потрібно лікувати
+        // 
+        //     return this;
+        // }
     }
 }

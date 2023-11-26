@@ -47,7 +47,7 @@ namespace Plugin.Runtime.Services.ExecuteAction.Action
                 }
 
                 // Текущим исполнителем выполнить действие для текущего юнита
-                executer.Execute(unit, gameId, targetActorNr, posW, posH);
+                executer.ExecuteByPos(unit, gameId, targetActorNr, posW, posH);
                 return;
             }
 
