@@ -148,6 +148,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AiDoStepState.cs" />
     <Compile Include="Builders\GridBuilder.cs" />
     <Compile Include="Builders\GroupSyncBuilder.cs" />
     <Compile Include="Builders\StepSchemeBuilder.cs" />
@@ -323,7 +324,6 @@
     <Compile Include="Runtime\Services\SyncRoomService.cs" />
     <Compile Include="Runtime\Services\SyncStepService.cs" />
     <Compile Include="Runtime\Services\Sync\Groups\SyncActionGroup.cs" />
-    <Compile Include="Runtime\Services\Sync\Groups\SyncAdditionalGroup.cs" />
     <Compile Include="Runtime\Services\Sync\Groups\SyncPositionOnGridGroup.cs" />
     <Compile Include="Runtime\Services\Sync\Groups\SyncVipGroup.cs" />
     <Compile Include="Runtime\Services\Sync\SyncService.cs" />
@@ -382,6 +382,8 @@
     <Compile Include="Signals\HostsPrivateModelSignal.cs" />
     <Compile Include="Signals\ModelChangeSignal.cs" />
     <Compile Include="Signals\OpStockPrivateModelSignal.cs" />
+    <Compile Include="SyncAdditionalByPosGroup.cs" />
+    <Compile Include="SyncAdditionalByUnitGroup.cs" />
     <Compile Include="Templates\BaseModel.cs" />
     <Compile Include="Templates\BaseStateMachine.cs" />
     <Compile Include="Templates\BaseStatesModel.cs" />

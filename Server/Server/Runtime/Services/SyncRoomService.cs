@@ -12,15 +12,11 @@ namespace Plugin.Runtime.Services
     {
         private UnitsService _unitsService;
         private ActorStepsService _actorStepsService;
-        private PlotsModelService _plotsModelService;
 
-        public SyncRoomService(UnitsService unitsService, 
-                               ActorStepsService actorStepsService, 
-                               PlotsModelService plotsModelService)
+        public SyncRoomService(UnitsService unitsService, ActorStepsService actorStepsService)
         {
             _unitsService = unitsService;
             _actorStepsService = actorStepsService;
-            _plotsModelService = plotsModelService;
         }
 
         /// <summary>
@@ -53,22 +49,22 @@ namespace Plugin.Runtime.Services
         /// <summary>
         /// Зберегти позиції всіх юнітів актора
         /// </summary>
-        public void SyncPositionOnGrid(string gameId, int actorNr)
+        public void SyncPositionOnGrid(string gameId, int actorNr, int stepNumber)
         {
             List<IUnit> units = _unitsService.GetUnits(gameId, actorNr);
 
             foreach (IUnit unit in units)
             {
-                SyncPositionOnGrid(unit);
+                SyncPositionOnGrid(unit, stepNumber);
             }
         }
 
         /// <summary>
         /// Зберегти позицію вказаного юніта актора 
         /// </summary>
-        public void SyncPositionOnGrid(string gameId, int actorNr, int unitId, int unitInstanceId)
+        public void SyncPositionOnGrid(string gameId, int actorNr, int stepNumber, int unitId, int unitInstanceId)
         {
-            SyncPositionOnGrid(_unitsService.GetUnit(gameId, actorNr, unitId, unitInstanceId));
+            SyncPositionOnGrid(_unitsService.GetUnit(gameId, actorNr, unitId, unitInstanceId), stepNumber);
         }
 
         /// <summary>
@@ -84,10 +80,10 @@ namespace Plugin.Runtime.Services
         /// </summary>
         /// <param name="actorId">актор, володарь дії</param>
         /// <param name="vipUnit"></param>
-        public void SyncVip(string gameId, int actorNr, IUnit vipUnit)
+        public void SyncVip(string gameId, int actorNr, int stepNumber, IUnit vipUnit)
         {
             IGroupSyncComponents groupSync = new GroupSyncBuilder().CreateVip(vipUnit);
-            AddSync(gameId, actorNr, groupSync);
+            AddSync(gameId, actorNr, stepNumber, groupSync);
         }
 
         /// <summary>
@@ -96,10 +92,10 @@ namespace Plugin.Runtime.Services
         /// <param name="actorId">актор, володарь дії</param>
         /// <param name="unit">юніт, до котрого потрібно примінити синхронізацію</param>
         /// <param name="isVip">вказати юніт стане віпом чи ні</param>
-        public void SimulateSyncVip(string gameId, int actorNr, IUnit unit, bool isVip)
+        public void SimulateSyncVip(string gameId, int actorNr, int stepNumber, IUnit unit, bool isVip)
         {
             IGroupSyncComponents groupSync = new GroupSyncBuilder().CreateSimulateVip(unit, isVip);
-            AddSync(gameId, actorNr, groupSync);
+            AddSync(gameId, actorNr, stepNumber, groupSync);
         }
 
         /// <summary>
@@ -112,7 +108,8 @@ namespace Plugin.Runtime.Services
         /// <param name="targetPosW">позіція тача на ігровій сітці</param>
         /// <param name="targetPosH">позіція тача на ігровій сітці</param>
         public void SyncAction(string gameId, 
-                               int actorNr, 
+                               int actorNr,
+                               int stepNumber,
                                int unitId, 
                                int unitInstanceId, 
                                int targetActorId, 
@@ -124,7 +121,7 @@ namespace Plugin.Runtime.Services
                                                                                  targetActorId,
                                                                                  targetPosW,
                                                                                  targetPosH);
-            AddSync(gameId, actorNr, groupSync);
+            AddSync(gameId, actorNr, stepNumber, groupSync);
         }
 
         /// <summary>
@@ -138,6 +135,7 @@ namespace Plugin.Runtime.Services
         /// <param name="targetPosH">позіція тача на ігровій сітці</param>
         public void SyncAdditionalByPos(string gameId,
                                         int actorNr,
+                                        int stepNumber,
                                         int unitId,
                                         int unitInstanceId,
                                         int targetActorNr,
@@ -150,7 +148,7 @@ namespace Plugin.Runtime.Services
                                                                                           targetPosW,
                                                                                           targetPosH);
 
-            AddSync(gameId, actorNr, groupSync);
+            AddSync(gameId, actorNr, stepNumber, groupSync);
         }
 
         /// <summary>
@@ -164,6 +162,7 @@ namespace Plugin.Runtime.Services
         /// <param name="targetUnitInstanceId">вказати юніт інстанс Id, до котрого буде примінена додаткова дія</param>
         public void SyncAdditionalByUnit(string gameId, 
                                          int actorNr,
+                                         int stepNumber,
                                          int unitId,
                                          int unitInstanceId,
                                          int targetActorId,
@@ -176,24 +175,24 @@ namespace Plugin.Runtime.Services
                                                                                            targetUnitId,
                                                                                            targetUnitInstanceId);
 
-            AddSync(gameId, actorNr, groupSync);
+            AddSync(gameId, actorNr, stepNumber, groupSync);
         }
 
         /// <summary>
         /// Зберегти позіцію юніта для подальшої синхронізації із сервером
         /// </summary>
-        public void SyncPositionOnGrid(IUnit unit)
+        public void SyncPositionOnGrid(IUnit unit, int stepNumber)
         {
             IGroupSyncComponents groupSync = new GroupSyncBuilder().CreatePositionOnGrid(unit);
-            AddSync(unit.GameId, unit.OwnerActorNr, groupSync);
+            AddSync(unit.GameId, unit.OwnerActorNr, stepNumber, groupSync);
         }
 
-        public void SyncPositionOnGrid(IUnit unit, int positionInGridW, int positionInGridH)
+        public void SyncPositionOnGrid(IUnit unit, int stepNumber, int positionInGridW, int positionInGridH)
         {
             IGroupSyncComponents groupSync = new GroupSyncBuilder().CreatePositionOnGrid(unit,
                                                                                          positionInGridW,
                                                                                          positionInGridH);
-            AddSync(unit.GameId, unit.OwnerActorNr, groupSync);
+            AddSync(unit.GameId, unit.OwnerActorNr, stepNumber, groupSync);
         }
     }
 }

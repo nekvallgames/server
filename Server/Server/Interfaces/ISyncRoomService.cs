@@ -12,19 +12,19 @@ namespace Plugin.Interfaces
         /// <summary>
         /// Зберегти позиції всіх юнітів актора
         /// </summary>
-        void SyncPositionOnGrid(string gameId, int actorNr);
+        void SyncPositionOnGrid(string gameId, int actorNr, int stepNumber);
 
         /// <summary>
         /// Зберегти позицію вказаного юніта актора 
         /// </summary>
-        void SyncPositionOnGrid(string gameId, int actorNr, int unitId, int unitInstanceId);
+        void SyncPositionOnGrid(string gameId, int actorNr, int stepNumber, int unitId, int unitInstanceId);
 
         /// <summary>
         /// Зберегти зміну віпа вказаного юніта
         /// </summary>
         /// <param name="actorId">актор, володарь дії</param>
         /// <param name="vipUnit"></param>
-        void SyncVip(string gameId, int actorNr, IUnit vipUnit);
+        void SyncVip(string gameId, int actorNr, int stepNumber, IUnit vipUnit);
 
         /// <summary>
         /// Симулювати синхронізацію віпа для вказаного юніта
@@ -32,7 +32,7 @@ namespace Plugin.Interfaces
         /// <param name="actorId">актор, володарь дії</param>
         /// <param name="unit">юніт, до котрого потрібно примінити синхронізацію</param>
         /// <param name="isVip">вказати юніт стане віпом чи ні</param>
-        void SimulateSyncVip(string gameId, int actorNr, IUnit unit, bool isVip);
+        void SimulateSyncVip(string gameId, int actorNr, int stepNumber, IUnit unit, bool isVip);
 
         /// <summary>
         /// Зберегти дію актора для подальшої синхронізації із сервером
@@ -45,6 +45,7 @@ namespace Plugin.Interfaces
         /// <param name="targetPosH">позіція тача на ігровій сітці</param>
         void SyncAction(string gameId,
                         int actorNr,
+                        int stepNumber,
                         int unitId,
                         int unitInstanceId,
                         int targetActorId,
@@ -62,6 +63,7 @@ namespace Plugin.Interfaces
         /// <param name="targetPosH">позіція тача на ігровій сітці</param>
         void SyncAdditionalByPos(string gameId,
                                  int actorNr,
+                                 int stepNumber,
                                  int unitId,
                                  int unitInstanceId,
                                  int targetActorId,
@@ -79,6 +81,7 @@ namespace Plugin.Interfaces
         /// <param name="targetUnitInstanceId">вказати юніт інстанс Id, до котрого буде примінена додаткова дія</param>
         void SyncAdditionalByUnit(string gameId,
                                   int actorNr,
+                                  int stepNumber,
                                   int unitId,
                                   int unitInstanceId,
                                   int targetActorId,
@@ -88,8 +91,8 @@ namespace Plugin.Interfaces
         /// <summary>
         /// Зберегти позіцію юніта для подальшої синхронізації із сервером
         /// </summary>
-        void SyncPositionOnGrid(IUnit unit);
+        void SyncPositionOnGrid(IUnit unit, int stepNumber);
 
-        void SyncPositionOnGrid(IUnit unit, int positionInGridW, int positionInGridH);
+        void SyncPositionOnGrid(IUnit unit, int stepNumber, int positionInGridW, int positionInGridH);
     }
 }

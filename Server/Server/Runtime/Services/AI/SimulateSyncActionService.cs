@@ -29,7 +29,7 @@ namespace Plugin.Runtime.Services.AI
         /// Виконати для аказаного юніта по вказаному юніту всі єкшени
         /// (Скоріше за все, це будуть всі єкшени атаки)
         /// </summary>
-        public void SimulateAllActions(IUnit unitHunter, IUnit unitTarget)
+        public void SimulateAllActions(IUnit unitHunter, IUnit unitTarget, int stepNumber)
         {
             // кількість єкшенів юніта, котрий буде атакувати
             //var hunterActionCapacity = _entityManager.GetComponentData<ActionCapacityComponent>(unitHunter.UnitEntity);
@@ -60,6 +60,7 @@ namespace Plugin.Runtime.Services.AI
 
                 _syncRoomService.SyncAction(unitHunter.GameId,
                                             unitHunter.OwnerActorNr,
+                                            stepNumber,
                                             unitHunter.UnitId,
                                             unitHunter.InstanceId,
                                             unitTarget.OwnerActorNr,

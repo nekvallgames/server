@@ -148,9 +148,7 @@ namespace Plugin.Installers
                                             signalBus, 
                                             moveService, 
                                             plotPublicService);
-            syncRoomService = new SyncRoomService(unitsService,
-                                                  actorStepsService,
-                                                  plotsModelService);
+            syncRoomService = new SyncRoomService(unitsService, actorStepsService);
             locationUnitsSpawner = new LocationUnitsSpawner(publicModelProvider, unitsService, signalBus);
             vipService = new VipService(syncService, unitsService);
             sortTargetOnGridService = new SortHitOnGridService();

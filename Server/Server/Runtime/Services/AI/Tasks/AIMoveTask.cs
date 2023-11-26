@@ -64,7 +64,7 @@ namespace Plugin.Runtime.Services.AI.Tasks
                     _cellWalkableService.AddPositionToIgnoreList(gameId, actorNr, (posW + i, posH));
                 }
 
-                _syncRoomService.SyncPositionOnGrid(unit, posW, posH);
+                _syncRoomService.SyncPositionOnGrid(unit, stepNumber, posW, posH);
             }
 
             _cellWalkableService.ClearIgnoreList(gameId, actorNr);

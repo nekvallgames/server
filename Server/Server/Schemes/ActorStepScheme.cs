@@ -1,4 +1,6 @@
-﻿namespace Plugin.Schemes
+﻿using System.Collections.Generic;
+
+namespace Plugin.Schemes
 {
     public class ActorStepScheme
     {
@@ -9,7 +11,7 @@
         /// Схема со всеми действиями игрока
         /// Куча компонентов, которые разсортированы по спискам
         /// </summary>
-        public StepScheme stepScheme;
+        public List<StepScheme> steps = new List<StepScheme>();
 
         public ActorStepScheme(string gameId, int actorId)
         {
@@ -19,9 +21,7 @@
 
         public int GetNextGroupIndex(int stepNumber)
         {
-            я тут закінчив
-
-            return stepScheme.syncUnitId.Count;
+            return steps[stepNumber].syncUnitId.Count;
         }
     }
 }

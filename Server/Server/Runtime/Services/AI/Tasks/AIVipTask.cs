@@ -70,7 +70,7 @@ namespace Plugin.Runtime.Services.AI.Tasks
             allowOutputs.Reverse();
 
             // Зробити VIP із найбільшою сумою output
-            _syncRoomService.SimulateSyncVip(gameId, actorNr, allowOutputs[0].Units[0], true);
+            _syncRoomService.SimulateSyncVip(gameId, actorNr, stepNumber, allowOutputs[0].Units[0], true);
             _simulateNotificationChangeVipService.Execute();
         }
 

@@ -98,6 +98,7 @@ namespace Plugin.Runtime.Services.AI.Tasks
 
                 _syncRoomService.SyncAdditionalByUnit(gameId,
                                                       actorNr,
+                                                      stepNumber,
                                                       unitMedPack.UnitId,
                                                       unitMedPack.InstanceId,
                                                       pacient.Unit.OwnerActorNr,

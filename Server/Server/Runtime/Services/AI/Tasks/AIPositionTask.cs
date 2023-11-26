@@ -33,7 +33,7 @@ namespace Plugin.Runtime.Services.AI.Tasks
                     continue;
                 }
 
-                _syncRoomService.SyncPositionOnGrid(unit);
+                _syncRoomService.SyncPositionOnGrid(unit, stepNumber);
             }
         }
     }

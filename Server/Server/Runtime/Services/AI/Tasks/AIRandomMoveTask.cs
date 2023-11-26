@@ -58,7 +58,7 @@ namespace Plugin.Runtime.Services.AI.Tasks
             Cell position =
                 cellWalkablePrivateScheme.CellsSettleArea[random.Next(0, cellWalkablePrivateScheme.CellsSettleArea.Count)];
 
-            _syncRoomService.SyncPositionOnGrid(candidates[0], (int)position.wIndex, (int)position.hIndex);
+            _syncRoomService.SyncPositionOnGrid(candidates[0], stepNumber, (int)position.wIndex, (int)position.hIndex);
         }
     }
 }
