@@ -58,20 +58,22 @@ namespace Plugin.Runtime.Services.PlotStates.States
 
             foreach (IActorScheme actor in actors)
             {
-                _executeOpStepService.Execute(host.GameId, 
-                                              actor.ActorNr, 
-                                              plotModel.SyncStep, 
-                                              _actorStepsService.Get(host.GameId, actor.ActorNr).stepScheme);
+                // BLAW 0
+                // _executeOpStepService.Execute(host.GameId, 
+                //                               actor.ActorNr, 
+                //                               plotModel.SyncStep, 
+                //                               _actorStepsService.Get(host.GameId, actor.ActorNr).stepScheme);
             }
             plotModel.SyncStep++;
 
             // Виконати другий крок всих гравців в ігровій кімнаті - attack
             foreach (IActorScheme actor in actors)
             {
-                _executeOpStepService.Execute(host.GameId,
-                                              actor.ActorNr,
-                                              plotModel.SyncStep,
-                                              _actorStepsService.Get(host.GameId, actor.ActorNr).stepScheme);
+                // BLAW 1
+                // _executeOpStepService.Execute(host.GameId,
+                //                               actor.ActorNr,
+                //                               plotModel.SyncStep,
+                //                               _actorStepsService.Get(host.GameId, actor.ActorNr).stepScheme);
             }
             // ExecuteSteps(host.GameId, ref actorSteps, plotModel.SyncStep);
             plotModel.SyncStep++;

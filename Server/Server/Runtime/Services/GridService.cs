@@ -59,8 +59,15 @@ namespace Plugin.Runtime.Services
 
             int cellIndex = (grid.SizeGridW * cellIndexH) + cellIndexW;
 
+            if (cellIndex == -26)
+            {
+                int a = 2;
+            }
+
             if (cellIndex < grid.CellsList.Length)
             {
+                LogChannel.Log("Blaw = " + cellIndex + " cellIndexW = " + cellIndexW + ", cellIndexH = " + cellIndexH);
+                
                 return grid.CellsList[cellIndex];
             }
 

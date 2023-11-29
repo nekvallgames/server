@@ -21,6 +21,14 @@ namespace Plugin.Schemes
 
         public int GetNextGroupIndex(int stepNumber)
         {
+            if (steps.Count == 0){
+                steps.Add(new StepScheme());
+            }
+
+            while (steps.Count <= stepNumber){
+                steps.Add(new StepScheme());
+            }
+
             return steps[stepNumber].syncUnitId.Count;
         }
     }

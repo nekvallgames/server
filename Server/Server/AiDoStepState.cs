@@ -46,14 +46,6 @@ namespace Plugin.Runtime.Services.PlotStates.States
                 return;
             }
 
-            List<IActorScheme> actors = _actorService.GetActorsInRoom(host.GameId);
-            foreach (IActorScheme actor in actors)
-            {
-                // Высчитать путь, куда может переместится каждый юнит игрока
-                if (plotModel.IsNeedToCheckOnCorrectPosition){
-                    _pathService.Calculate(host.GameId, actor.ActorNr);
-                }
-            }
 
             // Виконати перший крок всих гравців в ігровій кімнаті - move
             IActorScheme aiActor = _actorService.GetAiActor(host.GameId);
@@ -65,6 +57,16 @@ namespace Plugin.Runtime.Services.PlotStates.States
             }
             else
             {
+                List<IActorScheme> actors = _actorService.GetActorsInRoom(host.GameId);
+                foreach (IActorScheme actor in actors)
+                {
+                    // Высчитать путь, куда может переместится каждый юнит игрока
+                    if (plotModel.IsNeedToCheckOnCorrectPosition)
+                    {
+                        _pathService.Calculate(host.GameId, actor.ActorNr);
+                    }
+                }
+
                 // Так як локальний гравець грає проти AI, для AI потрібно отсліжувати
                 // температурний слід юнітів локального гравця
 
@@ -85,6 +87,9 @@ namespace Plugin.Runtime.Services.PlotStates.States
 
                 _aiService.ExecuteTasks(host.GameId, aiActor.ActorNr, plotModel.SyncStep, tasks);
             }
+
+            перед атакою потрібно юнітів противника виставити в якісь точки.
+            Бо зараз юніти противника стоять в (0,0). Потрібно виставити в рандомні міста
 
             // виконати другий крок
             _aiService.ExecuteTasks(host.GameId, aiActor.ActorNr, plotModel.SyncStep+1, new List<string> { AIActionTask.TASK_NAME });

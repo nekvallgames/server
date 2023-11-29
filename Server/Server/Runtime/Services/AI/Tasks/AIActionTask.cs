@@ -78,7 +78,7 @@ namespace Plugin.Runtime.Services.AI.Tasks
             {
                 IUnit unitHunter = decision.Units[0];
                 IUnit unitTarget = decision.Units[1];
-                _simulateSyncActionService.SimulateAllActions(unitHunter, unitTarget);
+                _simulateSyncActionService.SimulateAllActions(unitHunter, unitTarget, stepNumber);
             }
         }
 

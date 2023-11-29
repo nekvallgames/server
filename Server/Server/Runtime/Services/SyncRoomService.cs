@@ -40,7 +40,7 @@ namespace Plugin.Runtime.Services
                 component.SyncStep = stepNumber;
                 component.GroupIndex = groupIndex;
 
-                actorStepScheme.stepScheme.Add(component);
+                actorStepScheme.steps[stepNumber].Add(component);
             }
             
             // actorSyncScheme.AddSync(components, _plotPrivateModelProvider.Model<PlotPVPPrivateModel>().SyncStep); 

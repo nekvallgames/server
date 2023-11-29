@@ -79,10 +79,12 @@ namespace Plugin.Runtime.Services.UnitsPath
 
                 Int2 positionOnGrid = unit.Position;
 
-                unitsPathPrivateScheme.unitsPath.Add(CalculatePathForUnit(unit,
-                                                                          positionOnGrid.x,
-                                                                          positionOnGrid.y,
-                                                                          grid));
+                UnitPathPrivateScheme unitPathPrivateScheme = CalculatePathForUnit(unit,
+                                                                                   positionOnGrid.x,
+                                                                                   positionOnGrid.y,
+                                                                                   grid);
+
+                unitsPathPrivateScheme.unitsPath.Add(unitPathPrivateScheme);
             }
         }
 
