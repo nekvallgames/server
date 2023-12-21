@@ -3,7 +3,9 @@ using Plugin.Installers;
 using Plugin.Interfaces;
 using Plugin.Runtime.Services.AI;
 using Plugin.Runtime.Services.AI.Tasks;
+using Plugin.Schemes;
 using Plugin.Tools;
+using System;
 using System.Collections.Generic;
 
 namespace Plugin.Runtime.Services.PlotStates.States
@@ -21,6 +23,7 @@ namespace Plugin.Runtime.Services.PlotStates.States
         private ActorService _actorService;
         private AIService _aiService;
         private UnitsService _unitsService;
+        private CellWalkableService _cellWalkableService;
 
         public AiDoStepState(PlotStatesService plotStatesService,
                              IPluginHost host,
@@ -33,6 +36,7 @@ namespace Plugin.Runtime.Services.PlotStates.States
             _actorService = gameInstaller.actorService;
             _aiService = gameInstaller.aiService;
             _unitsService = gameInstaller.unitsService;
+            _cellWalkableService = gameInstaller.cellWalkableService;
         }
 
         public override void EnterState()
@@ -46,12 +50,26 @@ namespace Plugin.Runtime.Services.PlotStates.States
                 return;
             }
 
+            потрібно всі кроки покласти в один stepScheme
 
             // Виконати перший крок всих гравців в ігровій кімнаті - move
             IActorScheme aiActor = _actorService.GetAiActor(host.GameId);
 
             if (plotModel.SyncStep == 0)
             {
+                // Це самий перший крок, і гравець ще не прислав свої позиції, де стоять його юніти
+                // Перший раз просто рандомно виставляємо юнітів реального гравця
+
+                // Вирахувати шлях, куди можуть переміститься юніти реального гравця
+                IActorScheme realActor = _actorService.GetRealActor(host.GameId);
+               
+                var realUnits = new List<IUnit>();
+                _unitsService.GetAliveUnits(host.GameId, realActor.ActorNr, ref realUnits);
+                foreach (IUnit unit in realUnits)
+                {
+                    unit.Position = new Int2(1,1);
+                }
+
                 // Це самий перший крок, просто потрібно добавити позиції юнів в syncService
                 _aiService.ExecuteTask(host.GameId, aiActor.ActorNr, plotModel.SyncStep, AIPositionTask.TASK_NAME);
             }
@@ -88,11 +106,13 @@ namespace Plugin.Runtime.Services.PlotStates.States
                 _aiService.ExecuteTasks(host.GameId, aiActor.ActorNr, plotModel.SyncStep, tasks);
             }
 
-            перед атакою потрібно юнітів противника виставити в якісь точки.
-            Бо зараз юніти противника стоять в (0,0). Потрібно виставити в рандомні міста
+            // перед атакою потрібно юнітів противника виставити в якісь точки.
+            // Бо зараз юніти противника стоять в (0,0). Потрібно виставити в рандомні міста
 
             // виконати другий крок
             _aiService.ExecuteTasks(host.GameId, aiActor.ActorNr, plotModel.SyncStep+1, new List<string> { AIActionTask.TASK_NAME });
+
+            plotStatesService.ChangeState(nextState);
         }
     }
 }

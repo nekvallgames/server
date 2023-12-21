@@ -33,8 +33,8 @@ namespace Plugin.Runtime.Services
                 return;
 
             ActorStepScheme actorStepScheme = _model.Items.Find(x => x.GameId == gameId && x.OwnerActorId == actorNr);
-            // BLAW 2
-            // actorStepScheme.stepScheme = stepScheme;
+            
+            actorStepScheme.steps.Add(stepScheme);
         }
 
         public ActorStepScheme Get(string gameId, int actorNr)
