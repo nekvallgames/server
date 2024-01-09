@@ -68,14 +68,6 @@ namespace Plugin.Runtime.Services
         }
 
         /// <summary>
-        /// Получить историю с экшенами, действия игрока в комнате
-        /// </summary>
-        // public List<IGroupSyncComponents> GetSyncByStep(string gameId, int actorNr, int syncStep)
-        // {
-        //     return _actorStepsService.Get(gameId, actorNr).stepScheme.GetSyncByStep(syncStep);
-        // }
-
-        /// <summary>
         /// Зберегти зміну віпа вказаного юніта
         /// </summary>
         /// <param name="actorId">актор, володарь дії</param>

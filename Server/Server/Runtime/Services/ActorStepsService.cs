@@ -1,6 +1,7 @@
 ﻿using Plugin.Models.Private;
 using Plugin.Schemes;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Plugin.Runtime.Services
@@ -33,8 +34,18 @@ namespace Plugin.Runtime.Services
                 return;
 
             ActorStepScheme actorStepScheme = _model.Items.Find(x => x.GameId == gameId && x.OwnerActorId == actorNr);
-            
-            actorStepScheme.steps.Add(stepScheme);
+
+            Dictionary<int, StepScheme> steps = StepScheme.SeparateBySteps(stepScheme);
+
+            foreach (int stepIndex in steps.Keys)
+            {
+                while(actorStepScheme.steps.Count <= stepIndex)
+                {
+                    actorStepScheme.steps.Add(new StepScheme());
+                }
+
+                actorStepScheme.steps[stepIndex] = steps[stepIndex];
+            }
         }
 
         public ActorStepScheme Get(string gameId, int actorNr)

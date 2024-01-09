@@ -148,7 +148,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AiDoStepState.cs" />
+    <Compile Include="Runtime\Services\PlotStates\States\AiDoStepState.cs" />
     <Compile Include="Builders\GridBuilder.cs" />
     <Compile Include="Builders\GroupSyncBuilder.cs" />
     <Compile Include="Builders\StepSchemeBuilder.cs" />
