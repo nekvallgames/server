@@ -21,7 +21,7 @@ namespace Plugin.Runtime.Services.PlotStates.States
         private ActorService _actorService;
         private AIService _aiService;
         private UnitsService _unitsService;
-        private CellWalkableService _cellWalkableService;
+        private CellTemperatureTraceService _cellTemperatureTraceService;
 
         public AiDoStepState(PlotStatesService plotStatesService,
                              IPluginHost host,
@@ -34,7 +34,7 @@ namespace Plugin.Runtime.Services.PlotStates.States
             _actorService = gameInstaller.actorService;
             _aiService = gameInstaller.aiService;
             _unitsService = gameInstaller.unitsService;
-            _cellWalkableService = gameInstaller.cellWalkableService;
+            _cellTemperatureTraceService = gameInstaller.cellTemperatureTraceService;
         }
 
         public override void EnterState()
@@ -52,6 +52,7 @@ namespace Plugin.Runtime.Services.PlotStates.States
 
             // Виконати перший крок всих гравців в ігровій кімнаті - move
             IActorScheme aiActor = _actorService.GetAiActor(host.GameId);
+            IActorScheme realActor = _actorService.GetRealActor(host.GameId);
 
             if (plotModel.SyncStep == 0)
             {
@@ -59,7 +60,7 @@ namespace Plugin.Runtime.Services.PlotStates.States
                 // Перший раз просто рандомно виставляємо юнітів реального гравця
 
                 // Вирахувати шлях, куди можуть переміститься юніти реального гравця
-                IActorScheme realActor = _actorService.GetRealActor(host.GameId);
+                
                
                 var realUnits = new List<IUnit>();
                 _unitsService.GetAliveUnits(host.GameId, realActor.ActorNr, ref realUnits);
@@ -88,7 +89,7 @@ namespace Plugin.Runtime.Services.PlotStates.States
 
                 int aiAliveUnitsCount = _unitsService.GetAliveUnitsCount(host.GameId, aiActor.ActorNr);
 
-                // _temperatureWalkableTraceService.UpdateTemperatureTrace(targetActorId); TODO
+                _cellTemperatureTraceService.UpdateTemperatureTrace(host.GameId, realActor.ActorNr);
 
                 var tasks = new List<string>
                 {

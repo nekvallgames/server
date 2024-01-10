@@ -3,6 +3,7 @@ using Plugin.Installers;
 using Plugin.Interfaces;
 using Plugin.Schemes;
 using Plugin.Tools;
+using System;
 using System.Collections.Generic;
 
 namespace Plugin.Runtime.Services.PlotStates.States
@@ -15,6 +16,7 @@ namespace Plugin.Runtime.Services.PlotStates.States
         private ActorService _actorService;
         private ConvertService _convertService;
         private PlotsModelService _plotsModelService;
+        private CellTemperatureTraceService _cellTemperatureTraceService;
 
         public StartGameState(PlotStatesService plotStatesService,
                               IPluginHost host,
@@ -25,6 +27,7 @@ namespace Plugin.Runtime.Services.PlotStates.States
             _actorService = gameInstaller.actorService;
             _convertService = gameInstaller.convertService;
             _plotsModelService = gameInstaller.plotsModelService;
+            _cellTemperatureTraceService = gameInstaller.cellTemperatureTraceService;
         }
 
         public override void EnterState()
@@ -34,9 +37,22 @@ namespace Plugin.Runtime.Services.PlotStates.States
             IPlotModelScheme plotModel = _plotsModelService.Get(host.GameId);
             plotModel.IsStartRoom = true;
 
+            InitCellTemperatures();
+
             SendStartGame();
 
             plotStatesService.ChangeState(nextState);
+        }
+
+        /// <summary>
+        /// Створити температурний слід для гравцій 
+        /// </summary>
+        private void InitCellTemperatures()
+        {
+            foreach (IActorScheme actor in _actorService.GetActorsInRoom(host.GameId))
+            {
+                _cellTemperatureTraceService.CreateTemperatureTrace(host.GameId, actor.ActorNr);
+            }
         }
 
         /// <summary>

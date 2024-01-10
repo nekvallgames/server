@@ -1,6 +1,7 @@
 ﻿using Plugin.Interfaces;
 using Plugin.Models.Private;
 using Plugin.Schemes;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -27,8 +28,12 @@ namespace Plugin.Runtime.Services
 
         private CellTemperaturePrivateModel _cellTemperaturePrivateModel;
 
-        public CellTemperatureTraceService(CellTemperaturePrivateModel cellTemperaturePrivateModel)
+        public CellTemperatureTraceService(UnitsService unitsService,
+            HitAreaService hitAreaService,
+            CellTemperaturePrivateModel cellTemperaturePrivateModel)
         {
+            _unitService = unitsService;
+            _hitAreaService = hitAreaService;
             _cellTemperaturePrivateModel = cellTemperaturePrivateModel;
         }
 
@@ -60,6 +65,11 @@ namespace Plugin.Runtime.Services
 
                 IncreaseTemperature(temperatureCells, cellsBehind);
             }
+        }
+
+        public void CreateTemperatureTrace(string gameId, int actorNr)
+        {
+            _cellTemperaturePrivateModel.Add(new CellTemperatureTracesScheme(gameId, actorNr));
         }
 
         /// <summary>

@@ -77,7 +77,7 @@ namespace Plugin.Installers
         public ActorStepsService actorStepsService;
         public DeserializeStepService deserializeStepService;
         public SyncRoomService syncRoomService;
-        public CellTemperatureTraceService temperatureWalkableTraceService;
+        public CellTemperatureTraceService cellTemperatureTraceService;
         public SimulateSyncActionService simulateSyncActionService;
         public HitAreaService hitAreaService;
 
@@ -208,9 +208,9 @@ namespace Plugin.Installers
             hitAreaService = new HitAreaService(cellWalkableService,
                                                 unitsService,
                                                 gridService);
-            temperatureWalkableTraceService = new CellTemperatureTraceService(privateModelProvider.Get<CellTemperaturePrivateModel>());
+            cellTemperatureTraceService = new CellTemperatureTraceService(unitsService, hitAreaService, privateModelProvider.Get<CellTemperaturePrivateModel>());
             simulateSyncActionService = new SimulateSyncActionService(syncRoomService,
-                                                                      temperatureWalkableTraceService,
+                                                                      cellTemperatureTraceService,
                                                                       hitAreaService);
             aiService = new AIService(actorService,
                                       unitsService,
