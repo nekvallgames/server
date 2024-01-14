@@ -30,6 +30,7 @@ namespace Plugin.Runtime.Services.ExecuteOp
             {
                 new ExecuteOpGroupAction(unitsService, actionService),
                 new ExecuteOpGroupAdditionalByPos(unitsService, additionalService),
+                new ExecuteOpGroupAdditionalByUnit(unitsService, additionalService),
                 new ExecuteOpGroupPositionOnGrid(unitsService, moveService, unitsPathService, plotsModelService, cellWalkableService, gridService),
                 new ExecuteOpGroupVip(unitsService, vipService)
             };

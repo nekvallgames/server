@@ -54,9 +54,9 @@ namespace Plugin.Runtime.Services.ExecuteAction.Additional.Executors
 
             // Синхронизировать выполненное действие юнита на игровой сетке
             ISyncGroupComponent syncAdditional = new SyncAdditionalByPosGroup(unit,
-                                                                          targetActorId,
-                                                                          posW,
-                                                                          posH);
+                                                                              targetActorId,
+                                                                              posW,
+                                                                              posH);
             _syncService.Add(gameId, unit.OwnerActorNr, syncAdditional);
 
             Int2[] additionalArea = unitMedic.GetAdditionalArea();

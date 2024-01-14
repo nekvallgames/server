@@ -8,21 +8,16 @@ namespace Plugin.Runtime.Services.ExecuteOp.Executors
 {
     /// <summary>
     /// Выполнить дополнительное действие юнита - выполнить дополнительное (пассивное) действие юнита.
-    /// Например, если юнит хиллер, то вылечить юнита.
-    /// 
-    /// Виконати додаткову дію по координатам - це вірно, але для AI, котрий працює на стороні сервера це не підходить 
-    /// із за архітектурних рішень. Наприклад, що би вилікувати юніта, котрий стоїть за спиною другого юніта, потрібно їх
-    /// розставити, вилікувати, а потім поставити обратно одне за одним. Гравець так уміє, і тільки так і потрібно лікувати, 
-    /// а от AI так не вміє. Для цього ми просто довіряємо AI, і він приміняє додаткову дію до вказаного юніта.
+    /// Например, если юнит хиллер, то вылечить юнита
     /// </summary>
-    public class ExecuteOpGroupAdditionalByUnit : ExecuteOpGroupAdditionalByPos
+    public class ExecuteOpGroupAdditionalByUnit : IExecuteOpGroup
     {
         private UnitsService _unitsService;
         private AdditionalService _additionalService;
         private AdditionalByUnitOpComponent _additionalOpComponent;
         private UnitIdOpComponent _unitIdOpComponent;
 
-        public ExecuteOpGroupAdditionalByUnit(UnitsService unitsService, AdditionalService additionalService):base(unitsService, additionalService)
+        public ExecuteOpGroupAdditionalByUnit(UnitsService unitsService, AdditionalService additionalService)
         {
             _unitsService = unitsService;
             _additionalService = additionalService;
@@ -31,7 +26,7 @@ namespace Plugin.Runtime.Services.ExecuteOp.Executors
         /// <summary>
         /// Может ли текущий класс выполнить действие игрока?
         /// </summary>
-        public override bool CanExecute(List<ISyncComponent> componentsGroup)
+        public virtual bool CanExecute(List<ISyncComponent> componentsGroup)
         {
             foreach (ISyncComponent component in componentsGroup)
             {
@@ -44,10 +39,11 @@ namespace Plugin.Runtime.Services.ExecuteOp.Executors
             return false;
         }
 
+
         /// <summary>
         /// Выполнить дополнительное (пассивное) действия юнита
         /// </summary>
-        public override void Execute(string gameId, int playerActorNr, List<ISyncComponent> componentsGroup)
+        public virtual void Execute(string gameId, int playerActorNr, List<ISyncComponent> componentsGroup)
         {
             // Вытаскиваем нужные нам компоненты из списка
             Parce(componentsGroup);
@@ -69,7 +65,7 @@ namespace Plugin.Runtime.Services.ExecuteOp.Executors
         /// <summary>
         /// Распарсить входящие данные
         /// </summary>
-        protected override void Parce(List<ISyncComponent> componentsGroup)
+        protected virtual void Parce(List<ISyncComponent> componentsGroup)
         {
             foreach (ISyncComponent component in componentsGroup)
             {
@@ -84,6 +80,5 @@ namespace Plugin.Runtime.Services.ExecuteOp.Executors
                 }
             }
         }
-
     }
 }

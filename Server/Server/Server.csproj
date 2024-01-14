@@ -148,6 +148,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Runtime\Services\ExecuteOp\Executors\ExecuteOpGroupAdditionalByUnit.cs" />
     <Compile Include="Runtime\Services\PlotStates\States\AiDoStepState.cs" />
     <Compile Include="Builders\GridBuilder.cs" />
     <Compile Include="Builders\GroupSyncBuilder.cs" />
