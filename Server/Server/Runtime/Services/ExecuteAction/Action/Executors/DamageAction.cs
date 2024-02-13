@@ -106,6 +106,7 @@ namespace Plugin.Runtime.Services.ExecuteAction.Action.Executors
                 int damageByBody = _bodyDamageConverterService.Converter(unitTarget, damage, targetW, targetH);
 
                 _unitsService.SetDamage(unitTarget, damageByBody);
+                _unitsService.SetPoisonDamage(unit, unitTarget);
             }
         }
 

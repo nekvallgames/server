@@ -29,6 +29,6 @@ namespace Plugin.Interfaces
         /// </summary>
         Int2[] GetAdditionalArea();
 
-        int AdditionalCapacity { get; }
+        int AdditionalCapacity { get; set; }
     }
 }

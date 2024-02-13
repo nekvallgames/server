@@ -39,8 +39,9 @@ namespace Plugin.Plugins.PVP
                                             new PvpResultState(plotService, host, SyncProgressState.NAME),
                                             new SyncProgressState(plotService, host, SyncStepsState.NAME),
                                             new SyncStepsState(plotService, host, StopRoomState.NAME),
-                                            new StopRoomState(plotService, host, AiDoStepState.NAME)
-                                          });
+                                            new StopRoomState(plotService, host, SyncUnitSkills.NAME),
+                                            new SyncUnitSkills(plotService, host, AiDoStepState.NAME)
+                                              });
         }
 
         /// <summary>

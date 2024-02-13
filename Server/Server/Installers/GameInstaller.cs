@@ -204,7 +204,7 @@ namespace Plugin.Installers
             poisonActionDecisionService = new PoisonActionDecisionService(unitsService);
             vipDecisionService = new VipDecisionService(unitsService, unitsPathService);
             weaponActionDecisionService = new WeaponActionDecisionService(unitsService, unitsPathService);
-            simulateNotificationChangeVipService = new SimulateNotificationChangeVipService(signalBus);
+            simulateNotificationChangeVipService = new SimulateNotificationChangeVipService(actorService, hostsService);
             hitAreaService = new HitAreaService(cellWalkableService,
                                                 unitsService,
                                                 gridService);

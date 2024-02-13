@@ -55,7 +55,6 @@ namespace Plugin.Runtime.Services.AI
                 {AIVipTask.TASK_NAME, new AIVipTask(vipDecisionService, 
                                                     unitsService, 
                                                     simulateNotificationChangeVipService, 
-                                                    actorService,
                                                     syncRoomService)}
             };
         }

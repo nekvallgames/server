@@ -1,4 +1,7 @@
-﻿using System;
+﻿using Photon.Hive.Plugin;
+using Plugin.Tools;
+using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Plugin.Runtime.Services
@@ -9,26 +12,34 @@ namespace Plugin.Runtime.Services
     /// </summary>
     public class SimulateNotificationChangeVipService
     {
-        private SignalBus _signalBus;
+        private HostsService _hostsService;
+        private ActorService _actorService;
 
-        private const int MIN_WAIT_BEFORE_SHOW = 5000;    // 5 sec
-        private const int MAX_WAIT_BEFORE_SHOW = 10000;   // 10 sec
+        private const int MIN_WAIT_BEFORE_SHOW = 15000;    // 15 sec
+        private const int MAX_WAIT_BEFORE_SHOW = 20000;   // 20 sec
 
-        public SimulateNotificationChangeVipService(SignalBus signalBus)
+        public SimulateNotificationChangeVipService(ActorService actorService, HostsService hostsService)
         {
-            _signalBus = signalBus;
+            _actorService = actorService;
+            _hostsService = hostsService;
         }
 
-        public async void Execute()
+        public async void Execute(string gameId)
         {
             Random random = new Random();
 
             await Task.Delay(random.Next(MIN_WAIT_BEFORE_SHOW, MAX_WAIT_BEFORE_SHOW));
 
-            // ToastSignal toastSignal = new ToastSignal();
-            // toastSignal.DescriptionTxt = "Leader is changed";
-            // toastSignal.ImagePath = "UI/vip_icon";
-            // _signalBus.Fire(toastSignal);
+            // Відправити всім участникам цей івент
+            int targetActorNr = _actorService.GetRealActor(gameId).ActorNr;
+            IPluginHost plugin = _hostsService.Get(gameId);
+
+            plugin.BroadcastEvent(ReciverGroup.All,
+                                 targetActorNr,
+                                 0,
+                                 OperationCode.changeVip,
+                                 null,
+                                 CacheOperations.DoNotCache); // не кэшировать сообщение
         }
     }
 }

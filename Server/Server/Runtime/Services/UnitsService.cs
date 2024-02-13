@@ -463,17 +463,16 @@ namespace Plugin.Runtime.Services
         }
 
         /// <summary>
-        /// Со всех юнитов удалить хилки,
-        /// что бы юниты не могли применить хилку
+        /// Зі всіх юнітів вказаного гравця обнулити додатковий єкшен
         /// </summary>
-        public void RemoveAllMedicHealing(string gameId, int actorNr)
+        public void RemoveAllHealingAdditional(string gameId, int actorNr)
         {
             // перебираем всех юнитов игрока
             foreach (IUnit unit in GetUnits(gameId, actorNr))
             {
-                if (unit is IHealthComponent)
+                if (unit is IHealingAdditionalComponent)
                 {
-                    ((IHealthComponent)unit).HealthCapacity = 0;
+                    ((IHealingAdditionalComponent)unit).AdditionalCapacity = 0;
                 }
             }
         }
@@ -533,6 +532,45 @@ namespace Plugin.Runtime.Services
                 }
 
                 result.Add(unit);
+            }
+        }
+
+        /// <summary>
+        /// Нанести урон юнитам от яда, если они отравлены
+        /// </summary>
+        public void SetPoisonDamage(string gameId, int actorNr)
+        {
+            List<IUnit> units = GetUnits(gameId, actorNr);
+
+            foreach (IUnit unit in units)
+            {
+                if (!unit.IsDead && (unit is IPoisonBuffComponent))
+                {
+                    int poisonBuff = (unit as IPoisonBuffComponent).PoisonBuff;
+
+                    if (poisonBuff == 0)
+                        continue;    // сила яда == 0. Не наносим урон по юнита
+
+                    int currHealth = (unit as IHealthComponent).HealthCapacity;
+                    currHealth -= poisonBuff;
+                    if (currHealth <= 0){
+                        currHealth = 1;
+                    }
+
+                    (unit as IHealthComponent).HealthCapacity = currHealth;
+                }
+            }
+        }
+
+        public void SetPoisonDamage(IUnit unitHunter, IUnit unitTarget)
+        {
+            if ((unitHunter is IPoisonActionComponent) && (unitTarget is IPoisonBuffComponent))
+            {
+                // TODO в майбутньому переробити, що би яд міг дублюватися. Типу різні бафи із ядом
+                int poisonBuff = (unitTarget as IPoisonBuffComponent).PoisonBuff;
+                int poisonPower = (unitHunter as IPoisonActionComponent).PoisonPower;
+
+                (unitTarget as IPoisonBuffComponent).PoisonBuff = poisonPower;
             }
         }
     }

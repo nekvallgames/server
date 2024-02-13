@@ -24,7 +24,6 @@ namespace Plugin.Runtime.Services.AI.Tasks
         public AIVipTask(VipDecisionService vipDecisionService,
                          UnitsService unitsService,
                          SimulateNotificationChangeVipService simulateNotificationChangeVipService,
-                         ActorService actorService,
                          SyncRoomService syncRoomService)
         {
             _vipDecisionService = vipDecisionService;
@@ -41,7 +40,7 @@ namespace Plugin.Runtime.Services.AI.Tasks
             var candidates = new List<IUnit>();
             _unitsService.GetAliveUnitsForVip(gameId, actorNr, ref candidates);
 
-            if (candidates.Count <= 0 || unitVip == null)
+            if (candidates.Count <= 1 || unitVip == null)
             {
                 return;    // в гравця не має взагалі VIP або залишився тільки 1
             }
@@ -60,7 +59,7 @@ namespace Plugin.Runtime.Services.AI.Tasks
 
                 if (random.Next(0, 100) < CHANGE_TO_FAIL_NOTIFICATION)
                 {
-                    _simulateNotificationChangeVipService.Execute();
+                    _simulateNotificationChangeVipService.Execute(gameId);
                 }
 
                 return;    // не має рішень, які дозволяють прийняти рішення
@@ -71,7 +70,7 @@ namespace Plugin.Runtime.Services.AI.Tasks
 
             // Зробити VIP із найбільшою сумою output
             _syncRoomService.SimulateSyncVip(gameId, actorNr, stepNumber, allowOutputs[0].Units[0], true);
-            _simulateNotificationChangeVipService.Execute();
+            _simulateNotificationChangeVipService.Execute(gameId);
         }
 
         public void ExitTask()

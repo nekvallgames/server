@@ -315,6 +315,7 @@
     <Compile Include="Runtime\Services\PlotStates\States\SyncBackendState.cs" />
     <Compile Include="Runtime\Services\PlotStates\States\PvpExecuteStepsState.cs" />
     <Compile Include="Runtime\Services\PlotStates\States\SyncStepsState.cs" />
+    <Compile Include="Runtime\Services\PlotStates\States\SyncUnitSkills.cs" />
     <Compile Include="Runtime\Services\PlotStates\States\WaitStepResultState.cs" />
     <Compile Include="Runtime\Services\ResultService.cs" />
     <Compile Include="Runtime\Services\SimulateNotificationChangeVipService.cs" />

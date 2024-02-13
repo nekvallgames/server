@@ -60,14 +60,13 @@ namespace Plugin.Runtime.Units
 
         #region additional
 
-        public int AdditionalCapacity => _additionalCapacity;
+        public int AdditionalCapacity { get; set; }
 
-        private int _additionalCapacity;
         private int _additionalPower;
 
         public bool CanExecuteAdditional()
         {
-            return _additionalCapacity > 0;
+            return AdditionalCapacity > 0;
         }
 
         public int GetHealthPower()
@@ -77,9 +76,9 @@ namespace Plugin.Runtime.Units
 
         public void SpendAdditional()
         {
-            _additionalCapacity--;
-            if (_additionalCapacity < 0)
-                _additionalCapacity = 0;
+            AdditionalCapacity--;
+            if (AdditionalCapacity < 0)
+                AdditionalCapacity = 0;
         }
 
         public Int2[] GetAdditionalArea() => new Int2[] { new Int2(0, 0) };
@@ -89,12 +88,6 @@ namespace Plugin.Runtime.Units
         public override Int2 Position {
             get { return _position; }
             set {
-
-                if (OwnerActorNr == 2)
-                {
-                    int a = 2;
-                }
-
                 _position = value; 
             } 
         }
@@ -117,7 +110,7 @@ namespace Plugin.Runtime.Units
             OriginalActionCapacity = unitPublicScheme.capacity;
 
             // Set additional 
-            _additionalCapacity = unitPublicScheme.additionalCapacity;
+            AdditionalCapacity = unitPublicScheme.additionalCapacity;
             _additionalPower = unitPublicScheme.additionalPower;
         }
     }

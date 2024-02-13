@@ -63,7 +63,7 @@ namespace Plugin.Runtime.Services.PlotMode.States.PVP
 
                 foreach (ActorScheme actor in _actors)
                 {
-                    _unitsService.RemoveAllMedicHealing(_host.GameId, actor.ActorNr);
+                    _unitsService.RemoveAllHealingAdditional(_host.GameId, actor.ActorNr);
                 }
 
                 ChangeWayForDuel(_actor0DuelUnit);
